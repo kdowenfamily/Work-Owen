@@ -1,0 +1,2 @@
+# This file should be a symlink to the main alert directory.  Replace it as follows:
+ln -sf <alert_directory> qadata

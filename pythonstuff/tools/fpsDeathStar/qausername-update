@@ -1,0 +1,2 @@
+# This file should be a symlink to the alert directory with Username-Update alerts.  Replace it as follows:
+ln -sf <alert_directory> qausername-update

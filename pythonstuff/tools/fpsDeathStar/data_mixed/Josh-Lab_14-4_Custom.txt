@@ -1,0 +1,11 @@
+POST /rstats/ HTTP/1.1
+content-length=1189
+accept-language=en-us
+accept-encoding=gzip, deflate
+fps-license=9ae0daaf
+connection=close
+user-agent=MobileSafeDemo/1.0 CFNetwork/711.4.6 Darwin/14.5.0
+host=172.29.33.129
+content-type=application/x-www-form-urlencoded
+
+fpm_alert_type=14&fpm_alert_component=4&fpm_guid=9D6A10407B33867FF44CA4F0AA22B2E7&fpm_score=100&fpm_device_id=iOS-B9D6A42C-1A81-4808-BEAB-190BC7E1B49B&fpm_alert_details=%7B%22ts%22%3A%221458735292.41786%22%2C%0A++%22SSLTrust_InvalidDomainName%22+%3A+%22SUCCESS%22%2C%0A++%22VDns_CorrectIpAddress%22+%3A+%22FAILURE%22%2C%0A++%22VDns_IncorrectIpAddress%22+%3A+%22SUCCESS%22%2C%0A++%22imsi%22+%3A+%22%22%2C%0A++%22Get+Public+Key%22+%3A+%22SUCCESS%22%2C%0A++%22VJail_jailBreakDetected%22+%3A+%22SUCCESS%22%2C%0A++%22imei%22+%3A+%22%22%2C%0A++%22Load+Settings%22+%3A+%22SUCCESS%22%2C%0A++%22SSlTrust_NoSSLOnServer%22+%3A+%22SUCCESS%22%2C%0A++%22version%22+%3A+%228.4%22%2C%0A++%22msVersion%22+%3A+%221.2.1+build+150714%22%2C%0A++%22VDns_InvalidDomainName%22+%3A+%22FAILURE%22%2C%0A++%22VDns_CorrectIPRange%22+%3A+%22SUCCESS%22%2C%0A++%22SSLTrust_CorrectSSLTrust%22+%3A+%22SUCCESS%22%2C%0A++%22realDevice%22+%3A+false%2C%0A++%22VDns_ThreatScoreCheck%22+%3A+%22SUCCESS%22%2C%0A++%22SSLTrust_IncorrectSSLTrust%22+%3A+%22SUCCESS%22%2C%0A++%22threshold%22+%3A+5%2C%0A++%22Sleep+5+seconds+to+get+location%22+%3A+%22SUCCESS%22%2C%0A++%22VDns_IncorrectIpRange%22+%3A+%22SUCCESS%22%0A%7D&fpm_alert_id=d4

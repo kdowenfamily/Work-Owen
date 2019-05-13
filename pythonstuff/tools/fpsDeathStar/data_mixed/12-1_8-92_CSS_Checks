@@ -1,0 +1,9 @@
+GET /rstats/?id=d4&c=ss&phg=0zsh4rv0AZ5S HTTP/1.1
+accept-language=en-US,en;q=0.8
+fps-license=9ae0daaf
+connection=close
+user-agent=Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36
+host=10.64.8.206
+referer=http://10.64.8.206/e5GuvQBTjtmgnyB.css
+
+
