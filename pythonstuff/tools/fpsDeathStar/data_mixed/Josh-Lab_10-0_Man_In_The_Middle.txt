@@ -1,0 +1,10 @@
+POST /rstats/ HTTP/1.1
+content-length=836
+accept-encoding=gzip
+fps-license=9ae0daaf
+connection=close
+user-agent=Dalvik/1.6.0 (Linux; U; Android 4.4.4; Android SDK built for x86 Build/KK)
+host=172.29.33.129
+content-type=application/x-www-form-urlencoded
+
+fpm_alert_type=10&fpm_alert_component=0&fpm_guid=49AEB7C6C43B179DB20DB650318E3212&fpm_score=25&fpm_device_id=bfe5b18dc402a1fd&fpm_resolved_value=MD5%3DC782A5CBCAE453C01A92EA2896015C7D1+++SHA256%3DPfy52b4zpTRv8JceUh4AAlH5c7HriUYCmIiSqRaPwxw%3D2&fpm_defined_value=&fpm_alert_details=%7B%22ts%22%3A%221458733782248%22%2C%22vcertThreatDetected%22%3Atrue%2C%22sha256%22%3Afalse%2C%22imei%22%3A%22000000000000000%22%2C%22resolvedIP%22%3A%22104.219.107.148%22%2C%22vcertScore%22%3A20%2C%22vdnsScore%22%3A5%2C%22url%22%3A%22www.f5.com%22%2C%22threshold%22%3A5%2C%22version%22%3A%224.4.4%22%2C%22vdnsThreatDetected%22%3Atrue%2C%22realDevice%22%3Afalse%2C%22locationLong%22%3A0%2C%22locationLat%22%3A0%2C%22imsi%22%3A%2289014103211118510720%22%2C%22msVersion%22%3A%221.2.1.1%22%2C%22definedIP%22%3A%5B%2211.0.0.0-12.1.0.0%22%5D%7D&fpm_alert_id=d4

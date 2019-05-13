@@ -1,0 +1,11 @@
+POST /rstats/ HTTP/1.1
+content-length=886
+accept-language=en-us
+accept-encoding=gzip, deflate
+fps-license=9ae0daaf
+connection=close
+user-agent=MobileSafeDemo/1.0 CFNetwork/711.4.6 Darwin/14.5.0
+host=172.29.33.129
+content-type=application/x-www-form-urlencoded
+
+fpm_alert_type=14&fpm_alert_component=0&fpm_guid=0CF42D4B518E3CD1659B7372DCC66432&fpm_score=25&fpm_device_id=iOS-B9D6A42C-1A81-4808-BEAB-190BC7E1B49B&fpm_resolved_value=MD5=C782A5CBCAE453C01A92EA2896015C7D  SHA256=Pfy52b4zpTRv8JceUh4AAlH5c7HriUYCmIiSqRaPwxw=&fpm_defined_value=&fpm_alert_details=%7B%22ts%22%3A%221458736079.082302%22%2C%0A++%22imsi%22+%3A+%22%22%2C%0A++%22threshold%22+%3A+5%2C%0A++%22vcertScore%22+%3A+20%2C%0A++%22version%22+%3A+%228.4%22%2C%0A++%22realDevice%22+%3A+false%2C%0A++%22vcertThreatDetected%22+%3A+true%2C%0A++%22vdnsThreatDetected%22+%3A+1%2C%0A++%22sha256%22+%3A+0%2C%0A++%22url%22+%3A+%22www.f5.com%22%2C%0A++%22definedIP%22+%3A+%5B%0A++++%2211.0.0.0-12.1.0.0%22%0A++%5D%2C%0A++%22vdnsScore%22+%3A+5%2C%0A++%22imei%22+%3A+%22%22%2C%0A++%22resolvedIP%22+%3A+%22104.219.107.148%22%2C%0A++%22msVersion%22+%3A+%221.2.1+build+150714%22%0A%7D&fpm_alert_id=d4

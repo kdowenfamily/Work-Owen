@@ -1,0 +1,10 @@
+POST /rstats/ HTTP/1.1
+content-length=850
+accept-encoding=gzip
+fps-license=9ae0daaf
+connection=close
+user-agent=Dalvik/2.1.0 (Linux; U; Android 5.0.1; GT-I9500 Build/LRX22C)
+host=172.29.33.129
+content-type=application/x-www-form-urlencoded
+
+fpm_alert_type=10&fpm_alert_component=0&fpm_guid=EDCCEFB4A4C9D6D188741FD033607894&fpm_score=16&fpm_device_id=86c0fdf1f45c2d0f&fpm_resolved_value=MD5%3DE7037C6315767025505EF4845C2252BE1+++SHA256%3DGtwN6KrNKA1RuuAkZs38tCJPts9%2BvExJXRc05ksCVS0%3D2&fpm_defined_value=&fpm_alert_details=%7B%22ts%22%3A%221458734882127%22%2C%22msVersion%22%3A%221.2.1.1%22%2C%22version%22%3A%225.0.1%22%2C%22threshold%22%3A5%2C%22imei%22%3A%22357376057280284%22%2C%22imsi%22%3A%22899720204725804977%22%2C%22locationLong%22%3A34.8428301%2C%22locationLat%22%3A32.1153335%2C%22realDevice%22%3Atrue%2C%22url%22%3A%22www.citi.com%22%2C%22vcertThreatDetected%22%3Atrue%2C%22vcertScore%22%3A9%2C%22sha256%22%3Afalse%2C%22vdnsThreatDetected%22%3Atrue%2C%22resolvedIP%22%3A%2292.122.14.190%22%2C%22definedIP%22%3A%5B%223.3.3.3-3.3.3.3%22%5D%2C%22vdnsScore%22%3A7%7D&fpm_alert_id=d4

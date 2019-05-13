@@ -1,0 +1,11 @@
+POST /rstats/ HTTP/1.1
+content-length=478
+accept-language=en-us
+accept-encoding=gzip, deflate
+fps-license=9ae0daaf
+connection=close
+user-agent=MobileSafeDemo/1.0 CFNetwork/711.4.6 Darwin/14.5.0
+host=172.29.33.129
+content-type=application/x-www-form-urlencoded
+
+fpm_alert_type=14&fpm_alert_component=4&fpm_guid=E6F7140CF40EFB394B58AD75F4D8B67C&fpm_score=100&fpm_device_id=iOS-B9D6A42C-1A81-4808-BEAB-190BC7E1B49B&fpm_alert_details=%7B%22ts%22%3A%221458735618.804734%22%2C%0A++%22custom+value%22+%3A+%22test2%22%2C%0A++%22threshold%22+%3A+5%2C%0A++%22imei%22+%3A+%22%22%2C%0A++%22imsi%22+%3A+%22%22%2C%0A++%22msVersion%22+%3A+%221.2.1+build+150714%22%2C%0A++%22version%22+%3A+%228.4%22%2C%0A++%22realDevice%22+%3A+false%0A%7D&fpm_alert_id=d4
