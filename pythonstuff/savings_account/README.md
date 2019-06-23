@@ -4,7 +4,10 @@
 
 ### Config Files
 
-buckets.json - The divisions in the account.  This is a list of dictionaries with this format: 
+#### buckets.json
+
+The divisions in the account.  This is a list of dictionaries with this format: 
+
 {code:java}
   {
     "title": "",
@@ -14,7 +17,10 @@ buckets.json - The divisions in the account.  This is a list of dictionaries wit
   }
 {code}
 
-accounts.json - a list of valid accounts:
+#### accounts.json
+
+A list of valid accounts:
+
 {code:java}
   {
     "name": "",
@@ -22,8 +28,11 @@ accounts.json - a list of valid accounts:
   }
 {code}
 
-transfers/<foo>.json - one transfer pattern with a date, payer, payee, and
+#### transfers/<foo>.json
+
+One transfer pattern with a date, payer, payee, and
   a list of dictionaries with this format:
+
 {code:java}
   {
     "title": "", # a bucket title
@@ -35,35 +44,49 @@ transfers/<foo>.json - one transfer pattern with a date, payer, payee, and
   - Dan's paycheck: how it is divided
   - Kathy's paycheck
 
-savings.csv - the bucketized state of the savings account
+#### savings.csv
+
+The bucketized state of the savings account
   - one transaction per line: date_time, peer_account, amount of change in each bucket
 
 ### Input Files
 
-savings_export.csv - from Quicken, a list of transactions in and out of the savings account
+#### savings_export.csv
+
+From Quicken, a list of transactions in and out of the savings account
   ,"Scheduled","Split","Date","Payee","Category","Amount","Balance"
-cc_export.csv - from Quicken, a list of transactions in and out of one credit card
+
+#### cc_export.csv
+
+From Quicken, a list of transactions in and out of one credit card
   ,"Scheduled","Split","Date","Payee","Category","Tags","Amount","Memo/Notes"
 
 
 ## Classes
 
-Transaction_Template - describes how to split up a transfer into savings 
+### Transaction_Template
+
+Describes how to split up a transfer into savings 
   buckets.  From transfers/<foo>.json?
-  Properties:
+
+#### Properties
   - buckets:  Buckets list, where all buckets add up to the total. 
   - payer:  account that always pays this (could be Savings)
   - payee: account that always receives this (or this could be Savings)
-  Methods:
+
+#### Methods
   - __init__(): load up and parse the buckets.
       load() up the buckets from the JSON into self.buckets
       set the payer and payee from the JSON
   - load():  load JSON file into self.buckets.
 
-Transaction - describes a transaction event in the account.
+### Transaction
+
+Describes a transaction event in the account.
   This is about freezing a transaction in one moment of time, 
   and it gets listed out in order.
-  Properties:
+
+#### Properties
   - date_time:  when it happened
   - total:  the grand total of all buckets
   - payer:  account that always pays this
@@ -72,7 +95,8 @@ Transaction - describes a transaction event in the account.
   - note, maybe
   - buckets:  Buckets list, where all buckets add up to the total. 
   - total2Tr_Template: dictionary of all "known" totals to their Transaction_Template objects
-  Methods:
+
+#### Methods
   - __init__ (class):  find all transaction-template JSON files (in transfers/<foo>.json) and make
       a Transaction_Template object for each of them.
       Create total2Tr_Template, a map.
@@ -114,10 +138,14 @@ Transaction - describes a transaction event in the account.
         - N: enter bucket and new amount
       - N: back to top.
 
-Buckets - is a list of "buckets" in a savings account.
-  Properties:
+### Buckets
+
+Is a list of "buckets" in a savings account.
+
+#### Properties
   - contents: a list of Bucket objects
-  Methods:
+
+#### Methods
   - __init__(buckets.json): load up Buckets from the JSON file
     Read the json file and make one Bucket object per bucket dict.
   - __str__(): print all totals in priority order, separated by commas
@@ -128,14 +156,18 @@ Buckets - is a list of "buckets" in a savings account.
                        Use self.bucket + other.bucket.
   - _find(title):  return a bucket in this list with the given title.
 
-Bucket - is one "bucket" in a savings account.
-  Properties:
+### Bucket
+
+Is one "bucket" in a savings account.
+
+#### Properties
   - total
   - title
   - weight
   - order
   - tags()
-  Methods:
+
+#### Methods
   - __init__(dict): take one bucket dict (from JSON file) and load up
     the properties
   - __str__(): print the total
@@ -144,26 +176,35 @@ Bucket - is one "bucket" in a savings account.
   - __plus__(other): if this.title eq other.title:
                          this.total += other.total
 
-XactionCsv - any CSV file from Quicken
+### XactionCsv
+
+Any CSV file from Quicken
   Load up from a .csv file.
-  Properties:
+
+#### Properties
   - source_acct (string)
   - transactions[] (list of Transaction() objects)
-  Methods:
+
+#### Methods
   - __init__(path2csv, buckets): read the CSV and get all its transactions
     set self.source_acct
     for each CSV line:
       make xactionDict (dictionary) out of CSV line
       Append a new Transaction(self.source_acct, xactionDict, buckets) to self.transactions[]
 
-Savings() - is a savings account.
-  Class Properties:
+### Savings
+
+Is a savings account.
+
+#### Class Properties:
   - buckets:  a Buckets list object
-  Properties:
+
+#### Properties
   - total:  total of all Buckets after all transactions
   - transactions: list of Transactions in this account, sorted by date
   - snapshots: one bucket-list snapshot per transaction
-  Methods:
+
+#### Methods
   - __init__(path2buckets.json, path2savings.csv):
     init_buckets(path2buckets.json)
     load_sv(path2savings.csv)
