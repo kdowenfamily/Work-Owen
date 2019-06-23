@@ -8,37 +8,37 @@
 
 The divisions in the account.  This is a list of dictionaries with this format: 
 
-{code:java}
+```json
   {
     "title": "",
     "weight": n,
     "order": n,
     "tags": [""*]
   }
-{code}
+```
 
 #### accounts.json
 
 A list of valid accounts:
 
-{code:java}
+```json
   {
     "name": "",
     "type": "Savings|Checking|CC"
   }
-{code}
+```
 
 #### transfers/<foo>.json
 
 One transfer pattern with a date, payer, payee, and
   a list of dictionaries with this format:
 
-{code:java}
+```json
   {
     "title": "", # a bucket title
     "total": n
   }
-{code}
+```
 
   Examples:
   - Dan's paycheck: how it is divided
@@ -221,7 +221,11 @@ Is a savings account.
   - __str__():  make a string with the start total, all buckets now, and the final total.
 
   - __main__():
+    
     savings = Savings(path2buckets.json, path2savings.csv)
+
     savings.load_transactions(savings_export.csv, cc_export.csv)
+
     savings.csv_out()
+
     print savings
