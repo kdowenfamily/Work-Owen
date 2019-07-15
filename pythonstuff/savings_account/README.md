@@ -196,7 +196,7 @@ Is a list of "buckets" in a savings account.
 
   - __eq__(other): compare all buckets in this.contents with other.contents.
 
-  - __plus__(other): add all buckets in other.contents to this.contents.
+  - __iadd__(other): add all buckets in other.contents to this.contents.
 
 ```python
                      foreach ob in other.buckets:
@@ -227,7 +227,7 @@ Is one "bucket" in a savings account.
 
   - __eq__(other):  compare all properties in this with those in other.
 
-  - __plus__(other):
+  - __iadd__(other):
 
 ```python
                        if this.title eq other.title:
@@ -293,8 +293,10 @@ Is a savings account.
     ```
 
   - snapshot(): do a deepcopy of the current buckets list, with a timestamp
+
   - csv_out(): write out a .csv file with one snapshot of the buckets per row,
     ordered by transaction date.
+
   - __str__():  make a string with the start total, all buckets now, and the final total.
 
   - __main__():

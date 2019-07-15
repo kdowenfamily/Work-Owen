@@ -1,0 +1,167 @@
+[
+  {
+    "title": "Home Maintenance",
+    "weight": 1,
+    "order": 1,
+    "tags": [
+    ]
+  },
+  {
+    "title": "Home Improvement",
+    "weight": 1,
+    "order": 2,
+    "tags": [
+      "Home Improvement"
+    ]
+  },
+  {
+    "title": "Oil",
+    "weight": 1,
+    "order": 3,
+    "tags": [
+      "Utilities"
+    ]
+  },
+  {
+    "title": "AAA",
+    "weight": 1,
+    "order": 4,
+    "tags": []
+  },
+  {
+    "title": "Pool Care",
+    "weight": 1,
+    "order": 5,
+    "tags": []
+  },
+  {
+    "title": "Lawn Care",
+    "weight": 1,
+    "order": 6,
+    "tags": []
+  },
+  {
+    "title": "Vacation",
+    "weight": 1,
+    "order": 7,
+    "tags": [
+      "Travel"
+    ]
+  },
+  {
+    "title": "Party",
+    "weight": 1,
+    "order": 8,
+    "tags": []
+  },
+  {
+    "title": "Babysitter",
+    "weight": 0,
+    "order": 9,
+    "tags": []
+  },
+  {
+    "title": "Kid Activities",
+    "weight": 1,
+    "order": 10,
+    "tags": []
+  },
+  {
+    "title": "Magazines",
+    "weight": 1,
+    "order": 11,
+    "tags": [
+      "Magazines"
+    ]
+  },
+  {
+    "title": "Car Insurance",
+    "weight": 1,
+    "order": 12,
+    "tags": []
+  },
+  {
+    "title": "Car Maintenance",
+    "weight": 1,
+    "order": 13,
+    "tags": []
+  },
+  {
+    "title": "Car Savings",
+    "weight": 1,
+    "order": 14,
+    "tags": []
+  },
+  {
+    "title": "Clothes",
+    "weight": 1,
+    "order": 15,
+    "tags": [
+      "American Eagle Outfitters",
+      "Urban Outfitters",
+      "Columbia Sportswear",
+      "Eddie Bauer",
+      "Levi's",
+      "Clothes",
+      "Nike",
+      "Dick's Sporting",
+      "Dr Martens E"
+    ]
+  },
+  {
+    "title": "Gifts",
+    "weight": 1,
+    "order": 16,
+    "tags": [
+      "Gifts"
+    ]
+  },
+  {
+    "title": "Dan Swan's Taxes",
+    "weight": 1,
+    "order": 17,
+    "tags": []
+  },
+  {
+    "title": "Dan Life Insurance",
+    "weight": 1,
+    "order": 18,
+    "tags": []
+  },
+  {
+    "title": "Kathy Hair",
+    "weight": 1,
+    "order": 19,
+    "tags": []
+  },
+  {
+    "title": "Kathy Wardrobe",
+    "weight": 1,
+    "order": 20,
+    "tags": []
+  },
+  {
+    "title": "Kathy Life Insurance",
+    "weight": 1,
+    "order": 21,
+    "tags": []
+  },
+  {
+    "title": "Slush",
+    "weight": 1,
+    "order": 22,
+    "tags": []
+  },
+  {
+    "title": "Grammy",
+    "weight": 1,
+    "order": 23,
+    "tags": []
+  },
+  {
+    "title": "Water",
+    "weight": 1,
+    "order": 24,
+    "tags": []
+  }
+]
