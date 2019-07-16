@@ -1,5 +1,8 @@
 [
   "date": "*",
+  "payer": "Checking",
+  "payee": "Savings",
+  "buckets": [
   {
     "title": "Home Maintenance",
     "total": 0
@@ -96,4 +99,5 @@
     "title": "Water",
     "total": 0
   }
+  ]
 ]

@@ -10,41 +10,48 @@ logging.basicConfig(filename="savings.log",
                     level=logging.DEBUG)
 
 class Buckets(object):
-    def __init__(self, json=BUCKETS_FILE):
+    @classmethod
+    def from_file(cls, file_path=""):
+        # read the JSON file and make one bucket per bucket dict
+        buckets = []
+
+        logging.info("Parsing bucket-config file, '%s'.", file_path)
+        with open(file_path) as json_data:
+            buckets = json.load(json_data) 
+
+        return cls(buckets)
+
+    def __init__(self, buckets=[]):
         # read the JSON file and make one bucket per bucket dict
         self.titles2buckets = {}
         self.tags2buckets = {}
         self.ordered_titles = []
-        self.contents = self.init_buckets(json)
+        self.contents = self.init_buckets(buckets)
 
-    def init_buckets(self, file=""):
-        buckets = []
-
-        logging.info("Parsing bucket-config file, '%s'.", file)
-        with open(file) as json_data:
-            buckets = json.load(json_data) 
-
+    def init_buckets(self, buckets=[]):
+        bkts = []
         for bucket in buckets:
-            bkt = Bucket(title=bucket['title'], order=bucket['order'], weight=bucket['weight'], tags=bucket['tags'])
-            self.titles2buckets[bucket['title']] = bkt
+            bkt = Bucket(bucket)
+            bkts.append(bkt)
+
+            self.titles2buckets[bkt.title] = bkt
             for tag in bkt.tags:
                 if tag in self.tags2buckets.keys():
                     logging.warning("Dupe tag: '%s' in config record '%s, %s'.", tag, 
-                                    bkt.title, bkt.weight)
+                                    bkt.title, bkt.total)
                 else:
                     self.tags2buckets[tag] = bkt
 
-        for bucket in sorted(buckets, key=lambda k: k['order']):
-            self.ordered_titles.append(bucket['title'])
+        for bucket in sorted(bkts, key=lambda k: k.order):
+            self.ordered_titles.append(bucket.title)
 
-        logging.info("Done parsing bucket-config file, %s buckets.",
-            len(self.titles2buckets.keys()))
+        logging.info("Done parsing bucket-config file, %s buckets.", len(bkts))
 
-        return buckets
+        return bkts
 
 
     def find(self, title=""):
-        return self.titles2buckets(title)
+        return self.titles2buckets[title]
 
     def _print_titles(self):
         ret = ""
@@ -78,6 +85,6 @@ class Buckets(object):
         return True 
 
 if __name__ == "__main__":
-    bks = Buckets()
+    bks = Buckets.from_file(BUCKETS_FILE)
     print bks._print_titles()
     print bks
