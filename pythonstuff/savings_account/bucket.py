@@ -6,13 +6,21 @@ logging.basicConfig(filename="savings.log",
                     format="[%(asctime)s] [%(levelname)-7s] %(message)s",
                     level=logging.DEBUG)
 
+DEFAULT_BUCKET = {
+                "total": 0.0,
+                "order": 0,
+                "weight": 0,
+                "title": "",
+                "tags": []
+                }
+
 class Bucket(object):
-    def __init__(self, total=0.0, order=0, weight=0, title="", tags=[]):
-        self.total = total
-        self.order = order
-        self.weight = weight
-        self.title = title
-        self.tags = tags
+    def __init__(self, bucket=DEFAULT_BUCKET):
+        self.total = bucket.get("total", DEFAULT_BUCKET['total'])
+        self.order = bucket.get("order", DEFAULT_BUCKET['order'])
+        self.weight = bucket.get("weight", DEFAULT_BUCKET['weight'])
+        self.title = bucket.get("title", DEFAULT_BUCKET['title'])
+        self.tags = bucket.get("tags", DEFAULT_BUCKET['tags'])
 
     def _string2float(self, st):
         money = str(st)                         # incase it is already a number
@@ -108,5 +116,5 @@ class Bucket(object):
         return self
 
 if __name__ == "__main__":
-    bk = Bucket(title="Dan's Bucket", total="1,000,000")
+    bk = Bucket({"title":"Dan's Bucket", "total":"1,000,000"})
     print bk
