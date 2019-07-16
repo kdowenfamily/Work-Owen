@@ -1,4 +1,4 @@
-[
+{
   "date": "*",
   "payer": "Checking",
   "payee": "Savings",
@@ -100,4 +100,4 @@
     "total": 0
   }
   ]
-]
+}

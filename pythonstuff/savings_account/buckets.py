@@ -26,6 +26,7 @@ class Buckets(object):
         self.titles2buckets = {}
         self.tags2buckets = {}
         self.ordered_titles = []
+        self.total = 0
         self.contents = self.init_buckets(buckets)
 
     def init_buckets(self, buckets=[]):
@@ -35,6 +36,7 @@ class Buckets(object):
             bkts.append(bkt)
 
             self.titles2buckets[bkt.title] = bkt
+            self.total += bkt.total
             for tag in bkt.tags:
                 if tag in self.tags2buckets.keys():
                     logging.warning("Dupe tag: '%s' in config record '%s, %s'.", tag, 
@@ -74,6 +76,7 @@ class Buckets(object):
             my_bkt = self.titles2buckets(title)
             o_bkt = other_buckets.find(title)
             my_bkt += obkt
+            self.total += obkt.total
 
     def __eq__(self, other_buckets):
         for title in self.ordered_titles:

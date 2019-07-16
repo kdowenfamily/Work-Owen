@@ -17,32 +17,42 @@ class Transaction_Template(object):
         self.payer = ""
         self.payee = ""
         self.buckets = None
-        self.contents = self.init_template(template)
+
+        self.init_template(template)
 
     def init_template(self, tfile=""):
         template = {}
 
         logging.info("Parsing transaction-template file, '%s'.", tfile)
-        with open(tfile) as json_data:
-            template = json.load(json_data) 
+        try:
+            with open(tfile) as json_data:
+                template = json.load(json_data) 
 
-        self.payer = template["payer"]
-        self.payee = template["payee"]
-        self.buckets = Buckets(template["buckets"])
+            self.payer = template["payer"]
+            self.payee = template["payee"]
+            self.buckets = Buckets(template["buckets"])
+        except ValueError as ve:
+            logging.error("Parsing ValueError in '%s':  %s", tfile, ve)
+        except:
+            logging.error("Parsing error in '%s'.", tfile)
 
 
     def __str__(self):
         ret = ""
 
-        ret += "Payee:  " + self.payee + "\n"
-        ret += "Payer:  " + self.payer + "\n"
-        for title in self.buckets.ordered_titles:
-            bkt = self.buckets.find(title)
-            ret += bkt.title + ": "
-            ret += str(bkt.total) + "\n"
+        if self.buckets:
+            ret += "Payee:  " + self.payee + "\n"
+            ret += "Payer:  " + self.payer + "\n"
+            for title in self.buckets.ordered_titles:
+                bkt = self.buckets.find(title)
+                ret += bkt.title + ": "
+                ret += str(bkt.total) + "\n"
+            ret += "\nTotal:  " + str(self.buckets.total) + "\n"
 
         return ret
 
 if __name__ == "__main__":
     tts = Transaction_Template()
+    print tts
+    tts = Transaction_Template(KATHY_PAYCHECK)
     print tts
