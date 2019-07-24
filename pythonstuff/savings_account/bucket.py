@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import csv, json, re, logging
+import csv, json, re, logging, datetime
 
 logging.basicConfig(filename="savings.log",
                     format="[%(asctime)s] [%(levelname)-7s] %(message)s",
@@ -11,7 +11,8 @@ DEFAULT_BUCKET = {
                 "order": 0,
                 "weight": 0,
                 "title": "",
-                "tags": []
+                "tags": [],
+                "default": False
                 }
 
 class Bucket(object):
@@ -21,6 +22,7 @@ class Bucket(object):
         self.weight = bucket.get("weight", DEFAULT_BUCKET['weight'])
         self.title = bucket.get("title", DEFAULT_BUCKET['title'])
         self.tags = bucket.get("tags", DEFAULT_BUCKET['tags'])
+        self.default = bucket.get("default", DEFAULT_BUCKET['default'])
 
     def _string2float(self, st):
         money = str(st)                         # incase it is already a number
@@ -80,6 +82,14 @@ class Bucket(object):
             else:
                 self._tags.append(str(tag))    # incase it is unicode
 
+    @property
+    def default(self):
+        return self._default
+
+    @default.setter
+    def default(self, default):
+        self._default = default
+
 
     def __str__(self):
         ret = ""
@@ -89,6 +99,8 @@ class Bucket(object):
         ret += "Weight: " + str(self.weight) + "\n"
         ret += "Order:  " + str(self.order) + "\n"
         ret += "Tags:   " + str(self.tags) + "\n"
+        if self.default:
+            ret += "Default bucket\n"
 
         return ret
 

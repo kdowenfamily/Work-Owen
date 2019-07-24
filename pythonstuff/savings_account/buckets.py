@@ -19,14 +19,13 @@ class Buckets(object):
         with open(file_path) as json_data:
             buckets = json.load(json_data) 
 
-        return cls(buckets)
+        return Buckets(buckets)
 
     def __init__(self, buckets=[]):
         # read the JSON file and make one bucket per bucket dict
         self.titles2buckets = {}
         self.tags2buckets = {}
         self.ordered_titles = []
-        self.total = 0
         self.contents = self.init_buckets(buckets)
 
     def init_buckets(self, buckets=[]):
@@ -36,7 +35,6 @@ class Buckets(object):
             bkts.append(bkt)
 
             self.titles2buckets[bkt.title] = bkt
-            self.total += bkt.total
             for tag in bkt.tags:
                 if tag in self.tags2buckets.keys():
                     logging.warning("Dupe tag: '%s' in config record '%s, %s'.", tag, 
@@ -51,9 +49,50 @@ class Buckets(object):
 
         return bkts
 
+    def get_total(self):
+        tot = 0
+        for bkt in self.contents:
+            tot += bkt.total
+        return tot
+
+    def get_default(self):
+        for bkt in self.contents:
+            if bkt.default:
+                return bkt
+
+    def reset_default(self, bucket=None):
+        if not bucket:
+            return False
+
+        # remove any default
+        for bkt in self.contents:
+            if bkt.default:
+                bkt.default = False
+
+        # set the new default
+        bucket.default = True
 
     def find(self, title=""):
         return self.titles2buckets[title]
+
+    def find(self, number=0):
+        if not number:
+            return None
+
+        title = self.ordered_titles[int(number) - 1]
+        return self.titles2buckets[title]
+
+    def show(self):
+        ret = ""
+        ct = 0
+
+        for title in self.ordered_titles:
+            ct += 1
+            ct_str = str(ct)
+            bkt = self.titles2buckets[title]
+            ret += "%3d. %-24s %-6.2f\n" % (ct, bkt.title, bkt.total)
+
+        return ret
 
     def _print_titles(self):
         ret = ""
@@ -73,15 +112,16 @@ class Buckets(object):
 
     def __iadd__(self, other_buckets):
         for title in self.titles2buckets:
-            my_bkt = self.titles2buckets(title)
-            o_bkt = other_buckets.find(title)
-            my_bkt += obkt
-            self.total += obkt.total
+            my_bkt = self.titles2buckets[title]
+            o_bkt = other_buckets.titles2buckets[title]
+            my_bkt += o_bkt
+
+        return self
 
     def __eq__(self, other_buckets):
         for title in self.ordered_titles:
-            my_bkt = self.title2buckets[title]
-            o_bkt = other_buckets.find(title)
+            my_bkt = self.titles2buckets[title]
+            o_bkt = other_buckets.titles2buckets[title]
             if not (my_bkt == o_bkt):
                 return False
 

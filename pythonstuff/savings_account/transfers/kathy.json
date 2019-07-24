@@ -89,7 +89,8 @@
   },
   {
     "title": "Slush",
-    "total": 190
+    "total": 190.00,
+    "default": true
   },
   {
     "title": "Grammy",

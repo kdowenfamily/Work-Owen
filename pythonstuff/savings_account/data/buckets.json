@@ -150,7 +150,8 @@
     "title": "Slush",
     "weight": 1,
     "order": 22,
-    "tags": []
+    "tags": [],
+    "default": true
   },
   {
     "title": "Grammy",
