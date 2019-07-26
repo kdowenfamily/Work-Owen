@@ -72,15 +72,21 @@ class Buckets(object):
         # set the new default
         bucket.default = True
 
-    def find(self, title=""):
-        return self.titles2buckets[title]
-
     def find(self, number=0):
         if not number:
             return None
 
         title = self.ordered_titles[int(number) - 1]
         return self.titles2buckets[title]
+
+    def find_non_zero(self):
+        non_zero = []
+
+        for bkt in self.contents:
+            if bkt.total:
+                non_zero.append(bkt)
+
+        return non_zero
 
     def show(self):
         ret = ""
@@ -90,7 +96,10 @@ class Buckets(object):
             ct += 1
             ct_str = str(ct)
             bkt = self.titles2buckets[title]
-            ret += "%3d. %-24s %-6.2f\n" % (ct, bkt.title, bkt.total)
+            ret += "%3d. %-24s %-6.2f" % (ct, bkt.title, bkt.total)
+            if bkt.default:
+                ret += " (default)"
+            ret += "\n"
 
         return ret
 
