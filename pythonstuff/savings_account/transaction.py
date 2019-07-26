@@ -25,9 +25,6 @@ class Transaction(object):
             x_template = Transaction_Template(xact)
             cls.total2trTemplate[x_template.buckets.get_total()] = x_template
 
-    # TODO - Handle past, bucketized transactions, loaded from savings-account spreadsheets.
-    #        xact_data should be formatted with amount (not total), note (not transaction),
-    #        and a buckets list with those titles/totals
     def __init__(self, source_account="", xact_data={}, final=False):
         # make map of totals to 'template' transactions 
         # (eg, if total is XXX.YY, it must be Dan's paycheck, if it's AAA.BB, it's Kathy's)
@@ -35,12 +32,12 @@ class Transaction(object):
             Transaction.get_regular_xfers()
 
         # get data from the transaction line/dictionary
-        self.date_time = parse(xact_data.get('date', ""))
-        self.total = xact_data.get('amount', 0.0)
+        self.date_time = parse(xact_data.get('Date', ""))
+        self.total = xact_data.get('Amount', 0.0)
         self.payer = source_account
-        self.payee = xact_data.get('payee', "")
-        self.tags = xact_data.get('tags', "")
-        self.note = xact_data.get('note', "")
+        self.payee = xact_data.get('Payee', "")
+        self.tags = xact_data.get('Tags', "")
+        self.note = xact_data.get('Memo/Note', "")
         #self.buckets = Savings.empty_buckets
         self.buckets = Buckets.from_file(BUCKETS_FILE)
 
@@ -48,12 +45,11 @@ class Transaction(object):
         if self.total in Transaction.total2trTemplate.keys():
             # this looks like a paycheck, or similar
             self.buckets = Transaction.total2trTemplate[self.total].buckets
-        elif (final):
+        elif ('buckets' in xact_data.keys()):
             # no asking - this is final
-            return
+            self.buckets = Buckets(xact_data['buckets'])
         else:
             # this could be anything - ask the user
-            #self.buckets = self.ask()
             self.ask()
 
         logging.info("Done creating transaction: %s, %3.2f (from %s to %s)." % (self.date_time, self.total, self.payer, self.payee) )
@@ -62,7 +58,7 @@ class Transaction(object):
         print self.interactive_xaction_str()
 
         # ask if user wants to break it down
-        want_breakdown = raw_input("Do you want to split up this transaction? [y/n]: ")
+        want_breakdown = raw_input("Do you want to assign (or split up) this transaction? [y/n]: ")
         if want_breakdown == 'y':
             self.loop_buckets()
         else:
@@ -80,20 +76,26 @@ class Transaction(object):
                 not_done = 0
             else:
                 print self.interactive_buckets_str(total_so_far, still_needed)
-                bucket_n_amt = raw_input("Enter the bucket and amount, or 'q' to quit: ")
-                if bucket_n_amt == 'q':
-                    if still_needed != 0.0:
-                        self.buckets.get_default().total += still_needed
-                    not_done = 0
-                elif (not re.search("^\d+ \d+[\.\d+]?$", bucket_n_amt)):
-                    print "\n\nPlease enter in this format: '<bucket-number> <amount>'."
-                else:
-                    (bkt_num, amt) = bucket_n_amt.split()
-                    if round(float(amt),2) > round(still_needed,2):
-                        print "\n\nERROR:  %3.2f is too much.  Please enter %3.2f or less.\n\n" % (float(amt), still_needed)
-                        continue
-                    bkt = self.buckets.find(number = bkt_num)
-                    bkt.total += float(amt)
+                not_done = self._query_user(still_needed)
+
+    def _query_user(self, still_needed):
+        bucket_n_amt = raw_input("Enter the bucket and amount, 'q' to quit: ")
+        if bucket_n_amt == 'q':
+            if still_needed != 0.0:
+                self.buckets.get_default().total += still_needed
+        elif (re.search("^\d+ a$", bucket_n_amt)):
+            (bkt_num, amt) = bucket_n_amt.split()
+            bkt = self.buckets.find(number = bkt_num)
+            bkt.total += still_needed
+        elif (not re.search("^\d+ -?\d+(\.\d+)?$", bucket_n_amt)):
+            print "\n\nPlease enter in this format: '<bucket-number> <amount>'."
+        else:
+            (bkt_num, amt) = bucket_n_amt.split()
+            if round(float(amt),2) > round(still_needed,2):
+                print "\n\nERROR:  %3.2f is too much.  Please enter %3.2f or less.\n\n" % (float(amt), still_needed)
+                return
+            bkt = self.buckets.find(number = bkt_num)
+            bkt.total += float(amt)
 
     def _titles(self):
         ret = ""
@@ -133,21 +135,21 @@ class Transaction(object):
 if __name__ == "__main__":
     bkts = Buckets.from_file(BUCKETS_FILE)
 
-    sample = {"date": "11/12/1965", "amount": 190, "payee": "savings"}
+    sample = {"Date": "11/12/1965", "Amount": 190, "Payee": "savings"}
     tr1 = Transaction(source_account="checking", xact_data=sample)
     print "\n\nTransaction (Kathy Paycheck):\n"
     print tr1
     print "\nFinal Transaction Breakdown:\n"
     print tr1.buckets.show()
 
-    sample = {"date": "9/4/1965", "amount": 1525, "payee": "savings"}
+    sample = {"Date": "9/4/1965", "Amount": 1525, "Payee": "savings"}
     tr2 = Transaction(source_account="checking", xact_data=sample)
     print "\n\nTransaction (Dan Paycheck):\n"
     print tr2
     print "\nFinal Transaction Breakdown:\n"
     print tr2.buckets.show()
 
-    sample = {"date": "7/23/19", "amount": 2000, "payee": "savings"}
+    sample = {"Date": "7/23/19", "Amount": 2000, "Payee": "savings"}
     tr3 = Transaction(source_account="checking", xact_data=sample)
     print "\n\nTransaction (Windfall!):\n"
     print tr3
