@@ -6,7 +6,7 @@ from transaction_template import Transaction_Template
 #from savings import Savings
 from buckets import Buckets
 
-PAYCHECKS = ["transfers/dan.json", "transfers/kathy.json"]
+PAYCHECKS = ["transfers/dan.json", "transfers/kathy.json", "transfers/kathy2017.json"]
 BUCKETS_FILE = "data/buckets.json"
 
 logging.basicConfig(filename="savings.log",
@@ -21,15 +21,19 @@ class Transaction(object):
     # Load up all paychecks into memory, using their totals as keys
     @classmethod
     def get_regular_xfers(cls, file_paths=PAYCHECKS):
+        logging.info("Parsing the paycheck breakdowns.")
         for xact in file_paths:
             x_template = Transaction_Template(xact)
             cls.total2trTemplate[x_template.buckets.get_total()] = x_template
+        logging.info("Done parsing the paycheck breakdowns.")
 
     def __init__(self, source_account="", xact_data={}, final=False):
         # make map of totals to 'template' transactions 
         # (eg, if total is XXX.YY, it must be Dan's paycheck, if it's AAA.BB, it's Kathy's)
         if not Transaction.total2trTemplate:
             Transaction.get_regular_xfers()
+
+        logging.info("Creating transaction for %s." % source_account)
 
         # get data from the transaction line/dictionary
         self.date_time = parse(xact_data.get('Date', ""))
@@ -76,7 +80,7 @@ class Transaction(object):
                 not_done = 0
             else:
                 print self.interactive_buckets_str(total_so_far, still_needed)
-                not_done = self._query_user(still_needed)
+                self._query_user(still_needed)
 
     def _query_user(self, still_needed):
         bucket_n_amt = raw_input("Enter the bucket and amount, 'q' to quit: ")
@@ -91,7 +95,7 @@ class Transaction(object):
             print "\n\nPlease enter in this format: '<bucket-number> <amount>'."
         else:
             (bkt_num, amt) = bucket_n_amt.split()
-            if round(float(amt),2) > round(still_needed,2):
+            if abs(round(float(amt),2)) > abs(round(still_needed,2)):
                 print "\n\nERROR:  %3.2f is too much.  Please enter %3.2f or less.\n\n" % (float(amt), still_needed)
                 return
             bkt = self.buckets.find(number = bkt_num)
@@ -135,14 +139,14 @@ class Transaction(object):
 if __name__ == "__main__":
     bkts = Buckets.from_file(BUCKETS_FILE)
 
-    sample = {"Date": "11/12/1965", "Amount": 190, "Payee": "savings"}
+    sample = {"Date": "11/12/1965", "Amount": 250, "Payee": "savings"}
     tr1 = Transaction(source_account="checking", xact_data=sample)
     print "\n\nTransaction (Kathy Paycheck):\n"
     print tr1
     print "\nFinal Transaction Breakdown:\n"
     print tr1.buckets.show()
 
-    sample = {"Date": "9/4/1965", "Amount": 1525, "Payee": "savings"}
+    sample = {"Date": "9/4/1965", "Amount": 610, "Payee": "savings"}
     tr2 = Transaction(source_account="checking", xact_data=sample)
     print "\n\nTransaction (Dan Paycheck):\n"
     print tr2

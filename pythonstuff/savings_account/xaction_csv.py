@@ -3,10 +3,7 @@
 import csv, json, re, logging
 from dateutil.parser import parse
 from transaction import Transaction
-#from savings import Savings
 from buckets import Buckets
-
-X_FILES = ["data/private/cc-demo.csv", "data/private/cc-export-2018-12-26.csv", "data/private/savings.csv"]
 
 logging.basicConfig(filename="savings.log",
                     format="[%(asctime)s] [%(levelname)-7s] %(message)s",
@@ -14,7 +11,9 @@ logging.basicConfig(filename="savings.log",
 
 # A list of transactions from a CSV file.
 class XactionCsv(object):
-    def __init__(self, in_file=X_FILES[0]):
+    def __init__(self, in_file=""):
+        logging.info("Parsing CSV of transactions, %s." % in_file)
+
         # cherry pick some data from each CSV row
         source_account = ""
         if 'saving' in in_file:
@@ -30,7 +29,7 @@ class XactionCsv(object):
         if source_account == "credit card":
             self.transactions = self._prune_cc()
 
-        logging.info("Done parsing CSV of transactions, %s." % in_file)
+        logging.info("Done parsing CSV of transactions, %d transactions." % len(self.transactions))
 
     def _parse_csv(self, in_file=""):
         in_data = False
@@ -80,6 +79,7 @@ class XactionCsv(object):
                 xact_data['Amount'] = float(row.pop('Total'))
                 xact_data['Memo/Notes'] = row.pop('Transaction')
                 xact_data['Date'] = row.pop('Date')
+                xact_data['Running Total'] = row.pop('Running Total')
                 bkts = []
                 for rkey in row.keys():
                     bkts.append({"title":rkey, "total":row[rkey]})
@@ -129,6 +129,11 @@ class XactionCsv(object):
         return ret
 
 if __name__ == "__main__":
-    csv = XactionCsv(in_file=X_FILES[2])
+    X_FILES = ["data/private/cc-demo.csv",
+           "data/private/cc-export-2018-12-26.csv",
+           "data/private/savings.csv",
+           "data/private/savings-xactions-export-2018-12-30.csv"]
+
+    csv = XactionCsv(in_file=X_FILES[3])
     print
     print csv

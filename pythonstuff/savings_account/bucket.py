@@ -11,6 +11,7 @@ DEFAULT_BUCKET = {
                 "order": 0,
                 "weight": 0,
                 "title": "",
+                "alt_titles": [],
                 "tags": [],
                 "default": False
                 }
@@ -21,6 +22,7 @@ class Bucket(object):
         self.order = bucket.get("order", DEFAULT_BUCKET['order'])
         self.weight = bucket.get("weight", DEFAULT_BUCKET['weight'])
         self.title = bucket.get("title", DEFAULT_BUCKET['title'])
+        self.alt_titles = bucket.get("alt_titles", DEFAULT_BUCKET['alt_titles'])
         self.tags = bucket.get("tags", DEFAULT_BUCKET['tags'])
         self.default = bucket.get("default", DEFAULT_BUCKET['default'])
 
@@ -66,6 +68,19 @@ class Bucket(object):
         self._title = str(title)               # incase it is unicode
 
     @property
+    def alt_titles(self):
+        return self._alt_titles
+
+    @alt_titles.setter
+    def alt_titles(self, alt_titles):
+        if not isinstance(alt_titles, list):
+            alt_titles = [alt_titles]
+
+        self._alt_titles = []
+        for atitle in alt_titles:
+            self._alt_titles.append(str(atitle)) # incase it is unicode
+
+    @property
     def tags(self):
         return self._tags
 
@@ -104,15 +119,25 @@ class Bucket(object):
 
         return ret
 
+    def _match(self, another_bucket):
+        o_titles = [""]
+        o_titles.append(another_bucket.title)
+        o_titles.extend(another_bucket.alt_titles)
+        for o_title in o_titles:
+            if self.title == o_title:
+                return True
+
+        return False
+
     def __add__(self, another_bucket):
-        if ((self.title == another_bucket.title) or (another_bucket.title == "")):
+        if self._match(another_bucket):
             sum_total = self._total + another_bucket.total
             return Bucket(total=sum_total)
         else:
             return self
 
     def __iadd__(self, another_bucket):
-        if ((self.title == another_bucket.title) or (another_bucket.title == "")):
+        if self._match(another_bucket):
             self.total += another_bucket.total
         return self
 

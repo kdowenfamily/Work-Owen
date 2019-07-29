@@ -1,5 +1,13 @@
 # Design
 
+## To Do
+
+Bugs and improvements:
+- Losing old buckets that later morphed into new names
+- For credit-card reports, do not ask unless it is tagged for Savings
+- Allow multiple titles per bucket
+- Support old paycheck splits
+
 ## Files
 
 ### Config Files

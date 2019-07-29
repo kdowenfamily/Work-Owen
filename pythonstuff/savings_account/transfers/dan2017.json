@@ -64,7 +64,7 @@
     "total": 200
   },
   {
-    "title": "Dan Gifts",
+    "title": "Gifts",
     "total": 45
   },
   {
@@ -74,10 +74,6 @@
   {
     "title": "Dan Life Insurance",
     "total": 30
-  },
-  {
-    "title": "Kathy Gifts",
-    "total": 45
   },
   {
     "title": "Kathy Hair",
@@ -102,10 +98,6 @@
   {
     "title": "Water",
     "total": 92.50
-  },
-  {
-      "title": "Cash Flow",
-      "total": -960.00
   }
   ]
 }
