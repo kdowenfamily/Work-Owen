@@ -3,13 +3,14 @@
 import csv, json, re, logging
 from bucket import Bucket
 
-BUCKETS_FILE = "data/buckets.json"
 
 logging.basicConfig(filename="savings.log",
                     format="[%(asctime)s] [%(levelname)-7s] %(message)s",
                     level=logging.DEBUG)
 
 class Buckets(object):
+    BUCKETS_FILE = "data/buckets.json"
+
     @classmethod
     def from_file(cls, file_path=""):
         # read the JSON file and make one bucket per bucket dict
@@ -23,10 +24,12 @@ class Buckets(object):
 
     def __init__(self, buckets=[]):
         # read the JSON file and make one bucket per bucket dict
+        logging.info("Setting up %s raw buckets." % len(buckets))
         self.titles2buckets = {}
         self.tags2buckets = {}
         self.ordered_titles = []
         self.contents = self.init_buckets(buckets)
+        logging.info("Done setting up %s buckets, total of %.2f." % (len(self.contents), self.get_total()))
 
     def init_buckets(self, buckets=[]):
         bkts = []
@@ -44,8 +47,6 @@ class Buckets(object):
 
         for bucket in sorted(bkts, key=lambda k: k.order):
             self.ordered_titles.append(bucket.title)
-
-        logging.info("Done parsing bucket-config file, %s buckets.", len(bkts))
 
         return bkts
 
@@ -122,8 +123,8 @@ class Buckets(object):
     def __iadd__(self, other_buckets):
         for title in self.titles2buckets:
             my_bkt = self.titles2buckets[title]
-            o_bkt = other_buckets.titles2buckets[title]
-            my_bkt += o_bkt
+            if title in other_buckets.titles2buckets:
+                my_bkt += other_buckets.titles2buckets[title]
 
         return self
 
@@ -137,6 +138,6 @@ class Buckets(object):
         return True 
 
 if __name__ == "__main__":
-    bks = Buckets.from_file(BUCKETS_FILE)
+    bks = Buckets.from_file(Buckets.BUCKETS_FILE)
     print bks._print_titles()
     print bks

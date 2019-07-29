@@ -62,6 +62,13 @@
   },
   {
     "title": "Kid Activities",
+    "alt_titles": [
+        "Brown",
+        "SCAD",
+        "Liam",
+        "Molly",
+        "Lindsey"
+    ],
     "weight": 1,
     "order": 10,
     "tags": []
@@ -110,6 +117,10 @@
   },
   {
     "title": "Gifts",
+    "alt_titles": [
+        "Dan Gifts",
+        "Kathy Gifts"
+    ],
     "weight": 1,
     "order": 16,
     "tags": [
