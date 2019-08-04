@@ -28,27 +28,34 @@ class Buckets(object):
         self.titles2buckets = {}
         self.tags2buckets = {}
         self.ordered_titles = []
-        self.contents = self.init_buckets(buckets)
+        self.contents = []
+        self.init_buckets(buckets)
         logging.info("Done setting up %s buckets, total of %.2f." % (len(self.contents), self.get_total()))
 
     def init_buckets(self, buckets=[]):
-        bkts = []
         for bucket in buckets:
             bkt = Bucket(bucket)
-            bkts.append(bkt)
+            self.insert_bucket(bkt)
 
-            self.titles2buckets[bkt.title] = bkt
-            for tag in bkt.tags:
-                if tag in self.tags2buckets.keys():
-                    logging.warning("Dupe tag: '%s' in config record '%s, %s'.", tag, 
-                                    bkt.title, bkt.total)
-                else:
-                    self.tags2buckets[tag] = bkt
+        self.sort_buckets()
 
-        for bucket in sorted(bkts, key=lambda k: k.order):
+    def insert_bucket(self, bkt=None):
+        if not bkt:
+            return
+
+        self.contents.append(bkt)
+        self.titles2buckets[bkt.title] = bkt
+        for tag in bkt.tags:
+            if tag in self.tags2buckets.keys():
+                logging.warning("Dupe tag: '%s' in config record '%s, %s'.", tag, 
+                                bkt.title, bkt.total)
+            else:
+                self.tags2buckets[tag] = bkt
+
+    def sort_buckets(self):
+        self.ordered_titles = []
+        for bucket in sorted(self.contents, key=lambda k: k.order):
             self.ordered_titles.append(bucket.title)
-
-        return bkts
 
     def get_total(self):
         tot = 0
@@ -102,6 +109,8 @@ class Buckets(object):
                 ret += " (default)"
             ret += "\n"
 
+        ret += "\nTotal:  %.2f\n" % self.get_total()
+
         return ret
 
     def _print_titles(self):
@@ -121,10 +130,23 @@ class Buckets(object):
         return ret
 
     def __iadd__(self, other_buckets):
-        for title in self.titles2buckets:
+        # from self: for all my buckets, if I find a same-named bucket in the other set, add it
+        for title in self.titles2buckets.keys():
             my_bkt = self.titles2buckets[title]
             if title in other_buckets.titles2buckets:
                 my_bkt += other_buckets.titles2buckets[title]
+
+        # from other: for all other buckets NOT in my set, insert them as new buckets
+        added_new = False
+        for otitle in other_buckets.titles2buckets.keys():
+            if otitle not in self.titles2buckets.keys():
+                o_bkt = other_buckets.titles2buckets[otitle]
+                self.insert_bucket(o_bkt)
+                added_new = True
+
+        # if any new buckets, sort again
+        if added_new:
+            self.sort_buckets()
 
         return self
 
