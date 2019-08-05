@@ -42,7 +42,6 @@ class Transaction(object):
         self.payee = xact_data.get('Payee', "")
         self.tags = xact_data.get('Tags', "")
         self.note = xact_data.get('Memo/Note', "")
-        #self.buckets = Savings.empty_buckets
         self.buckets = Buckets.from_file(BUCKETS_FILE)
 
         # divide the transaction into buckets

@@ -120,14 +120,12 @@ class Bucket(object):
         return ret
 
     def _match(self, another_bucket):
-        o_titles = [""]
-        o_titles.append(another_bucket.title)
-        o_titles.extend(another_bucket.alt_titles)
-        for o_title in o_titles:
-            if self.title == o_title:
-                return True
-
-        return False
+        if another_bucket.title in self.alt_titles:
+            return True
+        elif another_bucket.title == self.title:
+            return True
+        else:
+            return False
 
     def __add__(self, another_bucket):
         if self._match(another_bucket):

@@ -27,6 +27,7 @@ class Buckets(object):
         logging.info("Setting up %s raw buckets." % len(buckets))
         self.titles2buckets = {}
         self.tags2buckets = {}
+        self.alias2title = {}
         self.ordered_titles = []
         self.contents = []
         self.init_buckets(buckets)
@@ -51,11 +52,37 @@ class Buckets(object):
                                 bkt.title, bkt.total)
             else:
                 self.tags2buckets[tag] = bkt
+        for al in bkt.alt_titles:
+            self.alias2title[al] = bkt.title
+
+    def drop_bucket(self, bkt=None):
+        if not bkt:
+            return
+
+        if bkt.title in self.ordered_titles:
+            self.ordered_titles.remove(bkt.title)
+        if bkt.title in self.titles2buckets.keys():
+            del self.titles2buckets[bkt.title]
+        self.contents.remove(bkt)
 
     def sort_buckets(self):
         self.ordered_titles = []
         for bucket in sorted(self.contents, key=lambda k: k.order):
             self.ordered_titles.append(bucket.title)
+
+    def prune(self):
+        to_drop = []
+        for bucket in self.contents:
+            if bucket.title not in self.alias2title.keys():
+                continue
+            real_title = self.alias2title[bucket.title]
+            logging.debug("Pruning %s and adding to %s." % (bucket.title, real_title) )
+            real_bkt = self.titles2buckets[real_title]
+            real_bkt += bucket
+            to_drop.append(bucket)
+
+        for dropped in to_drop:
+            self.drop_bucket(dropped)
 
     def get_total(self):
         tot = 0
@@ -144,8 +171,9 @@ class Buckets(object):
                 self.insert_bucket(o_bkt)
                 added_new = True
 
-        # if any new buckets, sort again
+        # if any new buckets, prune and sort again
         if added_new:
+            self.prune()
             self.sort_buckets()
 
         return self
