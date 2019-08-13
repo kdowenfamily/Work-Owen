@@ -146,7 +146,7 @@ class Buckets(object):
         for title in self.ordered_titles:
             ret += self.titles2buckets[title].title + ","
 
-        return ret
+        return ret.rstrip(",")
 
     def __str__(self):
         ret = ""
@@ -154,7 +154,7 @@ class Buckets(object):
         for title in self.ordered_titles:
             ret += str(self.titles2buckets[title].total) + ","
 
-        return ret
+        return ret.rstrip(",")
 
     def __iadd__(self, other_buckets):
         # from self: for all my buckets, if I find a same-named bucket in the other set, add it

@@ -100,14 +100,6 @@ class Transaction(object):
             bkt = self.buckets.find(number = bkt_num)
             bkt.total += float(amt)
 
-    def _titles(self):
-        ret = ""
-
-        for title in ("Date", "Total", "Payer", "Payee"):
-            ret += title + ", "
-
-        return ret
-
     def interactive_xaction_str(self):
         # show the transaction info
         ret = "On " + str(self.date_time) + ", '" + str(self.total) + "' transferred from '" + self.payer + "' to '" + self.payee + "'"
@@ -127,12 +119,15 @@ class Transaction(object):
 
         return ret
 
+    def _titles(self):
+        return ", ".join(("Date", "Total", "Payer", "Payee"))
+
+    def show(self):
+        return ", ".join((str(self.date_time), str(self.total), self.payer, self.payee))
+
     def __str__(self):
-        ret = ""
-
-        for value in (self.date_time, self.total, self.payer, self.payee):
-            ret += str(value) + ", "
-
+        ret = self.show()
+        ret += ", " + str(self.buckets)
         return ret
 
 if __name__ == "__main__":
@@ -140,27 +135,31 @@ if __name__ == "__main__":
 
     sample = {"Date": "11/12/1965", "Amount": 250, "Payee": "savings"}
     tr1 = Transaction(source_account="checking", xact_data=sample)
+    bkts += tr1.buckets
     print "\n\nTransaction (Kathy Paycheck):\n"
-    print tr1
+    print tr1.show()
     print "\nFinal Transaction Breakdown:\n"
     print tr1.buckets.show()
+    print "\nBucket Breakdown:\n"
+    print bkts.show()
 
     sample = {"Date": "9/4/1965", "Amount": 610, "Payee": "savings"}
     tr2 = Transaction(source_account="checking", xact_data=sample)
+    bkts += tr2.buckets
     print "\n\nTransaction (Dan Paycheck):\n"
-    print tr2
+    print tr2.show()
     print "\nFinal Transaction Breakdown:\n"
     print tr2.buckets.show()
+    print "\nBucket Breakdown:\n"
+    print bkts.show()
 
     sample = {"Date": "7/23/19", "Amount": 2000, "Payee": "savings"}
     tr3 = Transaction(source_account="checking", xact_data=sample)
+    bkts += tr3.buckets
     print "\n\nTransaction (Windfall!):\n"
-    print tr3
+    print tr3.show()
     print "\nFinal Transaction Breakdown:\n"
     print tr3.buckets.show()
 
-    bkts += tr1.buckets
-    bkts += tr2.buckets
-    bkts += tr3.buckets
     print "\nTotal Transaction Breakdown:\n"
     print bkts.show()

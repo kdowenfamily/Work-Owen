@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import csv, json, re, logging, datetime
+import re, logging
 
 logging.basicConfig(filename="savings.log",
                     format="[%(asctime)s] [%(levelname)-7s] %(message)s",
@@ -107,13 +107,17 @@ class Bucket(object):
 
 
     def __str__(self):
+        return self.total
+
+    def show(self):
         ret = ""
 
-        ret += "Title:  " + self.title + "\n"
-        ret += "Total:  " + str(self.total) + "\n"
-        ret += "Weight: " + str(self.weight) + "\n"
-        ret += "Order:  " + str(self.order) + "\n"
-        ret += "Tags:   " + str(self.tags) + "\n"
+        ret += "Title:          " + self.title + "\n"
+        ret += "  Alternates:   " + str(self.alt_titles) + "\n"
+        ret += "Total:          " + str(self.total) + "\n"
+        ret += "Weight:         " + str(self.weight) + "\n"
+        ret += "Order:          " + str(self.order) + "\n"
+        ret += "Tags:           " + str(self.tags) + "\n"
         if self.default:
             ret += "Default bucket\n"
 
@@ -152,4 +156,4 @@ class Bucket(object):
 
 if __name__ == "__main__":
     bk = Bucket({"title":"Dan's Bucket", "total":"1,000,000"})
-    print bk
+    print bk.show()

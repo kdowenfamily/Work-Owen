@@ -14,7 +14,7 @@ class XactionCsv(object):
     def __init__(self, in_file=""):
         logging.info("Parsing CSV of transactions, %s." % in_file)
 
-        # cherry pick some data from each CSV row
+        # identify the account type
         source_account = ""
         if 'saving' in in_file:
             source_account = "savings"
@@ -87,6 +87,7 @@ class XactionCsv(object):
             else:
                 # this is a CSV from Quicken
                 xact_data = row
+                # TODO if not tagged for savings, skip it...?
 
             # create the transaction
             xactions.append(Transaction(source_account=source_account, xact_data=xact_data))
@@ -118,12 +119,14 @@ class XactionCsv(object):
 
         for xaction in sorted(self.transactions, key=lambda k: k.date_time):
             ret += str(xaction)
+            '''
             bkts = xaction.buckets.find_non_zero()
             if bkts:
                 btitles = []
                 for bkt in bkts:
                     btitles.append(bkt.title)
                 ret += " => " + ", ".join(btitles)
+            '''
             ret += "\n"
 
         return ret
