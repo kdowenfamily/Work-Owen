@@ -2,6 +2,7 @@
   "date": "*",
   "payer": "Checking",
   "payee": "Savings",
+  "title": "Kathy's 2017 Paycheck",
   "buckets": [
   {
     "title": "Home Maintenance",

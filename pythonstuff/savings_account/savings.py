@@ -15,11 +15,14 @@ class Savings(object):
     def __init__(self, name="Savings"):
         logging.info("Creating savings account, %s." % name)
         self.name = name
-        self.total = 0.0
         self.buckets = None
         self.transactions = []
         self.snapshots = []
         logging.info("Finished savings account, %s." % name)
+
+    @property
+    def total(self):
+        return self.buckets.get_total()
 
     def read_history(self, savings_record=''):
         # seed the buckets and the total with the older savings-account record
@@ -38,7 +41,17 @@ class Savings(object):
         self.buckets = Buckets.from_file(Buckets.BUCKETS_FILE)
         for xact in self.transactions:
             self.buckets += xact.buckets
-        self.total = self.buckets.get_total()
+
+    def _take_snapshot(self, xaction=None):
+        for xaction in self.transactions:
+            snapshot = {}
+            snapshot["date"] = xaction.date_time
+            snapshot["payer"] = xaction.payer
+            snapshot["payee"] = xaction.payee
+            snapshot["notes"] = xaction.notes
+            snapshot["total"] = xaction.total
+            snapshot["grand_total"] = self.buckets.get_total()
+            snapshot["buckets"] = self.buckets
 
     def csv_out(self):
         # output the full history in CSV format
