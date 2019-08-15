@@ -86,11 +86,13 @@ class XactionCsv(object):
                 xact_data['buckets'] = bkts
             else:
                 # this is a CSV from Quicken
-                xact_data = row
-                # TODO if not tagged for savings, skip it...?
+                if not (('Tags' in row.keys()) and ("Savings" not in row['Tags'])):
+                    # avoid this: there are tags, and "Savings" isn't one of them
+                    xact_data = row
 
             # create the transaction
-            xactions.append(Transaction(source_account=source_account, xact_data=xact_data))
+            if xact_data:
+                xactions.append(Transaction(source_account=source_account, xact_data=xact_data))
 
         return xactions
 

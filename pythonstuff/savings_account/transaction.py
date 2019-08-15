@@ -120,10 +120,10 @@ class Transaction(object):
         return ret
 
     def _titles(self):
-        return ", ".join(("Date", "Total", "Payer", "Payee"))
+        return ", ".join(("Date", "Transaction", "Total"))
 
     def show(self):
-        return ", ".join((str(self.date_time), str(self.total), self.payer, self.payee))
+        return ", ".join((str(self.date_time), self.payee, str(self.total)))
 
     def __str__(self):
         ret = self.show()
