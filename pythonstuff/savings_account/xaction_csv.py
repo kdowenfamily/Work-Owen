@@ -4,6 +4,7 @@ import csv, json, re, logging
 from dateutil.parser import parse
 from transaction import Transaction
 from buckets import Buckets
+from bucket import Bucket
 
 logging.basicConfig(filename="savings.log",
                     format="[%(asctime)s] [%(levelname)-7s] %(message)s",
@@ -13,10 +14,11 @@ logging.basicConfig(filename="savings.log",
 class XactionCsv(object):
     def __init__(self, in_file=""):
         logging.info("Parsing CSV of transactions, %s." % in_file)
+        self.grand_total = 0.0
 
         # identify the account type
         source_account = ""
-        if 'saving' in in_file:
+        if ('saving' in in_file) or ('spending' in in_file):
             source_account = "savings"
         elif 'cc' in in_file:
             source_account = "credit card"
@@ -25,10 +27,6 @@ class XactionCsv(object):
         rows = self._parse_csv(in_file)
         self.transactions = self._parse_rows(source_account, rows)
 
-        # if this is a credit card, weed out the non-savings transactions
-        if source_account == "credit card":
-            self.transactions = self._prune_cc()
-
         logging.info("Done parsing CSV of transactions, %d transactions." % len(self.transactions))
 
     def _parse_csv(self, in_file=""):
@@ -36,6 +34,7 @@ class XactionCsv(object):
         headers = []
         boring = ['', 'Scheduled', 'Split']
         useful = []
+        GRAND_TOTAL_COL = 2 # this is the column where the grand total lives in the "Running Total" row
 
         if not in_file:
             return useful
@@ -43,7 +42,7 @@ class XactionCsv(object):
         with open(in_file) as csvfile:
             reader = csv.reader(csvfile)
             for row in reader:
-                if in_data:
+                if in_data and not ("Running Total" in row):
                     head_pos = 0
                     goodies = {}
                     for header in headers:
@@ -56,6 +55,8 @@ class XactionCsv(object):
                 if 'Date' in row:
                     in_data = True
                     headers = row
+                elif ("Running Total" in row):
+                    self.grand_total = Bucket.string2float(row[GRAND_TOTAL_COL])
                 if 'Total Inflows:' in row:
                     in_data = False 
 
@@ -71,7 +72,7 @@ class XactionCsv(object):
             # clean the raw data
             for rkey in row.keys():
                 if re.search("^[\s\,\.\-\$\d]+$", row[rkey]):
-                    row[rkey] = self._string2float(row[rkey])
+                    row[rkey] = Bucket.string2float(row[rkey])
 
             # prepare the data for creating a transaction
             if "Running Total" in row.keys():
@@ -87,7 +88,7 @@ class XactionCsv(object):
             else:
                 # this is a CSV from Quicken
                 if not (('Tags' in row.keys()) and ("Savings" not in row['Tags'])):
-                    # avoid this: there are tags, and "Savings" isn't one of them
+                    # avoid rows where: there are tags, and "Savings" isn't one of them
                     xact_data = row
 
             # create the transaction
@@ -96,40 +97,19 @@ class XactionCsv(object):
 
         return xactions
 
-    def _prune_cc(self):
-        good_xacts = []
+    def verify(self):
+        ret = 0.0
 
-        for xact in self.transactions:
-            if ("savings" in xact.tags) or ("Savings" in xact.tags):
-                good_xacts.append(xact)
-            else:
-                logging.debug("Pruning %s, %f, transaction from credit card" % (xact.date_time, xact.total) )
+        for xaction in sorted(self.transactions, key=lambda k: k.date_time):
+            ret += xaction.total
 
-        return good_xacts
-
-    def _string2float(self, st):
-        money = str(st)                         # incase it is already a number
-
-        money = money.strip()                   # remove any leading/trailing space
-        money = money.strip("$")                # remove any leading '$'
-        money = re.sub(r',', "", money)         # no commas
-        money = re.sub(r'^-$', "0", money)      # a '-' translates to 0
-        return float(money)
+        print "Expected %.2f, got %.2f" % (self.grand_total, ret)
 
     def __str__(self):
         ret = ""
 
         for xaction in sorted(self.transactions, key=lambda k: k.date_time):
-            ret += str(xaction)
-            '''
-            bkts = xaction.buckets.find_non_zero()
-            if bkts:
-                btitles = []
-                for bkt in bkts:
-                    btitles.append(bkt.title)
-                ret += " => " + ", ".join(btitles)
-            '''
-            ret += "\n"
+            ret += str(xaction) + "\n"
 
         return ret
 
@@ -137,8 +117,10 @@ if __name__ == "__main__":
     X_FILES = ["data/private/cc-demo.csv",
            "data/private/cc-export-2018-12-26.csv",
            "data/private/savings.csv",
+           "data/private/spending2012.csv",
            "data/private/savings-xactions-export-2018-12-30.csv"]
 
     csv = XactionCsv(in_file=X_FILES[3])
     print
     print csv
+    csv.verify()
