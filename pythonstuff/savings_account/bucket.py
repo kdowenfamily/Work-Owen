@@ -17,6 +17,18 @@ DEFAULT_BUCKET = {
                 }
 
 class Bucket(object):
+    @classmethod
+    def string2float(cls, st):
+        money = str(st)                         # incase it is already a number
+
+        money = money.strip()                   # remove any leading/trailing space
+        money = money.strip("$")                # remove any leading '$'
+        money = re.sub(r',', "", money)         # no commas
+        money = re.sub(r'^$', "0", money)       # a '' translates to 0
+        money = re.sub(r'^-$', "0", money)      # a '-' translates to 0
+        money = re.sub(r'^-\$', "-", money)     # a '-$x.yz' translates to '-x.yz'
+        return float(money)
+
     def __init__(self, bucket=DEFAULT_BUCKET):
         self.total = bucket.get("total", DEFAULT_BUCKET['total'])
         self.order = bucket.get("order", DEFAULT_BUCKET['order'])
@@ -26,22 +38,13 @@ class Bucket(object):
         self.tags = bucket.get("tags", DEFAULT_BUCKET['tags'])
         self.default = bucket.get("default", DEFAULT_BUCKET['default'])
 
-    def _string2float(self, st):
-        money = str(st)                         # incase it is already a number
-
-        money = money.strip()                   # remove any leading/trailing space
-        money = money.strip("$")                # remove any leading '$'
-        money = re.sub(r',', "", money)         # no commas
-        money = re.sub(r'^-$', "0", money)      # a '-' translates to 0
-        return float(money)
-
     @property
     def total(self):
         return self._total
 
     @total.setter
     def total(self, total):
-        self._total = self._string2float(total) 
+        self._total = Bucket.string2float(total)
 
     @property
     def order(self):
@@ -150,8 +153,8 @@ class Bucket(object):
                 (self.total == another_bucket.total)
             )
 
-    def transact(self, xaction):
-        self._total += xaction.amount
+    def transact(self, dollars):
+        self._total += dollars
         return self
 
 if __name__ == "__main__":

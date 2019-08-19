@@ -1,13 +1,20 @@
 [
   {
     "title": "Home Maintenance",
+    "alt_titles": [
+        "Maint.",
+        "Braces"
+    ],
     "weight": 1,
     "order": 1,
-    "tags": [
-    ]
+    "tags": []
   },
   {
     "title": "Home Improvement",
+    "alt_titles": [
+      "Improvemt.",
+      "Shed"
+    ],
     "weight": 1,
     "order": 2,
     "tags": [
@@ -65,6 +72,7 @@
     "alt_titles": [
         "Brown",
         "SCAD",
+        "Pre School",
         "Liam",
         "Molly",
         "Lindsey"
@@ -89,6 +97,9 @@
   },
   {
     "title": "Car Maintenance",
+    "alt_titles": [
+      "Car Maint."
+    ],
     "weight": 1,
     "order": 13,
     "tags": []
@@ -119,7 +130,9 @@
     "title": "Gifts",
     "alt_titles": [
         "Dan Gifts",
-        "Kathy Gifts"
+        "Kathy Gifts",
+        "D Gifts",
+        "K Gifts"
     ],
     "weight": 1,
     "order": 16,
@@ -136,27 +149,43 @@
   },
   {
     "title": "Dan Life Insurance",
+    "alt_titles": [
+        "D Life Insurance"
+    ],
     "weight": 1,
     "order": 18,
-    "tags": []
+    "tags": [
+    ]
   },
   {
     "title": "Kathy Hair",
+    "alt_titles": [
+        "K Hair"
+    ],
     "weight": 1,
     "order": 19,
-    "tags": []
+    "tags": [
+    ]
   },
   {
     "title": "Kathy Wardrobe",
+    "alt_titles": [
+        "K clothes"
+    ],
     "weight": 1,
     "order": 20,
-    "tags": []
+    "tags": [
+    ]
   },
   {
     "title": "Kathy Life Insurance",
+    "alt_titles": [
+        "K Life Insurance"
+    ],
     "weight": 1,
     "order": 21,
-    "tags": []
+    "tags": [
+    ]
   },
   {
     "title": "Slush",
@@ -167,6 +196,9 @@
   },
   {
     "title": "Grammy",
+    "alt_titles": [
+        "Dan's Mom"
+    ],
     "weight": 1,
     "order": 23,
     "tags": []

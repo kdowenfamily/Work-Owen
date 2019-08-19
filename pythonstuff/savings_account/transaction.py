@@ -36,10 +36,18 @@ class Transaction(object):
         logging.info("Creating transaction for %s." % source_account)
 
         # get data from the transaction line/dictionary
-        self.date_time = parse(xact_data.get('Date', ""))
+        try:
+            self.date_time = parse(xact_data.get('Date', ""))
+        except ValueError:
+            logging.error("Bad date string, %s." % xact_data.get('Date', ""))
+            self.date_time = parse("1/1/2001")
+        except AttributeError:
+            logging.error("Bad date string, %s." % xact_data.get('Date', ""))
+            self.date_time = parse("1/1/2001")
         self.total = xact_data.get('Amount', 0.0)
         self.payer = source_account
         self.payee = xact_data.get('Payee', "")
+        self.trans_title = xact_data.get('Memo/Notes', "")
         self.tags = xact_data.get('Tags', "")
         self.note = xact_data.get('Memo/Note', "")
         self.buckets = Buckets.from_file(BUCKETS_FILE)
@@ -47,13 +55,16 @@ class Transaction(object):
         # divide the transaction into buckets
         if self.total in Transaction.total2trTemplate.keys():
             # this looks like a paycheck, or similar
-            self.buckets = Transaction.total2trTemplate[self.total].buckets
+            self.buckets += Transaction.total2trTemplate[self.total].buckets
         elif ('buckets' in xact_data.keys()):
             # no asking - this is final
-            self.buckets = Buckets(xact_data['buckets'])
+            self.buckets += Buckets(xact_data['buckets'])
         else:
             # this could be anything - ask the user
             self.ask()
+
+        # as verification, set the total to the bucket total
+        self._reconcile_total()
 
         logging.info("Done creating transaction: %s, %3.2f (from %s to %s)." % (self.date_time, self.total, self.payer, self.payee) )
 
@@ -119,11 +130,22 @@ class Transaction(object):
 
         return ret
 
+    def _reconcile_total(self):
+        # if the total in the file is different from the bucket total, add the diff to the default bucket
+        new_total = self.buckets.get_total()
+        if self.total and (self.total != new_total):
+            logging.error("Original total: %.2f; new total: %.2f" % (self.total, new_total))
+            diff = self.total - new_total
+            def_bucket = self.buckets.get_default()
+            def_bucket.transact(diff)
+            logging.error("Added %.2f to %s" % (diff, def_bucket.title))
+
     def _titles(self):
         return ", ".join(("Date", "Transaction", "Total"))
 
     def show(self):
-        return ", ".join((str(self.date_time), self.payee, str(self.total)))
+        title = self.payee if self.payee else self.trans_title
+        return ", ".join((str(self.date_time), title, str(self.total)))
 
     def __str__(self):
         ret = self.show()
