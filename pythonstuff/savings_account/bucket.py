@@ -8,7 +8,7 @@ logging.basicConfig(filename="savings.log",
 
 DEFAULT_BUCKET = {
                 "total": 0.0,
-                "order": 0,
+                "order": 99,
                 "weight": 0,
                 "title": "",
                 "alt_titles": [],
@@ -20,13 +20,13 @@ class Bucket(object):
     @classmethod
     def string2float(cls, st):
         money = str(st)                         # incase it is already a number
-
         money = money.strip()                   # remove any leading/trailing space
         money = money.strip("$")                # remove any leading '$'
         money = re.sub(r',', "", money)         # no commas
         money = re.sub(r'^$', "0", money)       # a '' translates to 0
         money = re.sub(r'^-$', "0", money)      # a '-' translates to 0
         money = re.sub(r'^-\$', "-", money)     # a '-$x.yz' translates to '-x.yz'
+        money = "%.2f" % float(money)           # only penny precision, please
         return float(money)
 
     def __init__(self, bucket=DEFAULT_BUCKET):
@@ -136,14 +136,14 @@ class Bucket(object):
 
     def __add__(self, another_bucket):
         if self._match(another_bucket):
-            sum_total = self._total + another_bucket.total
+            sum_total = self.total + another_bucket.total
             return Bucket(total=sum_total)
         else:
             return self
 
     def __iadd__(self, another_bucket):
         if self._match(another_bucket):
-            self.total += another_bucket.total
+            self.total = self.total + another_bucket.total
         return self
 
     def __eq__(self, another_bucket):
@@ -154,7 +154,7 @@ class Bucket(object):
             )
 
     def transact(self, dollars):
-        self._total += dollars
+        self.total = self.total + dollars
         return self
 
 if __name__ == "__main__":

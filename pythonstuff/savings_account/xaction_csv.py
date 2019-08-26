@@ -99,18 +99,20 @@ class XactionCsv(object):
 
     def verify(self):
         ret = 0.0
+        bckts = Buckets.from_file(Buckets.BUCKETS_FILE) # re-initialize
 
-        for xaction in sorted(self.transactions, key=lambda k: k.date_time):
-            ret += xaction.total
+        for xact in self.transactions:
+            ret += xact.total
+            bckts += xact.buckets
 
-        print "Expected %.2f, got %.2f" % (self.grand_total, ret)
+        print "Expected %.2f, got %.2f from totals" % (self.grand_total, ret)
+        print "Expected %.2f, got %.2f from buckets" % (self.grand_total, bckts.total)
+        print str(len(self.transactions)) + " total transactions\n"
 
     def __str__(self):
         ret = ""
-
         for xaction in sorted(self.transactions, key=lambda k: k.date_time):
-            ret += str(xaction) + "\n"
-
+            ret += str(xaction.show()) + "\n"
         return ret
 
 if __name__ == "__main__":
@@ -118,9 +120,14 @@ if __name__ == "__main__":
            "data/private/cc-export-2018-12-26.csv",
            "data/private/savings.csv",
            "data/private/spending2012.csv",
+           "data/private/sp2.csv",
            "data/private/savings-xactions-export-2018-12-30.csv"]
 
-    csv = XactionCsv(in_file=X_FILES[3])
+    csv = XactionCsv(in_file=X_FILES[4])
     print
-    print csv
+    print "Input file is " + X_FILES[4] + "\n"
+    print "Output file is /tmp/xaction.csv\n"
+    with open("/tmp/xaction.csv", 'w') as f:
+        f.write(csv.transactions[0].titles() + "\n")
+        f.write(str(csv))
     csv.verify()

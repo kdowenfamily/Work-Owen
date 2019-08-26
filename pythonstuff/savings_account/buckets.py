@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import csv, json, re, logging
+from copy import deepcopy
 from bucket import Bucket
 
 
@@ -23,7 +24,7 @@ class Buckets(object):
         return Buckets(buckets)
 
     def __init__(self, buckets=[]):
-        # read the JSON file and make one bucket per bucket dict
+        # read the list of bucket dicts and make one bucket per bucket dict
         logging.info("Setting up %s raw buckets." % len(buckets))
         self.titles2buckets = {}
         self.tags2buckets = {}
@@ -31,7 +32,11 @@ class Buckets(object):
         self.ordered_titles = []
         self.contents = []
         self.init_buckets(buckets)
-        logging.info("Done setting up %s buckets, total of %.2f." % (len(self.contents), self.get_total()))
+        logging.info("Done setting up %s buckets, total of %.2f." % (len(self.contents), self.total))
+
+    @property
+    def total(self):
+        return self.get_total()
 
     def init_buckets(self, buckets=[]):
         for bucket in buckets:
@@ -70,6 +75,7 @@ class Buckets(object):
         for bucket in sorted(self.contents, key=lambda k: k.order):
             self.ordered_titles.append(bucket.title)
 
+    # merge all buckets with alias titles into the buckets with the real titles
     def prune(self):
         to_drop = []
         for bucket in self.contents:
@@ -123,6 +129,12 @@ class Buckets(object):
 
         return non_zero
 
+    def dupe(self):
+        twin = deepcopy(self)
+        for bkt in twin.contents:
+            bkt.total = 0
+        return twin
+
     def show(self):
         ret = ""
         ct = 0
@@ -136,11 +148,11 @@ class Buckets(object):
                 ret += " (default)"
             ret += "\n"
 
-        ret += "\nTotal:  %.2f\n" % self.get_total()
+        ret += "\nTotal:  %.2f\n" % self.total
 
         return ret
 
-    def _print_titles(self):
+    def titles(self):
         ret = ""
 
         for title in self.ordered_titles:
@@ -171,7 +183,7 @@ class Buckets(object):
                 self.insert_bucket(o_bkt)
                 added_new = True
 
-        # if any new buckets, prune and sort again
+        # if any new buckets, prune aliases and sort again
         if added_new:
             self.prune()
             self.sort_buckets()
@@ -189,5 +201,5 @@ class Buckets(object):
 
 if __name__ == "__main__":
     bks = Buckets.from_file(Buckets.BUCKETS_FILE)
-    print bks._print_titles()
+    print bks.titles()
     print bks
