@@ -61,11 +61,12 @@ class Savings(object):
     def csv_out(self, out_file="/tmp/savings.csv"):
         if not self.transactions:
             return
-        with open (out_file, 'w') as f:
-            f.write(self.transactions[-1].titles() + "\n")
-            f.write(",Running Total," + str(self.total) + "," + str(self.buckets) + "\n")
+        with open (out_file, 'wb') as f:
+            csv_writer = csv.writer(f)
+            csv_writer.writerow(self.transactions[-1].titles().split(","))
+            csv_writer.writerow(["", "Running Total", str(self.total)] + self.buckets.list_out())
             for xaction in sorted(self.transactions, key=lambda k: k.date_time):
-                f.write(str(xaction) + "\n")
+                csv_writer.writerow(xaction.list_out())
 
     def __str__(self):
         ret = "Name:  %s\n" % self.name
