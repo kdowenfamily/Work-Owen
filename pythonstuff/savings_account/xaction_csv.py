@@ -39,7 +39,7 @@ class XactionCsv(object):
         if not in_file:
             return useful
 
-        with open(in_file) as csvfile:
+        with open(in_file, 'rb') as csvfile:
             reader = csv.reader(csvfile)
             for row in reader:
                 if in_data and not ("Running Total" in row):
@@ -57,6 +57,7 @@ class XactionCsv(object):
                     headers = row
                 elif ("Running Total" in row):
                     self.grand_total = Bucket.string2float(row[GRAND_TOTAL_COL])
+
                 if 'Total Inflows:' in row:
                     in_data = False 
 

@@ -160,13 +160,14 @@ class Buckets(object):
 
         return ret.rstrip(",")
 
-    def __str__(self):
-        ret = ""
-
+    def list_out(self):
+        ret = []
         for title in self.ordered_titles:
-            ret += str(self.titles2buckets[title].total) + ","
+            ret.append(str(self.titles2buckets[title].total))
+        return ret
 
-        return ret.rstrip(",")
+    def __str__(self):
+        return ",".join(self.list_out())
 
     def __iadd__(self, other_buckets):
         # from self: for all my buckets, if I find a same-named bucket in the other set, add it
@@ -183,7 +184,7 @@ class Buckets(object):
                 self.insert_bucket(o_bkt)
                 added_new = True
 
-        # if any new buckets, prune aliases and sort again
+        # if there were any new buckets, prune aliases and sort again
         if added_new:
             self.prune()
             self.sort_buckets()

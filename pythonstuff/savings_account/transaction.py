@@ -49,6 +49,7 @@ class Transaction(object):
         self.payee = xact_data.get('Payee', "")
         self.tags = xact_data.get('Tags', "")
         self.note = xact_data.get('Memo/Notes', "")
+        self.title = self.payee if self.payee else self.note
         self.buckets = Buckets.from_file(BUCKETS_FILE)
 
         # divide the transaction into buckets
@@ -145,18 +146,19 @@ class Transaction(object):
                 def_bucket.transact(diff)
                 logging.error("Added %.2f to %s" % (diff, def_bucket.title))
 
+    # make a list of the strings we need to print out
+    def list_out(self):
+        return [str(self.date_time), self.title, str(self.total)] + self.buckets.list_out()
+
     def titles(self):
         preamble = ", ".join(("Date", "Transaction", "Total"))
         return preamble + ", " + self.buckets.titles()
 
     def show(self):
-        title = self.payee if self.payee else self.note
-        return ", ".join((str(self.date_time), title, str(self.total)))
+        return ", ".join((str(self.date_time), self.title, str(self.total)))
 
     def __str__(self):
-        ret = self.show()
-        ret += ", " + str(self.buckets)
-        return ret
+        return ",".join(self.list_out())
 
 if __name__ == "__main__":
     bkts = Buckets.from_file(BUCKETS_FILE)
