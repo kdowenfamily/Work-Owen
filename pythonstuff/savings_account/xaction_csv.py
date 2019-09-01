@@ -72,7 +72,7 @@ class XactionCsv(object):
 
             # clean the raw data
             for rkey in row.keys():
-                if re.search("^[\s\,\.\-\$\d]+$", row[rkey]):
+                if re.search("^[\s\,\(,\),\.\-\$\d]+$", row[rkey]):
                     row[rkey] = Bucket.string2float(row[rkey])
 
             # prepare the data for creating a transaction

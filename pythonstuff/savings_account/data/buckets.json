@@ -112,6 +112,10 @@
   },
   {
     "title": "Clothes",
+    "alt_titles": [
+        "D Clothes",
+        "K Clothes"
+    ],
     "weight": 1,
     "order": 15,
     "tags": [
