@@ -22,6 +22,9 @@ class Bucket(object):
         money = str(st)                         # incase it is already a number
         money = money.strip()                   # remove any leading/trailing space
         money = money.strip("$")                # remove any leading '$'
+        if re.search(r'^\(', money):
+            money = re.sub(r'^\(', "-", money)  # any leading "(" becomes "-"
+            money = re.sub(r'\)', "", money)    # the trailing ")" goes away
         money = re.sub(r',', "", money)         # no commas
         money = re.sub(r'^$', "0", money)       # a '' translates to 0
         money = re.sub(r'^-$', "0", money)      # a '-' translates to 0
