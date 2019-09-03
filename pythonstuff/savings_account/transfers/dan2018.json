@@ -3,7 +3,7 @@
   "per_year": 24,
   "payer": "Checking",
   "payee": "Savings",
-  "title": "Dan's 2017 Paycheck",
+  "title": "Dan's Paycheck",
   "buckets": [
   {
     "title": "Home Maintenance",
@@ -66,7 +66,7 @@
     "total": 200
   },
   {
-    "title": "Gifts",
+    "title": "Dan Gifts",
     "total": 45
   },
   {
@@ -76,6 +76,10 @@
   {
     "title": "Dan Life Insurance",
     "total": 30
+  },
+  {
+    "title": "Kathy Gifts",
+    "total": 45
   },
   {
     "title": "Kathy Hair",
@@ -100,6 +104,10 @@
   {
     "title": "Water",
     "total": 92.50
+  },
+  {
+      "title": "Cash Flow",
+      "total": -960.00
   }
   ]
 }

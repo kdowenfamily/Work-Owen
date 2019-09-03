@@ -29,8 +29,7 @@ class Bucket(object):
         money = re.sub(r'^$', "0", money)       # a '' translates to 0
         money = re.sub(r'^-$', "0", money)      # a '-' translates to 0
         money = re.sub(r'^-\$', "-", money)     # a '-$x.yz' translates to '-x.yz'
-        money = "%.2f" % float(money)           # only penny precision, please
-        return float(money)
+        return round(float(money), 2)           # only penny precision, please
 
     def __init__(self, bucket=DEFAULT_BUCKET):
         self.total = bucket.get("total", DEFAULT_BUCKET['total'])
@@ -63,7 +62,7 @@ class Bucket(object):
 
     @weight.setter
     def weight(self, weight):
-        self._weight = int(weight)             # incase it is a string
+        self._weight = float(weight)             # incase it is a string
 
     @property
     def title(self):

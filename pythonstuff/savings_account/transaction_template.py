@@ -4,21 +4,17 @@ import csv, json, re, logging
 from bucket import Bucket
 from buckets import Buckets
 
-DAN_PAYCHECK = "transfers/dan.json"
-DAN_PAYCHECK_2017 = "transfers/dan2017.json"
-KATHY_PAYCHECK = "transfers/kathy.json"
-KATHY_PAYCHECK_2017 = "transfers/kathy2017.json"
-
 logging.basicConfig(filename="savings.log",
                     format="[%(asctime)s] [%(levelname)-7s] %(message)s",
                     level=logging.DEBUG)
 
 class Transaction_Template(object):
-    def __init__(self, template=DAN_PAYCHECK):
+    def __init__(self, template="transfers/dan.json"):
         # read the JSON files and make one bucket per bucket dict
         self.payer = ""
         self.payee = ""
         self.title = ""
+        self.per_year = 0
         self.buckets = None
 
         self.init_template(template)
@@ -34,6 +30,7 @@ class Transaction_Template(object):
             self.payer = template["payer"]
             self.payee = template["payee"]
             self.title = template["title"]
+            self.per_year = int(template["per_year"])
             self.buckets = Buckets(template["buckets"])
         except ValueError as ve:
             logging.error("Parsing ValueError in '%s':  %s", tfile, ve)
@@ -87,6 +84,8 @@ class Transaction_Template(object):
         return ret
 
 if __name__ == "__main__":
-    tts = Transaction_Template(DAN_PAYCHECK_2017)
+    tts = Transaction_Template("transfers/dan.json")
     print tts._titles()
     print tts
+    print
+    print tts.buckets.show()

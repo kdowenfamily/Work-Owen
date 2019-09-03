@@ -1,13 +1,11 @@
 #!/usr/bin/python
 
-import csv, json, re, logging
+import csv, json, re, logging, os
 from dateutil.parser import parse
 from transaction_template import Transaction_Template
-#from savings import Savings
 from buckets import Buckets
 
-PAYCHECKS = ["transfers/dan.json", "transfers/kathy.json", "transfers/kathy2017.json"]
-BUCKETS_FILE = "data/buckets.json"
+PAYCHECK_DIR = "./transfers/"
 
 logging.basicConfig(filename="savings.log",
                     format="[%(asctime)s] [%(levelname)-7s] %(message)s",
@@ -17,14 +15,20 @@ logging.basicConfig(filename="savings.log",
 # one line in a Credit-Card or Savings-Account report.
 class Transaction(object):
     total2trTemplate = {}
+    masterPaychecks = []
 
     # Load up all paychecks into memory, using their totals as keys
     @classmethod
-    def get_regular_xfers(cls, file_paths=PAYCHECKS):
-        logging.info("Parsing the paycheck breakdowns.")
-        for xact in file_paths:
+    def get_regular_xfers(cls, paychk_dir=PAYCHECK_DIR):
+        logging.info("Parsing the paycheck breakdowns in %s." % paychk_dir)
+        for fl in os.listdir(paychk_dir):
+            xact = os.path.join(paychk_dir, fl)
+            if not (os.path.isfile(xact) and re.search(r'\.json\s*$', xact)):
+                continue
             x_template = Transaction_Template(xact)
             cls.total2trTemplate[x_template.buckets.get_total()] = x_template
+            if not (re.search(r'\d\d\d\d\.', xact)):
+                cls.masterPaychecks.append(x_template)
         logging.info("Done parsing the paycheck breakdowns.")
 
     def __init__(self, source_account="", xact_data={}):
@@ -50,18 +54,10 @@ class Transaction(object):
         self.tags = xact_data.get('Tags', "")
         self.note = xact_data.get('Memo/Notes', "")
         self.title = self.payee if self.payee else self.note
-        self.buckets = Buckets.from_file(BUCKETS_FILE)
+        self.buckets = Buckets.from_file(Buckets.BUCKETS_FILE)
 
         # divide the transaction into buckets
-        if self.init_total in Transaction.total2trTemplate.keys():
-            # this looks like a paycheck, or similar
-            self.buckets += Transaction.total2trTemplate[self.init_total].buckets
-        elif ('buckets' in xact_data.keys()):
-            # no asking - this is final
-            self.buckets += Buckets(xact_data['buckets'])
-        else:
-            # this could be anything - ask the user
-            self.ask()
+        self._divide_into_buckets(xact_data)
 
         # as verification, set the total to the bucket total
         self._reconcile_total()
@@ -146,6 +142,18 @@ class Transaction(object):
                 def_bucket.transact(diff)
                 logging.error("Added %.2f to %s" % (diff, def_bucket.title))
 
+    # divide the total into buckets as needed
+    def _divide_into_buckets(self, xact_data={}):
+        if self.init_total in Transaction.total2trTemplate.keys():
+            # this looks like a paycheck, or similar
+            self.buckets += Transaction.total2trTemplate[self.init_total].buckets
+        elif ('buckets' in xact_data.keys()):
+            # no asking - this is final
+            self.buckets += Buckets(xact_data['buckets'])
+        else:
+            # this could be anything - ask the user
+            self.ask()
+
     # make a list of the strings we need to print out
     def list_out(self):
         return [str(self.date_time), self.title, str(self.total)] + self.buckets.list_out()
@@ -160,8 +168,9 @@ class Transaction(object):
     def __str__(self):
         return ",".join(self.list_out())
 
+
 if __name__ == "__main__":
-    bkts = Buckets.from_file(BUCKETS_FILE)
+    bkts = Buckets.from_file(Buckets.BUCKETS_FILE)
 
     sample = {"Date": "11/12/1965", "Amount": 250, "Payee": "savings"}
     tr1 = Transaction(source_account="checking", xact_data=sample)

@@ -1,5 +1,6 @@
 {
   "date": "*",
+  "per_year": 52,
   "payer": "Checking",
   "payee": "Savings",
   "title": "Kathy's Paycheck",
@@ -42,6 +43,7 @@
   },
   {
     "title": "Kid Activities",
+    "total": 190.00,
     "total": 0
   },
   {
@@ -90,7 +92,6 @@
   },
   {
     "title": "Slush",
-    "total": 190.00,
     "default": true
   },
   {

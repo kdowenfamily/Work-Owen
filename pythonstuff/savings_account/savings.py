@@ -4,6 +4,7 @@ import csv, json, re, logging, argparse
 from dateutil.parser import parse
 from buckets import Buckets
 from transaction import Transaction
+from start_transaction import Start_Transaction
 from xaction_csv import XactionCsv
 
 logging.basicConfig(filename="savings.log",
@@ -26,6 +27,8 @@ class Savings(object):
 
     # seed the buckets and the total with the older savings-account record
     def read_history(self, savings_record=''):
+        if not savings_record:
+            return
         savings_now = XactionCsv(savings_record)
         self._add_transactions(savings_now.transactions)
 
@@ -33,6 +36,9 @@ class Savings(object):
     def read_latest_transactions(self, transaction_files=[]):
         for csv_file in transaction_files:
             new_xactions = XactionCsv(csv_file)
+            if ((not self.transactions) and new_xactions.start_balance):
+                # no earlier savings-account spreadsheet; create a start row
+                self._add_transactions([Start_Transaction("Savings", new_xactions.start_balance)])
             self._add_transactions(new_xactions.transactions)
 
     def _add_transactions(self, xacts=[]):
