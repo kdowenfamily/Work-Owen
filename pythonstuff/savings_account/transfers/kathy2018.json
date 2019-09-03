@@ -1,41 +1,41 @@
 {
   "date": "*",
-  "per_year": 24,
+  "per_year": 52,
   "payer": "Checking",
   "payee": "Savings",
-  "title": "Dan's 2017 Paycheck",
+  "title": "Kathy's Paycheck",
   "buckets": [
   {
     "title": "Home Maintenance",
-    "total": 262.50
+    "total": 0
   },
   {
     "title": "Home Improvement",
-    "total": 60
+    "total": 0
   },
   {
     "title": "Oil",
-    "total": 137.50
+    "total": 0
   },
   {
     "title": "AAA",
-    "total": 5
+    "total": 0
   },
   {
     "title": "Pool Care",
-    "total": 87.50
+    "total": 0
   },
   {
     "title": "Lawn Care",
-    "total": 55
+    "total": 0
   },
   {
     "title": "Vacation",
-    "total": 75
+    "total": 0
   },
   {
     "title": "Party",
-    "total": 40
+    "total": 0
   },
   {
     "title": "Babysitter",
@@ -43,19 +43,19 @@
   },
   {
     "title": "Kid Activities",
-    "total": 145
+    "total": 0
   },
   {
     "title": "Magazines",
-    "total": 5
+    "total": 0
   },
   {
     "title": "Car Insurance",
-    "total": 142.5
+    "total": 0
   },
   {
     "title": "Car Maintenance",
-    "total": 75
+    "total": 0
   },
   {
     "title": "Car Savings",
@@ -63,19 +63,19 @@
   },
   {
     "title": "Clothes",
-    "total": 200
+    "total": 0
   },
   {
     "title": "Gifts",
-    "total": 45
+    "total": 0
   },
   {
     "title": "Dan Swan's Taxes",
-    "total": 15
+    "total": 0
   },
   {
     "title": "Dan Life Insurance",
-    "total": 30
+    "total": 0
   },
   {
     "title": "Kathy Hair",
@@ -87,19 +87,20 @@
   },
   {
     "title": "Kathy Life Insurance",
-    "total": 12.5
+    "total": 0
   },
   {
     "title": "Slush",
-    "total": 25
+    "total": 190.00,
+    "default": true
   },
   {
     "title": "Grammy",
-    "total": 15
+    "total": 0
   },
   {
     "title": "Water",
-    "total": 92.50
+    "total": 0
   }
   ]
 }

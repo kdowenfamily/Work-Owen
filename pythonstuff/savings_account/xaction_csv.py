@@ -15,6 +15,8 @@ class XactionCsv(object):
     def __init__(self, in_file=""):
         logging.info("Parsing CSV of transactions, %s." % in_file)
         self.grand_total = 0.0
+        self.start_balance = 0.0
+        self.end_balance = 0.0
 
         # identify the account type
         source_account = ""
@@ -35,6 +37,7 @@ class XactionCsv(object):
         boring = ['', 'Scheduled', 'Split']
         useful = []
         GRAND_TOTAL_COL = 2 # this is the column where the grand total lives in the "Running Total" row
+        BALANCE_COL = 7 # this is the column where the balance lives in the "Balance" row
 
         if not in_file:
             return useful
@@ -57,6 +60,11 @@ class XactionCsv(object):
                     headers = row
                 elif ("Running Total" in row):
                     self.grand_total = Bucket.string2float(row[GRAND_TOTAL_COL])
+                elif ("Balance:" in row):
+                    if self.end_balance:
+                        self.start_balance = Bucket.string2float(row[BALANCE_COL])
+                    else:
+                        self.end_balance = Bucket.string2float(row[BALANCE_COL])
 
                 if 'Total Inflows:' in row:
                     in_data = False 
@@ -117,12 +125,15 @@ class XactionCsv(object):
         return ret
 
 if __name__ == "__main__":
-    X_FILES = ["data/private/cc-demo.csv",
-           "data/private/cc-export-2018-12-26.csv",
-           "data/private/savings.csv",
-           "data/private/spending2012.csv",
-           "data/private/sp2.csv",
-           "data/private/savings-xactions-export-2018-12-30.csv"]
+    X_FILES = [
+            "data/private/cc-demo.csv",
+            "data/private/cc-export-2018-12-26.csv",
+            "data/private/savings.csv",
+            "data/private/spending2012.csv",
+            "data/private/spending2016.csv",
+            "data/private/sp2.csv",
+            "data/private/savings-xactions-export-2018-12-30.csv"
+            ]
 
     csv = XactionCsv(in_file=X_FILES[4])
     print

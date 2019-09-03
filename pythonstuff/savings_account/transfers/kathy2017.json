@@ -1,5 +1,6 @@
 {
   "date": "*",
+  "per_year": 52,
   "payer": "Checking",
   "payee": "Savings",
   "title": "Kathy's 2017 Paycheck",
