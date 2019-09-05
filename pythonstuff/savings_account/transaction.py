@@ -56,82 +56,14 @@ class Transaction(object):
         self.title = self.payee if self.payee else self.note
         self.buckets = Buckets.from_file(Buckets.BUCKETS_FILE)
 
-        # divide the transaction into buckets
-        self._divide_into_buckets(xact_data)
-
-        # as verification, set the total to the bucket total
-        self._reconcile_total()
-
         logging.info("Done creating transaction: %s, %3.2f (from %s to %s)." % (self.date_time, self.total, self.payer, self.payee) )
 
     @property
     def total(self):
         return self.buckets.total
 
-    def ask(self):
-        print self.interactive_xaction_str()
-
-        # ask if user wants to break it down
-        want_breakdown = raw_input("Do you want to assign (or split up) this transaction? [y/n]: ")
-        if want_breakdown == 'y':
-            self.loop_buckets()
-        else:
-            # drop it all into the default bucket
-            self.buckets.get_default().total = self.total
-
-    def loop_buckets(self):
-        not_done = 1
-        while (not_done):
-            total_so_far = self.buckets.total
-            total_needed = self.init_total
-            still_needed = total_needed - total_so_far
-
-            if abs(still_needed) <= 0.01:
-                not_done = 0
-            else:
-                print self.interactive_buckets_str(total_so_far, still_needed)
-                self._query_user(still_needed)
-
-    def _query_user(self, still_needed):
-        bucket_n_amt = raw_input("Enter the bucket and amount, 'q' to quit: ")
-        if bucket_n_amt == 'q':
-            if still_needed != 0.0:
-                self.buckets.get_default().total += still_needed
-        elif (re.search("^\d+ a$", bucket_n_amt)):
-            (bkt_num, amt) = bucket_n_amt.split()
-            bkt = self.buckets.find(number = bkt_num)
-            bkt.total += still_needed
-        elif (not re.search("^\d+ -?\d+(\.\d+)?$", bucket_n_amt)):
-            print "\n\nPlease enter in this format: '<bucket-number> <amount>'."
-        else:
-            (bkt_num, amt) = bucket_n_amt.split()
-            if abs(round(float(amt),2)) > abs(round(still_needed,2)):
-                print "\n\nERROR:  %3.2f is too much.  Please enter %3.2f or less.\n\n" % (float(amt), still_needed)
-                return
-            bkt = self.buckets.find(number = bkt_num)
-            bkt.total += float(amt)
-
-    def interactive_xaction_str(self):
-        # show the transaction info
-        ret = "On " + str(self.date_time) + ", '" + str(self.init_total) + "' transferred from '" + self.payer + "' to '" + self.payee + "'"
-        if self.tags:
-            ret += "\n\tWith these tags: " + self.tags
-        if self.note:
-            ret += "\n\tNote:  " + self.note
-
-        return ret
-
-    def interactive_buckets_str(self, total_so_far=0.0, still_needed=0.0):
-        # show the transaction's buckets
-        ret = "\n\nBuckets:\n"
-        ret += self.buckets.show()
-        ret += "\nTotal:     %3.2f" % total_so_far
-        ret += "\nRemaining: %3.2f\n\n" % still_needed
-
-        return ret
-
     # if the total in the file is different from the bucket total, add the diff to the default bucket
-    def _reconcile_total(self):
+    def reconcile_total(self):
         if self.init_total and (self.init_total != self.total):
             curr = "%.2f" % self.init_total
             future = "%.2f" % self.total
@@ -141,18 +73,6 @@ class Transaction(object):
                 def_bucket = self.buckets.get_default()
                 def_bucket.transact(diff)
                 logging.error("Added %.2f to %s" % (diff, def_bucket.title))
-
-    # divide the total into buckets as needed
-    def _divide_into_buckets(self, xact_data={}):
-        if self.init_total in Transaction.total2trTemplate.keys():
-            # this looks like a paycheck, or similar
-            self.buckets += Transaction.total2trTemplate[self.init_total].buckets
-        elif ('buckets' in xact_data.keys()):
-            # no asking - this is final
-            self.buckets += Buckets(xact_data['buckets'])
-        else:
-            # this could be anything - ask the user
-            self.ask()
 
     # make a list of the strings we need to print out
     def list_out(self):

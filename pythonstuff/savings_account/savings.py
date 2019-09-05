@@ -3,6 +3,7 @@
 import csv, json, re, logging, argparse
 from dateutil.parser import parse
 from buckets import Buckets
+from teller import Teller
 from transaction import Transaction
 from start_transaction import Start_Transaction
 from xaction_csv import XactionCsv
@@ -19,6 +20,7 @@ class Savings(object):
         self.buckets = Buckets.from_file(Buckets.BUCKETS_FILE)
         self.transactions = []
         self.snapshots = []
+        self.teller = Teller()
         logging.info("Finished savings account, %s." % name)
 
     @property
@@ -29,16 +31,16 @@ class Savings(object):
     def read_history(self, savings_record=''):
         if not savings_record:
             return
-        savings_now = XactionCsv(savings_record)
+        savings_now = XactionCsv(savings_record, self.teller)
         self._add_transactions(savings_now.transactions)
 
     # feed in all the latest transaction files from Quicken
     def read_latest_transactions(self, transaction_files=[]):
         for csv_file in transaction_files:
-            new_xactions = XactionCsv(csv_file)
+            new_xactions = XactionCsv(csv_file, self.teller)
             if ((not self.transactions) and new_xactions.start_balance):
                 # no earlier savings-account spreadsheet; create a start row
-                self._add_transactions([Start_Transaction("Savings", new_xactions.start_balance)])
+                self._add_transactions([Start_Transaction("Savings", "", new_xactions.start_balance)])
             self._add_transactions(new_xactions.transactions)
 
     def _add_transactions(self, xacts=[]):
