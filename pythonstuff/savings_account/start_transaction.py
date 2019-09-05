@@ -37,7 +37,7 @@ class Start_Transaction(Transaction):
             blists.append(bkts)
 
         # sum up the bucket lists into our empty one
-        self.buckets = self.buckets.dupe()  # empty our our list with an empty dupe
+        self.buckets = self.buckets.dupe()  # empty out our list with an empty dupe
         for bl in blists:
             self.buckets += bl
 
@@ -48,7 +48,7 @@ class Start_Transaction(Transaction):
             bkt.total = round(bkt.weight * amount)      # derive the *real* total from the amount given
 
         # reconcile the buckets with the initial total
-        self._reconcile_total()
+        self.reconcile_total()
 
 
 if __name__ == "__main__":

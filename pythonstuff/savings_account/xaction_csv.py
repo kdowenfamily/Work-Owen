@@ -3,6 +3,7 @@
 import csv, json, re, logging
 from dateutil.parser import parse
 from transaction import Transaction
+from teller import Teller
 from buckets import Buckets
 from bucket import Bucket
 
@@ -12,8 +13,9 @@ logging.basicConfig(filename="savings.log",
 
 # A list of transactions from a CSV file.
 class XactionCsv(object):
-    def __init__(self, in_file=""):
+    def __init__(self, in_file="", teller=None):
         logging.info("Parsing CSV of transactions, %s." % in_file)
+        self.teller = teller
         self.grand_total = 0.0
         self.start_balance = 0.0
         self.end_balance = 0.0
@@ -62,7 +64,9 @@ class XactionCsv(object):
                     self.grand_total = Bucket.string2float(row[GRAND_TOTAL_COL])
                 elif ("Balance:" in row):
                     if self.end_balance:
-                        self.start_balance = Bucket.string2float(row[BALANCE_COL])
+                        start_bal = Bucket.string2float(useful[-1]["Balance"])
+                        start_amt = Bucket.string2float(useful[-1]["Amount"])
+                        self.start_balance = start_bal - start_amt
                     else:
                         self.end_balance = Bucket.string2float(row[BALANCE_COL])
 
@@ -102,7 +106,7 @@ class XactionCsv(object):
 
             # create the transaction
             if xact_data:
-                xactions.append(Transaction(source_account=source_account, xact_data=xact_data))
+                xactions.append(self.teller.process_transaction(source_account, xact_data))
 
         return xactions
 
