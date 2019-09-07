@@ -22,47 +22,91 @@ provides the starting point for the next run.
 The divisions in the account.  This is a list of dictionaries with this format: 
 
 ```json
+[
   {
     "title": "",
+    "alt_titles": [""\*]
     "weight": n,
     "order": n,
-    "tags": [""*]
-  }
-```
-
-### accounts.json
-
-A list of valid accounts:
-
-```json
+    "tags": [""\*]
+  },
   {
-    "name": "",
-    "type": "Savings|Checking|CC"
-  }
+    ...
+  },
+  ...
+]
 ```
 
-### transfers/<foo>.json
-
-One transfer pattern with a date, payer, payee, and
-  a list of dictionaries with this format:
+Prepare exactly one of these files to establish the buckets you want in your account.
+For example:
 
 ```json
+[
+  {
+    "title": "Home Maintenance",
+    "alt_titles": [
+        "Maint.",
+        "Braces"
+    ],
+    "weight": 1,
+    "order": 1,
+    "tags": []
+  },
+  {
+    "title": "College Fund",
+    "alt_titles": [
+      "Linsey College",
+      "Molly College",
+      "Liam College"
+    ],
+    "weight": 1,
+    "order": 2,
+    "tags": [
+      "Education"
+    ]
+  },
+  {
+    "title": "Oil",
+    "weight": 1,
+    "order": 3,
+    "tags": [
+      "Utilities"
+    ]
+  }
+]
+```
+
+Place this file in a "data" directory under the savings.py script.
+
+### transfers/\<foo\>.json
+
+One transfer pattern with a date, title, payer, payee, and a list of dictionaries with this format:
+
+```json
+  "date": "\*",
+  "title": "",
+  "per_year": n,
+  "payer": "",
+  "payee": "",
   {
     "title": "", # a bucket title
     "total": n
   }
 ```
+Prepare one of these for each "regular" transfer into savings.
 
-  Examples:
-  - Dan's paycheck: how it is divided
-  - Kathy's paycheck
+Examples:
+- Dan's paycheck: how it is divided
+- Kathy's paycheck
 
 ### spending.csv
 
 This is the final output of the program, and the first input on a later run.
+It is the bucketized state of the savings account, one transaction per line:
 
-The bucketized state of the savings account
-  - one transaction per line: date\_time, peer account, amount of change in each bucket
+```
+Date,Transaction,Running Total,Total,\<bucket1\>,\<bucket2\>,...,\<bucketN\>
+```
 
 ## Input Files From Quicken
 
@@ -86,8 +130,11 @@ From Quicken, a list of transactions in and out of one credit card
 
 ## To Do
 
-- comments in the CSV
+- allow adding comments to the CSV
 - manual division of credit-card transfers into individual CC transactions (big)
+- reduce the number of user inputs
+- allow user to make corrections without hitting the "too much" error
+- get the payer, payee, title, and notes right for every transaction
 
 ## Done
 
@@ -95,4 +142,3 @@ From Quicken, a list of transactions in and out of one credit card
 - For credit-card reports, do not ask unless it is tagged for Savings
 - Allow multiple titles per bucket
 - Support old paycheck splits
-
