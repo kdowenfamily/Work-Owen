@@ -17,7 +17,7 @@ provides the starting point for the next run.
 
 ## Config Files
 
-You need to write at least 2 JSON files, described below, to set up the buckets you want.
+You need to write at least one JSON file, described below, to set up the buckets you want.
 
 ### data/buckets.json
 

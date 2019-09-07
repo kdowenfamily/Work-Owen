@@ -1,5 +1,7 @@
 # Bug and Enhancement List
 
+Stuff I'm planning, or did.
+
 ## To Do
 
 - allow adding comments to the CSV
