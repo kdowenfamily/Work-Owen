@@ -17,7 +17,9 @@ provides the starting point for the next run.
 
 ## Config Files
 
-### buckets.json
+You need to write at least one JSON file, described below, to set up the buckets you want.
+
+### data/buckets.json
 
 The divisions in the account.  This is a list of dictionaries with this format: 
 
@@ -80,7 +82,11 @@ Place this file in a "data" directory under the savings.py script.
 
 ### transfers/\<foo\>.json
 
-One transfer pattern with a date, title, payer, payee, and a list of dictionaries with this format:
+Prepare one of these for each "regular" transfer into savings.  These are scheduled transactions
+that you create in your banking app, or just regular transfers that you periodically make (assuming
+the transfers are all exactly the same amount of money).
+
+The file contains one transfer pattern with a date, title, payer, payee, and a list of dictionaries with this format:
 
 ```json
   "date": "\*",
@@ -93,13 +99,12 @@ One transfer pattern with a date, title, payer, payee, and a list of dictionarie
     "total": n
   }
 ```
-Prepare one of these for each "regular" transfer into savings.
 
-Examples:
-- Dan's paycheck: how it is divided
-- Kathy's paycheck
+Examples of these transfers:
+- Dad's scheduled transfer after each paycheck (twice per month, or 24 times per year): how it is divided
+- Mom's scheduled transfer after each paycheck (once per week, or 52 times per year).
 
-### spending.csv
+## File From savings.py -  spending.csv
 
 This is the final output of the program, and the first input on a later run.
 It is the bucketized state of the savings account, one transaction per line:
@@ -108,11 +113,16 @@ It is the bucketized state of the savings account, one transaction per line:
 Date,Transaction,Running Total,Total,\<bucket1\>,\<bucket2\>,...,\<bucketN\>
 ```
 
+You do not need to make this; it is auto-generated.
+
 ## Input Files From Quicken
+
+You get these from the Quicken program.
+These files tell savings.py the details of the transactions at your bank and your credit card.
 
 ### savings\_export.csv
 
-From Quicken, a list of transactions in and out of the savings account
+From Quicken, a list of transactions in and out of the savings account:
 
 ```csv
   ,"Scheduled","Split","Date","Payee","Category","Amount","Balance"
@@ -120,25 +130,8 @@ From Quicken, a list of transactions in and out of the savings account
 
 ### cc\_export.csv
 
-From Quicken, a list of transactions in and out of one credit card
+From Quicken, a list of transactions in and out of one credit card account:
 
 ```csv
   ,"Scheduled","Split","Date","Payee","Category","Tags","Amount","Memo/Notes"
 ```
-
-# Bug and Enhancement List
-
-## To Do
-
-- allow adding comments to the CSV
-- manual division of credit-card transfers into individual CC transactions (big)
-- reduce the number of user inputs
-- allow user to make corrections without hitting the "too much" error
-- get the payer, payee, title, and notes right for every transaction
-
-## Done
-
-- Losing old buckets that later morphed into new names
-- For credit-card reports, do not ask unless it is tagged for Savings
-- Allow multiple titles per bucket
-- Support old paycheck splits

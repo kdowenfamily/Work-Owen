@@ -37,11 +37,11 @@ class Savings(object):
     # feed in all the latest transaction files from Quicken
     def read_latest_transactions(self, transaction_files=[]):
         for csv_file in transaction_files:
-            new_xactions = XactionCsv(csv_file, self.teller)
-            if ((not self.transactions) and new_xactions.start_balance):
+            nt = XactionCsv(csv_file, self.teller)
+            if ((not self.transactions) and nt.start_balance):
                 # no earlier savings-account spreadsheet; create a start row
-                self._add_transactions([Start_Transaction("Savings", "", new_xactions.start_balance)])
-            self._add_transactions(new_xactions.transactions)
+                self._add_transactions([Start_Transaction("Savings", nt.start_date, nt.start_balance)])
+            self._add_transactions(nt.transactions)
 
     def _add_transactions(self, xacts=[]):
         for xact in xacts:

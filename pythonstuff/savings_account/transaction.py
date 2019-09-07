@@ -64,15 +64,16 @@ class Transaction(object):
 
     # if the total in the file is different from the bucket total, add the diff to the default bucket
     def reconcile_total(self):
-        if self.init_total and (self.init_total != self.total):
-            curr = "%.2f" % self.init_total
-            future = "%.2f" % self.total
-            diff = float(curr) - float(future)
-            if diff:
-                logging.error("Original total: %.2f; new total: %.2f" % (self.init_total, self.total))
-                def_bucket = self.buckets.get_default()
-                def_bucket.transact(diff)
-                logging.error("Added %.2f to %s" % (diff, def_bucket.title))
+        if not (self.init_total and (self.init_total != self.total)):
+            return
+        curr = "%.2f" % self.init_total
+        future = "%.2f" % self.total
+        diff = float(curr) - float(future)
+        if diff:
+            logging.error("Original total: %.2f; new total: %.2f" % (self.init_total, self.total))
+            def_bucket = self.buckets.get_default()
+            def_bucket.transact(diff)
+            logging.error("Added %.2f to %s" % (diff, def_bucket.title))
 
     # make a list of the strings we need to print out
     def list_out(self):
