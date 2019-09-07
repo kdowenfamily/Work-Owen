@@ -19,7 +19,7 @@ class Start_Transaction(Transaction):
         my_data = {
                     "Date": start_date,
                     "Amount": amount,
-                    "Payee": "Savings",
+                    "Payee": "",
                     "Tags": "",
                     "Memo/Notes": "Restart budget",
                     "buckets": {}

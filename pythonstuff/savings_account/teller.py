@@ -34,25 +34,15 @@ class Teller(object):
         t = self.transaction
         if t.init_total in Transaction.total2trTemplate.keys():
             # this looks like a paycheck, or similar
-            t.buckets += Transaction.total2trTemplate[t.init_total].buckets
+            t_tmplt = Transaction.total2trTemplate[t.init_total]
+            t.buckets += t_tmplt.buckets
+            t.title = t_tmplt.title
         elif ('buckets' in xact_data.keys()):
             # no asking - this is final
             t.buckets += Buckets(xact_data['buckets'])
         else:
             # this could be anything - ask the user
-            self._ask()
-
-    def _ask(self):
-        print self._interactive_xaction_str()
-
-        # ask if user wants to break it down
-        t = self.transaction
-        want_breakdown = raw_input("Do you want to assign (or split up) this transaction? [y/n]: ")
-        if want_breakdown == 'y':
             self._loop_buckets()
-        else:
-            # drop it all into the default bucket
-            t.buckets.get_default().total = t.total
 
     def _loop_buckets(self):
         t = self.transaction
@@ -64,33 +54,53 @@ class Teller(object):
 
             if abs(still_needed) <= 0.01:
                 not_done = 0
+                print "\nFinal:"
+                print self._interactive_buckets_str(0.0)
             else:
-                print self._interactive_buckets_str(still_needed)
                 self._query_user(still_needed)
 
     def _query_user(self, still_needed):
+        print self._interactive_xaction_str()
+        print self._interactive_buckets_str(still_needed)
         bucket_n_amt = raw_input("Enter the bucket and amount, 'q' to quit: ")
         t = self.transaction
-        if bucket_n_amt == 'q':
-            if still_needed != 0.0:
+        if bucket_n_amt == 'n':
+            if abs(still_needed) >= 0.01:
                 t.buckets.get_default().total += still_needed
-        elif (re.search("^\d+ a$", bucket_n_amt)):
-            (bkt_num, amt) = bucket_n_amt.split()
+        elif (re.search("^(\d+)\s*a$", bucket_n_amt)):
+            stuff = re.search("^(\d+)\s*a$", bucket_n_amt)
+            bkt_num = int(stuff.group(1))
             bkt = t.buckets.find(number = bkt_num)
             bkt.total += still_needed
+        elif (re.search("^D\s*([\d\.]+)\s*$", bucket_n_amt)):
+            # divide the amount evenly, by the budget
+            stuff = re.search("^D\s*([\d\.]+)\s*$", bucket_n_amt)
+            amt = float(stuff.group(1))
+            ave_xact = Start_Transaction("Savings", "", amt)
+            t.buckets += ave_xact.buckets
         elif (re.search("^D$", bucket_n_amt)):
             # divide up all that's left evenly
             ave_xact = Start_Transaction("Savings", "", still_needed)
             t.buckets += ave_xact.buckets
-        elif (not re.search("^\d+ -?\d+(\.\d+)?$", bucket_n_amt)):
-            print "\n\nPlease enter in this format: '<bucket-number> <amount>'."
+        elif (not re.search("^\d+\s+-?\d+(\.\d+)?$", bucket_n_amt)):
+            print self._help_str()
+        elif (re.search("\?", bucket_n_amt)):
+            print self._help_str()
         else:
             (bkt_num, amt) = bucket_n_amt.split()
-            if abs(round(float(amt),2)) > abs(round(still_needed,2)):
-                print "\n\nERROR:  %3.2f is too much.  Please enter %3.2f or less.\n\n" % (float(amt), still_needed)
-                return
-            bkt = t.buckets.find(number = bkt_num)
+            bkt = t.buckets.find(bkt_num)
             bkt.total += float(amt)
+
+    def _help_str(self):
+        # show the options
+        ret = "\n\nPlease enter in one of these formats:\n"
+        ret += "\tAdd <amount> to a bucket:            <bucket-number> <amount>\n"
+        ret += "\tAdd all the rest to a bucket:        <bucket-number> a\n"
+        ret += "\tDivide <amount> based on budget:     D <amount>\n"
+        ret += "\tDivide the rest based on budget:     D\n"
+        ret += "\tNext (add the rest to the default):  n\n"
+        ret += "\tPrint this help:                     ?\n"
+        return ret
 
     def _interactive_xaction_str(self):
         # show the transaction info
@@ -118,16 +128,13 @@ class Teller(object):
 
 if __name__ == "__main__":
     sheila = Teller("Shiela")
-    sample = {"Date": "11/12/1965", "Amount": 250, "Payee": "savings"}
     print sheila
+
+    sample = {"Date": "11/12/1965", "Amount": 250, "Payee": "savings"}
     xact = sheila.process_transaction(source_account="savings", xact_data=sample)
-    print xact
     sample = {"Date": "9/4/1965", "Amount": 2345, "Payee": "savings"}
     xact = sheila.process_transaction(source_account="savings", xact_data=sample)
-    print xact.buckets.show()
     sample = {"Date": "5/6/1995", "Amount": 1000, "Payee": "savings"}
     xact = sheila.process_transaction(source_account="savings", xact_data=sample)
-    print xact.buckets.show()
     sample = {"Date": "6/5/1998", "Amount": 1950, "Payee": "savings"}
     xact = sheila.process_transaction(source_account="savings", xact_data=sample)
-    print xact.buckets.show()

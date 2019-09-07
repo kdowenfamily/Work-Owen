@@ -19,6 +19,7 @@ class XactionCsv(object):
         self.grand_total = 0.0
         self.start_balance = 0.0
         self.end_balance = 0.0
+        self.start_date = None
 
         # identify the account type
         source_account = ""
@@ -67,6 +68,7 @@ class XactionCsv(object):
                         start_bal = Bucket.string2float(useful[-1]["Balance"])
                         start_amt = Bucket.string2float(useful[-1]["Amount"])
                         self.start_balance = start_bal - start_amt
+                        self.start_date = parse(useful[-1]["Date"])
                     else:
                         self.end_balance = Bucket.string2float(row[BALANCE_COL])
 
