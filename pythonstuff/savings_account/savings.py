@@ -8,20 +8,22 @@ from transaction import Transaction
 from start_transaction import Start_Transaction
 from xaction_csv import XactionCsv
 
+
 logging.basicConfig(filename="savings.log",
-                    format="[%(asctime)s] [%(levelname)-7s] %(message)s",
-                    level=logging.DEBUG)
+        format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",
+        level=logging.DEBUG)
+log = logging.getLogger(__name__)
 
 # Represents the savings account.
 class Savings(object):
     def __init__(self, name="Savings"):
-        logging.info("Creating savings account, %s." % name)
+        log.info("Creating savings account, %s." % name)
         self.name = name
         self.buckets = Buckets.from_file(Buckets.BUCKETS_FILE)
         self.transactions = []
         self.snapshots = []
         self.teller = Teller()
-        logging.info("Finished savings account, %s." % name)
+        log.info("Finished savings account, %s." % name)
 
     @property
     def total(self):

@@ -3,8 +3,9 @@
 import re, logging
 
 logging.basicConfig(filename="savings.log",
-                    format="[%(asctime)s] [%(levelname)-7s] %(message)s",
-                    level=logging.DEBUG)
+        format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",
+        level=logging.DEBUG)
+log = logging.getLogger(__name__)
 
 DEFAULT_BUCKET = {
                 "total": 0.0,

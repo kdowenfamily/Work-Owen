@@ -7,20 +7,21 @@ from transaction import Transaction
 from start_transaction import Start_Transaction
 from buckets import Buckets
 
-PAYCHECK_DIR = "./transfers/"
-
 logging.basicConfig(filename="savings.log",
-                    format="[%(asctime)s] [%(levelname)-7s] %(message)s",
-                    level=logging.DEBUG)
+        format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",
+        level=logging.DEBUG)
+log = logging.getLogger(__name__)
+
+PAYCHECK_DIR = "./transfers/"
 
 # Represents a bank teller, to ask the user questions and alter transactions
 # as needed.
 class Teller(object):
     def __init__(self, name="Kathy"):
-        logging.info("Creating teller.")
+        log.info("Creating teller, %s." % name)
         self.transaction = None
         self.name = name
-        logging.info("Done creating teller.")
+        log.info("Done creating teller.")
 
     # process one transaction with the user
     def process_transaction(self, source_account="", xact_data={}):
@@ -72,13 +73,13 @@ class Teller(object):
             bkt_num = int(stuff.group(1))
             bkt = t.buckets.find(number = bkt_num)
             bkt.total += still_needed
-        elif (re.search("^D\s*([\d\.]+)\s*$", bucket_n_amt)):
+        elif (re.search("^d\s*([\d\.]+)\s*$", bucket_n_amt)):
             # divide the amount evenly, by the budget
-            stuff = re.search("^D\s*([\d\.]+)\s*$", bucket_n_amt)
+            stuff = re.search("^d\s*([\d\.]+)\s*$", bucket_n_amt)
             amt = float(stuff.group(1))
             ave_xact = Start_Transaction("Savings", "", amt)
             t.buckets += ave_xact.buckets
-        elif (re.search("^D$", bucket_n_amt)):
+        elif (re.search("^d$", bucket_n_amt)):
             # divide up all that's left evenly
             ave_xact = Start_Transaction("Savings", "", still_needed)
             t.buckets += ave_xact.buckets
@@ -96,8 +97,8 @@ class Teller(object):
         ret = "\n\nPlease enter in one of these formats:\n"
         ret += "\tAdd <amount> to a bucket:            <bucket-number> <amount>\n"
         ret += "\tAdd all the rest to a bucket:        <bucket-number> a\n"
-        ret += "\tDivide <amount> based on budget:     D <amount>\n"
-        ret += "\tDivide the rest based on budget:     D\n"
+        ret += "\tDivide <amount> based on budget:     d <amount>\n"
+        ret += "\tDivide the rest based on budget:     d\n"
         ret += "\tNext (add the rest to the default):  n\n"
         ret += "\tPrint this help:                     ?\n"
         return ret
