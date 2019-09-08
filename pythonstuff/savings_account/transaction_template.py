@@ -5,8 +5,9 @@ from bucket import Bucket
 from buckets import Buckets
 
 logging.basicConfig(filename="savings.log",
-                    format="[%(asctime)s] [%(levelname)-7s] %(message)s",
-                    level=logging.DEBUG)
+        format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",
+        level=logging.DEBUG)
+log = logging.getLogger(__name__)
 
 class Transaction_Template(object):
     def __init__(self, template="transfers/dan.json"):
@@ -22,7 +23,7 @@ class Transaction_Template(object):
     def init_template(self, tfile=""):
         template = {}
 
-        logging.info("Parsing transaction-template file, '%s'.", tfile)
+        log.info("Parsing transaction-template file, '%s'.", tfile)
         try:
             with open(tfile) as json_data:
                 template = json.load(json_data) 
@@ -33,9 +34,9 @@ class Transaction_Template(object):
             self.per_year = int(template["per_year"])
             self.buckets = Buckets(template["buckets"])
         except ValueError as ve:
-            logging.error("Parsing ValueError in '%s':  %s", tfile, ve)
+            log.error("Parsing ValueError in '%s':  %s", tfile, ve)
         except:
-            logging.error("Parsing error in '%s'.", tfile)
+            log.error("Parsing error in '%s'.", tfile)
 
 
     def __str__(self):

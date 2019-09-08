@@ -4,10 +4,11 @@ import csv, json, re, logging
 from copy import deepcopy
 from bucket import Bucket
 
-
 logging.basicConfig(filename="savings.log",
-                    format="[%(asctime)s] [%(levelname)-7s] %(message)s",
-                    level=logging.DEBUG)
+        format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",
+        level=logging.DEBUG)
+log = logging.getLogger(__name__)
+
 
 class Buckets(object):
     BUCKETS_FILE = "data/buckets.json"
@@ -17,7 +18,7 @@ class Buckets(object):
         # read the JSON file and make one bucket per bucket dict
         buckets = []
 
-        logging.info("Parsing bucket-config file, '%s'.", file_path)
+        log.info("Parsing bucket-config file, '%s'.", file_path)
         with open(file_path) as json_data:
             buckets = json.load(json_data) 
 
@@ -25,14 +26,14 @@ class Buckets(object):
 
     def __init__(self, buckets=[]):
         # read the list of bucket dicts and make one bucket per bucket dict
-        logging.info("Setting up %s raw buckets." % len(buckets))
+        log.info("Setting up %s raw buckets." % len(buckets))
         self.titles2buckets = {}
         self.tags2buckets = {}
         self.alias2title = {}
         self.ordered_titles = []
         self.contents = []
         self.init_buckets(buckets)
-        logging.info("Done setting up %s buckets, total of %.2f." % (len(self.contents), self.total))
+        log.info("Done setting up %s buckets, total of %.2f." % (len(self.contents), self.total))
 
     @property
     def total(self):
@@ -53,7 +54,7 @@ class Buckets(object):
         self.titles2buckets[bkt.title] = bkt
         for tag in bkt.tags:
             if tag in self.tags2buckets.keys():
-                logging.warning("Dupe tag: '%s' in config record '%s, %s'.", tag, 
+                log.warning("Dupe tag: '%s' in config record '%s, %s'.", tag, 
                                 bkt.title, bkt.total)
             else:
                 self.tags2buckets[tag] = bkt
@@ -82,7 +83,7 @@ class Buckets(object):
             if bucket.title not in self.alias2title.keys():
                 continue
             real_title = self.alias2title[bucket.title]
-            logging.debug("Pruning %s and adding to %s." % (bucket.title, real_title) )
+            log.debug("Pruning %s and adding %.2f to %s." % (bucket.title, bucket.total, real_title) )
             real_bkt = self.titles2buckets[real_title]
             real_bkt += bucket
             to_drop.append(bucket)

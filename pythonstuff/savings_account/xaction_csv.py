@@ -1,20 +1,18 @@
 #!/usr/bin/python
 
 import csv, json, re, logging
-from dateutil.parser import parse
-from transaction import Transaction
-from teller import Teller
 from buckets import Buckets
 from bucket import Bucket
 
 logging.basicConfig(filename="savings.log",
-                    format="[%(asctime)s] [%(levelname)-7s] %(message)s",
-                    level=logging.DEBUG)
+        format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",
+        level=logging.DEBUG)
+log = logging.getLogger(__name__)
 
 # A list of transactions from a CSV file.
 class XactionCsv(object):
     def __init__(self, in_file="", teller=None):
-        logging.info("Parsing CSV of transactions, %s." % in_file)
+        log.info("Parsing CSV of transactions, %s." % in_file)
         self.teller = teller
         self.grand_total = 0.0
         self.start_balance = 0.0
@@ -32,7 +30,7 @@ class XactionCsv(object):
         rows = self._parse_csv(in_file)
         self.transactions = self._parse_rows(source_account, rows)
 
-        logging.info("Done parsing CSV of transactions, %d transactions." % len(self.transactions))
+        log.info("Done parsing CSV of transactions, %d transactions." % len(self.transactions))
 
     def _parse_csv(self, in_file=""):
         in_data = False
@@ -65,10 +63,13 @@ class XactionCsv(object):
                     self.grand_total = Bucket.string2float(row[GRAND_TOTAL_COL])
                 elif ("Balance:" in row):
                     if self.end_balance:
+                        # This is past the last row, with the earliest transaction.
+                        # Take the last row and make an implicit "start" transaction.
+                        # TODO - this is a kludge
                         start_bal = Bucket.string2float(useful[-1]["Balance"])
                         start_amt = Bucket.string2float(useful[-1]["Amount"])
                         self.start_balance = start_bal - start_amt
-                        self.start_date = parse(useful[-1]["Date"])
+                        self.start_date = useful[-1]["Date"]
                     else:
                         self.end_balance = Bucket.string2float(row[BALANCE_COL])
 

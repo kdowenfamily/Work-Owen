@@ -43,8 +43,7 @@
   },
   {
     "title": "Kid Activities",
-    "total": 190.00,
-    "total": 0
+    "total": 190.00
   },
   {
     "title": "Magazines",
@@ -92,6 +91,7 @@
   },
   {
     "title": "Slush",
+    "total": 0,
     "default": true
   },
   {

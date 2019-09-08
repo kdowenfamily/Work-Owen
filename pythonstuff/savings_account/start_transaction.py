@@ -8,8 +8,9 @@ from buckets import Buckets
 from bucket import Bucket
 
 logging.basicConfig(filename="savings.log",
-                    format="[%(asctime)s] [%(levelname)-7s] %(message)s",
-                    level=logging.DEBUG)
+        format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",
+        level=logging.DEBUG)
+log = logging.getLogger(__name__)
 
 # An initial transaction, based on a start date and a total amount in the savings account.
 # Average all the current paychecks, and give each bucket the percentage allotted by those paychecks.
