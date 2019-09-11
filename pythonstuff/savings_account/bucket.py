@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import re, logging
+from copy import deepcopy
 
 logging.basicConfig(filename="savings.log",
         format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",
@@ -14,6 +15,7 @@ DEFAULT_BUCKET = {
                 "title": "",
                 "alt_titles": [],
                 "tags": [],
+                "comments": [],
                 "default": False
                 }
 
@@ -39,6 +41,7 @@ class Bucket(object):
         self.title = bucket.get("title", DEFAULT_BUCKET['title'])
         self.alt_titles = bucket.get("alt_titles", DEFAULT_BUCKET['alt_titles'])
         self.tags = bucket.get("tags", DEFAULT_BUCKET['tags'])
+        self.comments = bucket.get("comments", DEFAULT_BUCKET['comments'])
         self.default = bucket.get("default", DEFAULT_BUCKET['default'])
 
     @property
@@ -102,6 +105,17 @@ class Bucket(object):
                     self._tags.append(str(tg)) # incase it is unicode
             else:
                 self._tags.append(str(tag))    # incase it is unicode
+
+    @property
+    def comments(self):
+        return self._comments
+
+    @comments.setter
+    def comments(self, comments):
+        self._comments = deepcopy(comments)
+
+    def add_comment(self, comment):
+        self._comments.append(comment)
 
     @property
     def default(self):
