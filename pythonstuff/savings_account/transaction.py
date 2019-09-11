@@ -34,7 +34,7 @@ class Transaction(object):
 
     def __init__(self, source_account="", xact_data={}):
         # make map of totals to 'template' transactions 
-        # (eg, if total is XXX.YY, it must be Dan's paycheck, if it's AAA.BB, it's Kathy's)
+        # (eg, if total is YYY.ZZ, it must be Dan's paycheck, if it's AAA.BB, it's Kathy's)
         if not Transaction.total2trTemplate:
             Transaction.get_regular_xfers()
 
@@ -63,6 +63,13 @@ class Transaction(object):
     def total(self):
         return self.buckets.total
 
+    @property
+    def description(self):
+        ret = self.title
+        if self.buckets.notes:
+            ret += " - " + self.buckets.notes
+        return ret
+
     # if the total in the file is different from the bucket total, add the diff to the default bucket
     def reconcile_total(self):
         if not (self.init_total and (self.init_total != self.total)):
@@ -78,7 +85,7 @@ class Transaction(object):
 
     # make a list of the strings we need to print out
     def list_out(self):
-        return [str(self.date_time), self.title, str(self.total)] + self.buckets.list_out()
+        return [str(self.date_time), self.description, str(self.total)] + self.buckets.list_out()
 
     def titles(self):
         preamble = ", ".join(("Date", "Transaction", "Total"))

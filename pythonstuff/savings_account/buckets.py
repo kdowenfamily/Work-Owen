@@ -39,6 +39,14 @@ class Buckets(object):
     def total(self):
         return self.get_total()
 
+    @property
+    def notes(self):
+        ret = ""
+        for bkt in self.contents:
+            for cmt in bkt.comments:
+                ret += " " + bkt.title + ": " + cmt + ";"
+        return ret.rstrip(';')
+
     def init_buckets(self, buckets=[]):
         for bucket in buckets:
             bkt = Bucket(bucket)

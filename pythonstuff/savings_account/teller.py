@@ -60,37 +60,73 @@ class Teller(object):
             else:
                 self._query_user(still_needed)
 
+    def _divide_evenly(self, t=None, still_needed=0.0, user_words=[]):
+        if not (t and still_needed):
+            return
+        amt = still_needed
+        if len(user_words):
+            dollars = user_words.pop(0)
+            if re.search(r'-?^\d+(\.\d+)?$', dollars):
+                amt = float(dollars)
+            else:
+                log.error("Unclear amount for -d; expected dollar amount, got '%s'" % dollars)
+        if amt:
+            ave_xact = Start_Transaction("Savings", "", amt)
+            t.buckets += ave_xact.buckets
+
+    def _deposit_to_one_bucket(self, bkt=None, t=None, still_needed=0.0, user_words=[]):
+        if not (bkt and t and still_needed and user_words):
+            return user_words
+        amt = user_words.pop(0)
+        if re.search(r'^a$', amt, re.IGNORECASE):
+            amt = still_needed
+        elif re.search(r'^-?\d+(\.\d+)?$', amt):
+            amt = float(amt)
+        else:
+            log.error("Bad amount for bucket %s; expected 'a' or dollar amount, got '%s'" % (bkt.title, amt))
+            return user_words
+        bkt.total += amt
+        return user_words
+
+    def _record_comment(self, bkt=None, user_words=[]):
+        if not (bkt and user_words):
+            return
+        arg = user_words.pop(0)
+        if re.search(r'^-c$', arg, re.IGNORECASE):
+            comment = " ".join(user_words)
+            bkt.add_comment(comment)
+        else:
+            log.error("Unclear - is this a comment? Expected '-c', got '%s'" % arg)
+
     def _query_user(self, still_needed):
         print self._interactive_xaction_str()
         print self._interactive_buckets_str(still_needed)
-        bucket_n_amt = raw_input("Enter the bucket and amount, 'q' to quit: ")
+        raw_answer = raw_input("Enter the bucket and amount, 'n' for next: ")
+
+        # split up the answer
+        raw_answer.strip()
+        user_words = raw_answer.split()
+        if not user_words:
+            print self._help_str()
+            return
+
+        # nibble off and assess the first word
+        cmd = user_words.pop(0)
         t = self.transaction
-        if bucket_n_amt == 'n':
+        if re.search(r'^n$', cmd, re.IGNORECASE):
             if abs(still_needed) >= 0.01:
                 t.buckets.get_default().total += still_needed
-        elif (re.search("^(\d+)\s*a$", bucket_n_amt)):
-            stuff = re.search("^(\d+)\s*a$", bucket_n_amt)
-            bkt_num = int(stuff.group(1))
-            bkt = t.buckets.find(number = bkt_num)
-            bkt.total += still_needed
-        elif (re.search("^d\s*([\d\.]+)\s*$", bucket_n_amt)):
-            # divide the amount evenly, by the budget
-            stuff = re.search("^d\s*([\d\.]+)\s*$", bucket_n_amt)
-            amt = float(stuff.group(1))
-            ave_xact = Start_Transaction("Savings", "", amt)
-            t.buckets += ave_xact.buckets
-        elif (re.search("^d$", bucket_n_amt)):
-            # divide up all that's left evenly
-            ave_xact = Start_Transaction("Savings", "", still_needed)
-            t.buckets += ave_xact.buckets
-        elif (not re.search("^\d+\s+-?\d+(\.\d+)?$", bucket_n_amt)):
+        elif re.search(r'^\?$', cmd):
             print self._help_str()
-        elif (re.search("\?", bucket_n_amt)):
-            print self._help_str()
+        elif re.search(r'^d$', cmd, re.IGNORECASE):
+            self._divide_evenly(t, still_needed, user_words)
+        elif re.search(r'^\d+$', cmd):
+            bkt = t.buckets.find(int(cmd))
+            user_words = self._deposit_to_one_bucket(bkt, t, still_needed, user_words)
+            if user_words and len(user_words) > 1:
+                self._record_comment(bkt, user_words)
         else:
-            (bkt_num, amt) = bucket_n_amt.split()
-            bkt = t.buckets.find(bkt_num)
-            bkt.total += float(amt)
+            print self._help_str()
 
     def _help_str(self):
         # show the options
