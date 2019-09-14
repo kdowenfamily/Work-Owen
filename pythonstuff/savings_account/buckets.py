@@ -44,7 +44,7 @@ class Buckets(object):
         ret = ""
         for bkt in self.contents:
             for cmt in bkt.comments:
-                ret += " " + bkt.title + ": " + cmt + ";"
+                ret += " %s: %s (%.2f);" % (bkt.title, cmt, bkt.total)
         return ret.rstrip(';')
 
     def init_buckets(self, buckets=[]):
@@ -54,10 +54,11 @@ class Buckets(object):
 
         self.sort_buckets()
 
-    def insert_bucket(self, bkt=None):
-        if not bkt:
+    def insert_bucket(self, bucket=None):
+        if not bucket:
             return
 
+        bkt = deepcopy(bucket)
         self.contents.append(bkt)
         self.titles2buckets[bkt.title] = bkt
         for tag in bkt.tags:
