@@ -134,6 +134,7 @@ class Teller(object):
         ret = "\n\nPlease enter in one of these formats:\n"
         ret += "\tAdd <amount> to a bucket:            <bucket-number> <amount>\n"
         ret += "\tAdd all the rest to a bucket:        <bucket-number> a\n"
+        ret += "\tEither of the above, plus comment:   <bucket-number> [a | amount] -c <comment with spaces>\n"
         ret += "\tDivide <amount> based on budget:     d <amount>\n"
         ret += "\tDivide the rest based on budget:     d\n"
         ret += "\tNext (add the rest to the default):  n\n"
