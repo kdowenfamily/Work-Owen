@@ -99,35 +99,17 @@ class Transaction(object):
 
 
 if __name__ == "__main__":
-    bkts = Buckets.from_file(Buckets.BUCKETS_FILE)
-
     sample = {"Date": "11/12/1965", "Amount": 250, "Payee": "savings"}
     tr1 = Transaction(source_account="checking", xact_data=sample)
-    bkts += tr1.buckets
-    print "\n\nTransaction (Kathy Paycheck):\n"
+    print tr1.titles()
     print tr1.show()
-    print "\nFinal Transaction Breakdown:\n"
-    print tr1.buckets.show()
-    print "\nBucket Breakdown:\n"
-    print bkts.show()
 
     sample = {"Date": "9/4/1965", "Amount": 610, "Payee": "savings"}
     tr2 = Transaction(source_account="checking", xact_data=sample)
-    bkts += tr2.buckets
-    print "\n\nTransaction (Dan Paycheck):\n"
+    print tr2.titles()
     print tr2.show()
-    print "\nFinal Transaction Breakdown:\n"
-    print tr2.buckets.show()
-    print "\nBucket Breakdown:\n"
-    print bkts.show()
 
     sample = {"Date": "7/23/19", "Amount": 2000, "Payee": "savings"}
     tr3 = Transaction(source_account="checking", xact_data=sample)
-    bkts += tr3.buckets
-    print "\n\nTransaction (Windfall!):\n"
+    print tr3.titles()
     print tr3.show()
-    print "\nFinal Transaction Breakdown:\n"
-    print tr3.buckets.show()
-
-    print "\nTotal Transaction Breakdown:\n"
-    print bkts.show()

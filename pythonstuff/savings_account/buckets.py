@@ -43,8 +43,10 @@ class Buckets(object):
     def notes(self):
         ret = ""
         for bkt in self.contents:
+            if len(bkt.comments):
+                ret += " %s:" % bkt.title
             for cmt in bkt.comments:
-                ret += " %s: %s (%.2f);" % (bkt.title, cmt, bkt.total)
+                ret += " %s;" % cmt
         return ret.rstrip(';')
 
     def init_buckets(self, buckets=[]):

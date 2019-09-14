@@ -76,7 +76,7 @@ class Teller(object):
 
     def _deposit_to_one_bucket(self, bkt=None, t=None, still_needed=0.0, user_words=[]):
         if not (bkt and t and still_needed and user_words):
-            return user_words
+            return (user_words, 0)
         amt = user_words.pop(0)
         if re.search(r'^a$', amt, re.IGNORECASE):
             amt = still_needed
@@ -86,14 +86,15 @@ class Teller(object):
             log.error("Bad amount for bucket %s; expected 'a' or dollar amount, got '%s'" % (bkt.title, amt))
             return user_words
         bkt.total += amt
-        return user_words
+        return (user_words, amt)
 
-    def _record_comment(self, bkt=None, user_words=[]):
+    def _record_comment(self, bkt=None, user_words=[], deposit=0.0):
         if not (bkt and user_words):
             return
         arg = user_words.pop(0)
         if re.search(r'^-c$', arg, re.IGNORECASE):
             comment = " ".join(user_words)
+            comment += " (%.2f)" % deposit
             bkt.add_comment(comment)
         else:
             log.error("Unclear - is this a comment? Expected '-c', got '%s'" % arg)
@@ -122,9 +123,9 @@ class Teller(object):
             self._divide_evenly(t, still_needed, user_words)
         elif re.search(r'^\d+$', cmd):
             bkt = t.buckets.find(int(cmd))
-            user_words = self._deposit_to_one_bucket(bkt, t, still_needed, user_words)
+            user_words, dep = self._deposit_to_one_bucket(bkt, t, still_needed, user_words)
             if user_words and len(user_words) > 1:
-                self._record_comment(bkt, user_words)
+                self._record_comment(bkt, user_words, dep)
         else:
             print self._help_str()
 
@@ -133,6 +134,7 @@ class Teller(object):
         ret = "\n\nPlease enter in one of these formats:\n"
         ret += "\tAdd <amount> to a bucket:            <bucket-number> <amount>\n"
         ret += "\tAdd all the rest to a bucket:        <bucket-number> a\n"
+        ret += "\tEither of the above, plus comment:   <bucket-number> [a | amount] -c <comment with spaces>\n"
         ret += "\tDivide <amount> based on budget:     d <amount>\n"
         ret += "\tDivide the rest based on budget:     d\n"
         ret += "\tNext (add the rest to the default):  n\n"
