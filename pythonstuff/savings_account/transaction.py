@@ -85,14 +85,14 @@ class Transaction(object):
 
     # make a list of the strings we need to print out
     def list_out(self):
-        return [str(self.date_time), self.description, str(self.total)] + self.buckets.list_out()
+        return [str(self.date_time), self.description, "", str(self.total)] + self.buckets.list_out()
 
     def titles(self):
-        preamble = ", ".join(("Date", "Transaction", "Total"))
-        return preamble + ", " + self.buckets.titles()
+        preamble = ",".join(("Date", "Transaction", "Running Total", "Total"))
+        return preamble + "," + self.buckets.titles()
 
     def show(self):
-        return ", ".join((str(self.date_time), self.title, str(self.total)))
+        return ",".join((str(self.date_time), self.title, "", str(self.total)))
 
     def __str__(self):
         return ",".join(self.list_out())
