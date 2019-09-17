@@ -37,7 +37,7 @@ class XactionCsv(object):
         headers = []
         boring = ['', 'Scheduled', 'Split']
         useful = []
-        GRAND_TOTAL_COL = 2 # this is the column where the grand total lives in the "Running Total" row
+        GRAND_TOTAL_COL = 3 # this is the column where the grand total lives in the "Running Total" row
         BALANCE_COL = 7 # this is the column where the balance lives in the "Balance" row
 
         if not in_file:

@@ -2,6 +2,7 @@
 
 import csv, json, re, logging, argparse
 from dateutil.parser import parse
+from datetime import timedelta
 from buckets import Buckets
 from teller import Teller
 from transaction import Transaction
@@ -45,6 +46,11 @@ class Savings(object):
                 self._add_transactions([Start_Transaction("Savings", nt.start_date, nt.start_balance)])
             self._add_transactions(nt.transactions)
 
+    # let the user manually re-balance the buckets
+    def rebalance(self):
+        date = str(self.transactions[-1].date_time + timedelta(hours=1))
+        self._add_transactions([self.teller.play_in_vault(self.buckets, date)])
+
     def _add_transactions(self, xacts=[]):
         for xact in xacts:
             self.buckets += xact.buckets
@@ -73,8 +79,8 @@ class Savings(object):
             return
         with open (out_file, 'wb') as f:
             csv_writer = csv.writer(f)
-            csv_writer.writerow(self.transactions[-1].titles().split(","))
-            csv_writer.writerow(["", "Running Total", str(self.total)] + self.buckets.list_out())
+            csv_writer.writerow(self.transactions[-1].titles().split(",")) # titles
+            csv_writer.writerow(["", "Running Total", "", str(self.total)] + self.buckets.list_out())
             for xaction in sorted(self.transactions, key=lambda k: k.date_time):
                 csv_writer.writerow(xaction.list_out())
 
@@ -89,12 +95,15 @@ if __name__ == "__main__":
     parser.add_argument('--savings', '-s', help='Path to the current spreadsheed for the Savings account', default='')
     parser.add_argument('--quicken', '-q', nargs='*', help='Path(s) to Quicken transaction files', default='')
     parser.add_argument('--outfile', '-o', help='Path for the CSV output', default='/tmp/savings.csv')
+    parser.add_argument('--edit', '-e', help='Edit the buckets - trade between them', action='store_true')
     args = parser.parse_args()
 
     sv = Savings(args.name)
     sv.read_history(args.savings)
     sv.read_latest_transactions(args.quicken)
     sv.equalize_transactions()
+    if args.edit:
+        sv.rebalance()
 
     print
     sv.csv_out(args.outfile)

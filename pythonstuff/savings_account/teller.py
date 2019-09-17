@@ -2,6 +2,7 @@
 
 import csv, json, re, logging, os
 from dateutil.parser import parse
+from copy import deepcopy
 from transaction_template import Transaction_Template
 from transaction import Transaction
 from start_transaction import Start_Transaction
@@ -28,6 +29,51 @@ class Teller(object):
         self.transaction = Transaction(source_account, xact_data)
         self._divide_into_buckets(xact_data)
         self.transaction.reconcile_total()
+        return self.transaction
+
+    # bring the user into the vault to trade money between buckets
+    def play_in_vault(self, buckets=None, date='1/1/65'):
+        print "My name is %s.  Welcome to the vault.  How can I help you?" % self.name
+        self.transaction = Transaction("Savings", {'Date':date,'Memo/Notes':'Play in vault'})
+        t = self.transaction
+        bkts = deepcopy(buckets)
+        t.buckets += bkts.dupe()
+        quit = False
+        while not quit:
+            print "\nBuckets:\n"
+            print bkts.show()
+            raw_answer = raw_input("Enter an amount, a source bucket and a destination bucket ('q' to quit):  ")
+
+            # split up the answer
+            raw_answer.strip()
+            user_words = raw_answer.split()
+            if not user_words:
+                print self._help_str()
+                continue
+
+            # nibble off and assess the first word
+            amt = user_words.pop(0)
+            if re.search(r'^-?\d+(\.\d+)?$', amt):
+                amt = float(amt)
+            elif re.search(r'^q$', amt, re.IGNORECASE):
+                quit = True
+                continue
+            else:
+                print "Bad amount for bucket %s; expected 'a' or dollar amount, got '%s'" % (bkt.title, amt)
+                continue
+
+            # nibble off bucket numbers and exchange
+            bkt1_num = int(user_words.pop(0))
+            bkt1 = bkts.find(bkt1_num)
+            bkt1.total -= amt
+            bkt1a = t.buckets.find(bkt1_num)
+            bkt1a.total -= amt
+            bkt2_num = int(user_words.pop(0))
+            bkt2 = bkts.find(bkt2_num)
+            bkt2.total += amt
+            bkt2a = t.buckets.find(bkt2_num)
+            bkt2a.total += amt
+
         return self.transaction
 
     # divide the total into buckets as needed
