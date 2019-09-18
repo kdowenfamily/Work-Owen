@@ -5,6 +5,7 @@ from dateutil.parser import parse
 from datetime import timedelta
 from buckets import Buckets
 from teller import Teller
+from manager import Manager
 from transaction import Transaction
 from start_transaction import Start_Transaction
 from xaction_csv import XactionCsv
@@ -49,7 +50,7 @@ class Savings(object):
     # let the user manually re-balance the buckets
     def rebalance(self):
         date = str(self.transactions[-1].date_time + timedelta(hours=1))
-        self._add_transactions([self.teller.play_in_vault(self.buckets, date)])
+        self._add_transactions([self.manager.play_in_vault(self.buckets, date)])
 
     def _add_transactions(self, xacts=[]):
         for xact in xacts:
@@ -95,7 +96,7 @@ if __name__ == "__main__":
     parser.add_argument('--savings', '-s', help='Path to the current spreadsheed for the Savings account', default='')
     parser.add_argument('--quicken', '-q', nargs='*', help='Path(s) to Quicken transaction files', default='')
     parser.add_argument('--outfile', '-o', help='Path for the CSV output', default='/tmp/savings.csv')
-    parser.add_argument('--edit', '-e', help='Edit the buckets - trade between them', action='store_true')
+    parser.add_argument('--edit', '-e', help='Edit the buckets at the end - trade between them', action='store_true')
     args = parser.parse_args()
 
     sv = Savings(args.name)
