@@ -114,7 +114,8 @@
     "title": "Clothes",
     "alt_titles": [
         "D Clothes",
-        "K Clothes"
+        "K Clothes",
+        "Kathy Wardrobe"
     ],
     "weight": 1,
     "order": 15,
@@ -181,9 +182,9 @@
     ]
   },
   {
-    "title": "Kathy Wardrobe",
+    "title": "Kathy Life Insurance",
     "alt_titles": [
-        "K clothes"
+        "K Life Insurance"
     ],
     "weight": 1,
     "order": 21,
@@ -191,25 +192,31 @@
     ]
   },
   {
-    "title": "Kathy Life Insurance",
-    "alt_titles": [
-        "K Life Insurance"
-    ],
+    "title": "Water",
+    "alt_titles": [],
     "weight": 1,
     "order": 22,
-    "tags": [
-    ]
+    "tags": []
   },
   {
-    "title": "Water",
+    "title": "Taxes",
+    "alt_titles": [],
     "weight": 1,
     "order": 23,
     "tags": []
   },
   {
-    "title": "Slush",
+    "title": "Charity",
+    "alt_titles": [],
     "weight": 1,
     "order": 24,
+    "tags": []
+  },
+  {
+    "title": "Slush",
+    "alt_titles": [],
+    "weight": 1,
+    "order": 25,
     "tags": [],
     "default": true
   }

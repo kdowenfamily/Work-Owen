@@ -3,8 +3,6 @@
 import re, logging
 from copy import deepcopy
 from transaction import Transaction
-from bucket import Bucket
-from buckets import Buckets
 from teller import Teller
 
 logging.basicConfig(filename="savings.log",

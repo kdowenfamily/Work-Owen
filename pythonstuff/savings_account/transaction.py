@@ -2,6 +2,8 @@
 
 import csv, json, re, logging, os
 from dateutil.parser import parse
+from datetime import timedelta
+from copy import deepcopy
 from transaction_template import Transaction_Template
 from buckets import Buckets
 
@@ -56,6 +58,7 @@ class Transaction(object):
         self.note = xact_data.get('Memo/Notes', "")
         self.title = self.payee if self.payee else self.note
         self.buckets = Buckets.from_file(Buckets.BUCKETS_FILE)
+        self.subs = [] # If the transaction has sub-transactions, put them here
 
         log.info("Done setting up transaction: %s, %3.2f (from %s to %s)." % (self.date_time, self.init_total, self.payer, self.payee) )
 
@@ -69,6 +72,17 @@ class Transaction(object):
         if self.buckets.notes:
             ret += " - " + self.buckets.notes
         return ret
+
+    @property
+    def subs(self):
+        return self._subs
+
+    @subs.setter
+    def subs(self, new_subs):
+        self._subs = new_subs
+        self.buckets = Buckets.from_file(Buckets.BUCKETS_FILE)
+        for sub in new_subs:
+            self.buckets += sub.buckets
 
     # if the total in the file is different from the bucket total, add the diff to the default bucket
     def reconcile_total(self):
@@ -85,7 +99,34 @@ class Transaction(object):
 
     # make a list of the strings we need to print out
     def list_out(self):
-        return [str(self.date_time), self.description, "", str(self.total)] + self.buckets.list_out()
+        rets = []
+        subs = []
+        if self.subs:
+            for sub in self.subs:
+                self.buckets -= sub.buckets
+                subs.append(sub.list_out_as_sub(self.date_time))
+            ret = [str(self.date_time), self.description, "", str(self.total)] + self.buckets.list_out()
+            rets = [ret]
+            rets.extend(subs)
+        else:
+            ret = [str(self.date_time), self.description, "", str(self.total)] + self.buckets.list_out()
+            rets = [ret]
+        return rets
+
+    # make a list of the strings we need to print out, as a sub-transaction
+    def list_out_as_sub(self, date_of_master=None):
+        # make temporary alterations
+        otitle = self.title
+        self.title = "- %s (%s)" % (self.title, str(self.date_time))
+        odate = self.date_time
+        self.date_time = date_of_master + timedelta(hours=1)
+        ret = [str(self.date_time), self.description, "", str(self.total)] + self.buckets.list_out()
+
+        # undo the alterations, in case we need to do this again
+        self.title = otitle
+        self.date_time = odate
+
+        return ret
 
     def titles(self):
         preamble = ",".join(("Date", "Transaction", "Running Total", "Total"))

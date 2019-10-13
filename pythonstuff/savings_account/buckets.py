@@ -126,7 +126,7 @@ class Buckets(object):
         bucket.default = True
 
     def find(self, number=0):
-        if not number:
+        if ((not number) or (abs(int(number)) > len(self.contents))):
             return None
 
         title = self.ordered_titles[int(number) - 1]
@@ -202,6 +202,12 @@ class Buckets(object):
             self.sort_buckets()
 
         return self
+
+    def __isub__(self, other_buckets):
+        obkts = deepcopy(other_buckets)
+        for bkt in obkts.contents:
+            bkt.negate()
+        return self.__iadd__(obkts)
 
     def __eq__(self, other_buckets):
         for title in self.ordered_titles:
