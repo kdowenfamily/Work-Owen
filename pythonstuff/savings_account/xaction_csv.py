@@ -11,27 +11,21 @@ log = logging.getLogger(__name__)
 
 # A list of transactions from a CSV file.
 class XactionCsv(object):
-    def __init__(self, in_file="", teller=None):
+    def __init__(self, in_file=""):
         log.info("Parsing CSV of transactions, %s." % in_file)
-        self.teller = teller
         self.grand_total = 0.0
         self.start_balance = 0.0
         self.end_balance = 0.0
         self.start_date = None
 
-        # identify the account type
-        source_account = ""
-        if ('saving' in in_file) or ('spending' in in_file):
-            source_account = "savings"
-        elif 'cc' in in_file:
-            source_account = "credit card"
-
         # create a Transaction for each row
         rows = self._parse_csv(in_file)
-        self.transactions = self._parse_rows(source_account, rows)
+        self.raw_transactions = self._parse_rows(rows)
 
-        log.info("Done parsing CSV of transactions, %d transactions." % len(self.transactions))
+        log.info("Done parsing CSV of transactions, %d transactions." % len(self.raw_transactions))
 
+    # Find the header row and match every value to its header.
+    # Return a list of [{header1 : value1}, {header2 : value2},...]
     def _parse_csv(self, in_file=""):
         in_data = False
         headers = []
@@ -78,8 +72,11 @@ class XactionCsv(object):
 
         return useful
 
-    # The rows are each a dict:{"head1" : "val1", "head2": "val2", ...}
-    def _parse_rows(self, source_account="", rows=[]):
+    # The input rows are each a list of dicts: [{"head1" : "val1"}, {"head2": "val2"}, ...]
+    # Normalize these rows.  Separate out the metadata, and put the rest of 
+    # the dicts into a "buckets" sub-list.
+    # Return the list of raw-transaction dictionariess.
+    def _parse_rows(self, rows=[]):
         xactions = []
 
         for row in rows:
@@ -109,26 +106,26 @@ class XactionCsv(object):
 
             # create the transaction
             if xact_data:
-                xactions.append(self.teller.process_transaction(source_account, xact_data))
+                xactions.append(xact_data)
 
         return xactions
 
-    def verify(self):
+    def _verify(self):
         ret = 0.0
         bckts = Buckets.from_file(Buckets.BUCKETS_FILE) # re-initialize
 
-        for xact in self.transactions:
-            ret += xact.total
-            bckts += xact.buckets
+        for xact in self.raw_transactions:
+            ret += xact['Amount']
+            bckts += Buckets(xact['buckets'])
 
         print "Expected %.2f, got %.2f from totals" % (self.grand_total, ret)
         print "Expected %.2f, got %.2f from buckets" % (self.grand_total, bckts.total)
-        print str(len(self.transactions)) + " total transactions\n"
+        print str(len(self.raw_transactions)) + " total transactions\n"
 
     def __str__(self):
         ret = ""
-        for xaction in sorted(self.transactions, key=lambda k: k.date_time):
-            ret += str(xaction.show()) + "\n"
+        for xaction in sorted(self.raw_transactions, key=lambda k: k['Date']):
+            ret += str(xaction) + "\n"
         return ret
 
 if __name__ == "__main__":
@@ -145,8 +142,7 @@ if __name__ == "__main__":
     csv = XactionCsv(in_file=X_FILES[4])
     print
     print "Input file is " + X_FILES[4] + "\n"
-    print "Output file is /tmp/xaction.csv\n"
     with open("/tmp/xaction.csv", 'w') as f:
-        f.write(csv.transactions[0].titles() + "\n")
         f.write(str(csv))
-    csv.verify()
+    print "Output file is /tmp/xaction.csv\n"
+    csv._verify()

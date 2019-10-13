@@ -7,11 +7,11 @@
   "buckets": [
   {
     "title": "Home Maintenance",
-    "total": 290.00
+    "total": 280.00
   },
   {
     "title": "Home Improvement",
-    "total": 195.00
+    "total": 190.00
   },
   {
     "title": "Oil",
@@ -86,16 +86,8 @@
     "total": 0
   },
   {
-    "title": "Kathy Wardrobe",
-    "total": 0
-  },
-  {
     "title": "Kathy Life Insurance",
     "total": 15.00
-  },
-  {
-    "title": "Slush",
-    "total": 0
   },
   {
     "title": "Grammy",
@@ -106,8 +98,16 @@
     "total": 92.50
   },
   {
-      "title": "Cash Flow",
-      "total": 0.00
+    "title": "Taxes",
+    "total": 5
+  },
+  {
+    "title": "Charity",
+    "total": 10
+  },
+  {
+    "title": "Slush",
+    "total": 0
   }
   ]
 }

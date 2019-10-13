@@ -8,7 +8,6 @@ from teller import Teller
 from manager import Manager
 from transaction import Transaction
 from start_transaction import Start_Transaction
-from xaction_csv import XactionCsv
 
 
 logging.basicConfig(filename="savings.log",
@@ -25,6 +24,8 @@ class Savings(object):
         self.transactions = []
         self.snapshots = []
         self.teller = Teller()
+        self.sv_expert = Teller("Susie Q")
+        self.manager = Manager()
         log.info("Finished savings account, %s." % name)
 
     @property
@@ -35,17 +36,17 @@ class Savings(object):
     def read_history(self, savings_record=''):
         if not savings_record:
             return
-        savings_now = XactionCsv(savings_record, self.teller)
-        self._add_transactions(savings_now.transactions)
+        savings_now, statement = self.sv_expert.process_statement(savings_record)
+        self._add_transactions(savings_now)
 
     # feed in all the latest transaction files from Quicken
     def read_latest_transactions(self, transaction_files=[]):
         for csv_file in transaction_files:
-            nt = XactionCsv(csv_file, self.teller)
-            if ((not self.transactions) and nt.start_balance):
+            new_trs, sttmnt = self.sv_expert.process_statement(csv_file)
+            if ((not self.transactions) and sttmnt.start_balance):
                 # no earlier savings-account spreadsheet; create a start row
-                self._add_transactions([Start_Transaction("Savings", nt.start_date, nt.start_balance)])
-            self._add_transactions(nt.transactions)
+                self._add_transactions([Start_Transaction("Savings", sttmnt.start_date, sttmnt.start_balance)])
+            self._add_transactions(new_trs)
 
     # let the user manually re-balance the buckets
     def rebalance(self):
@@ -62,6 +63,17 @@ class Savings(object):
         zero_set = self.buckets.dupe()
         for xact in self.transactions:
             xact.buckets += zero_set
+
+    # go back and make sure all transactions are unique
+    def prune_transactions(self):
+        rets = []
+        for xact in sorted(self.transactions, key=lambda k: k.date_time):
+            if (rets and xact.total == rets[-1].total and xact.date_time == rets[-1].date_time):
+                # same date and total?! Mistake - move along...
+                continue
+            prev = xact
+            rets.append(xact)
+        self.transactions = rets
 
     def _take_snapshot(self, xaction=None):
         for xaction in self.transactions:
@@ -83,7 +95,8 @@ class Savings(object):
             csv_writer.writerow(self.transactions[-1].titles().split(",")) # titles
             csv_writer.writerow(["", "Running Total", "", str(self.total)] + self.buckets.list_out())
             for xaction in sorted(self.transactions, key=lambda k: k.date_time):
-                csv_writer.writerow(xaction.list_out())
+                my_list = xaction.list_out()
+                csv_writer.writerows(my_list)
 
     def __str__(self):
         ret = "Name:  %s\n" % self.name
@@ -103,6 +116,7 @@ if __name__ == "__main__":
     sv.read_history(args.savings)
     sv.read_latest_transactions(args.quicken)
     sv.equalize_transactions()
+    sv.prune_transactions()
     if args.edit:
         sv.rebalance()
 

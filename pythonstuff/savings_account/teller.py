@@ -3,10 +3,11 @@
 import csv, json, re, logging, os
 from dateutil.parser import parse
 from copy import deepcopy
-from transaction_template import Transaction_Template
 from transaction import Transaction
+from transaction_template import Transaction_Template
 from start_transaction import Start_Transaction
 from buckets import Buckets
+from xaction_csv import XactionCsv
 
 logging.basicConfig(filename="savings.log",
         format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",
@@ -30,6 +31,24 @@ class Teller(object):
         self._divide_into_buckets(xact_data)
         self.transaction.reconcile_total()
         return self.transaction
+
+    # process a bank statement with the user
+    # return a tuple: the list of transactions, and the statement form (XactionCsv)
+    def process_statement(self, csv_file="", st_type="Credit Card"):
+        log.info("Processing bank-statement file, %s." % csv_file)
+        transactions = []
+        sttmt = None
+
+        if csv_file:
+            # parse the CSV File
+            sttmt = XactionCsv(csv_file)
+
+            # convert the rows of normalized dictionaries to transactions
+            sid = Teller("Sid") # ask a new Teller to do this
+            for xact_data in sttmt.raw_transactions:
+                transactions.append(sid.process_transaction(st_type, xact_data))
+
+        return transactions, sttmt
 
     # divide the total into buckets as needed
     def _divide_into_buckets(self, xact_data={}):
@@ -75,9 +94,30 @@ class Teller(object):
             ave_xact = Start_Transaction("Savings", "", amt)
             t.buckets += ave_xact.buckets
 
-    def _deposit_to_one_bucket(self, bkt=None, t=None, still_needed=0.0, user_words=[]):
-        if not (bkt and t and still_needed and user_words):
+    def _credit_card_breakdown(self, cmd="", t=None, still_needed=0.0, user_words=[]):
+        if not (cmd and t and still_needed and user_words):
+            return []
+
+        # read what the user wants
+        csv = user_words.pop(0)
+        if user_words:
+            _ = user_words.pop(0)
+            start = user_words.pop(0)
+            _ = user_words.pop(0)
+            end = user_words.pop(0)
+
+        # Process the credit-card transactions. TODO - use start and end as a date range
+        print "Passing this off to another teller to process the credit card."
+        t.subs, _ = self.process_statement(csv)
+        print "Done processing %d credit-card transactions." % len(t.subs)
+
+    def _deposit_to_one_bucket(self, cmd="", t=None, still_needed=0.0, user_words=[]):
+        if not (cmd and t and still_needed and user_words):
             return (user_words, 0)
+
+        # find the bucket and money, and add the money to the bucket
+        bkt = t.buckets.find(int(cmd))
+        if not bkt: return
         amt = user_words.pop(0)
         if re.search(r'^a$', amt, re.IGNORECASE):
             amt = still_needed
@@ -87,7 +127,10 @@ class Teller(object):
             log.error("Bad amount for bucket %s; expected 'a' or dollar amount, got '%s'" % (bkt.title, amt))
             return user_words
         bkt.total += amt
-        return (user_words, amt)
+
+        # record any comment
+        if user_words and len(user_words) > 1:
+            self._record_comment(bkt, user_words, amt)
 
     def _record_comment(self, bkt=None, user_words=[], deposit=0.0):
         if not (bkt and user_words):
@@ -108,25 +151,21 @@ class Teller(object):
         # split up the answer
         raw_answer.strip()
         user_words = raw_answer.split()
-        if not user_words:
-            print self._help_str()
-            return
 
         # nibble off and assess the first word
-        cmd = user_words.pop(0)
+        cmd = ""
+        if user_words:
+            cmd = user_words.pop(0)
         t = self.transaction
         if re.search(r'^n$', cmd, re.IGNORECASE):
             if abs(still_needed) >= 0.01:
                 t.buckets.get_default().total += still_needed
-        elif re.search(r'^\?$', cmd):
-            print self._help_str()
         elif re.search(r'^d$', cmd, re.IGNORECASE):
             self._divide_evenly(t, still_needed, user_words)
+        elif re.search(r'^c$', cmd):
+            self._credit_card_breakdown(cmd, t, still_needed, user_words)
         elif re.search(r'^\d+$', cmd):
-            bkt = t.buckets.find(int(cmd))
-            user_words, dep = self._deposit_to_one_bucket(bkt, t, still_needed, user_words)
-            if user_words and len(user_words) > 1:
-                self._record_comment(bkt, user_words, dep)
+            self._deposit_to_one_bucket(cmd, t, still_needed, user_words)
         else:
             print self._help_str()
 
@@ -138,12 +177,13 @@ class Teller(object):
         ret += "\tEither of the above, plus comment:   <bucket-number> [a | amount] -c <comment with spaces>\n"
         ret += "\tDivide <amount> based on budget:     d <amount>\n"
         ret += "\tDivide the rest based on budget:     d\n"
+        ret += "\tCredit card - break down:            c <path-to-cc.csv-file> -s <start-date> -e <end-date>\n"
         ret += "\tNext (add the rest to the default):  n\n"
         ret += "\tPrint this help:                     ?\n"
         return ret
 
     def _interactive_xaction_str(self):
-        # show the transaction info
+        # summarize the transaction info
         t = self.transaction
         ret = "On " + str(t.date_time) + ", '" + str(t.init_total) + "' transferred from '" + t.payer + "' to '" + t.payee + "'"
         if t.tags:

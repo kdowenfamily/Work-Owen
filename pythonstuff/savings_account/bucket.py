@@ -170,6 +170,11 @@ class Bucket(object):
                 (self.total == another_bucket.total)
             )
 
+    def negate(self):
+        n = self.total
+        if n:
+            self.total = -n
+
     def transact(self, dollars):
         self.total = self.total + dollars
         return self
