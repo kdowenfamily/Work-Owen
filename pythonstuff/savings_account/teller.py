@@ -179,7 +179,7 @@ class Teller(object):
         ret += "\tEither of the above, plus comment:   <bucket-number> [a | amount] -c <comment with spaces>\n"
         ret += "\tDivide <amount> based on budget:     d <amount>\n"
         ret += "\tDivide the rest based on budget:     d\n"
-        ret += "\tCredit card - break down:            c <path-to-cc.csv-file> -s <start-date> -e <end-date>\n"
+        ret += "\tCredit card - break down:            c <path-to-cc.csv-file> range <start-date> - <end-date>\n"
         ret += "\tNext (add the rest to the default):  n\n"
         ret += "\tPrint this help:                     ?\n"
         return ret
