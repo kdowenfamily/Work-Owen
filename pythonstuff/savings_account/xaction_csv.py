@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import csv, json, re, logging
+from dateutil.parser import parse
 from buckets import Buckets
 from bucket import Bucket
 
@@ -11,12 +12,14 @@ log = logging.getLogger(__name__)
 
 # A list of transactions from a CSV file.
 class XactionCsv(object):
-    def __init__(self, in_file=""):
+    def __init__(self, in_file="", start="1/1/1970", end="1/1/2500"):
         log.info("Parsing CSV of transactions, %s." % in_file)
         self.grand_total = 0.0
         self.start_balance = 0.0
         self.end_balance = 0.0
         self.start_date = None
+        self.start_range = start
+        self.end_range = end
 
         # create a Transaction for each row
         rows = self._parse_csv(in_file)
@@ -105,10 +108,17 @@ class XactionCsv(object):
                     xact_data = row
 
             # create the transaction
-            if xact_data:
+            if xact_data and self._in_range(xact_data['Date']):
                 xactions.append(xact_data)
 
         return xactions
+
+    def _in_range(self, offered_date):
+        start = parse(self.start_range)
+        end = parse(self.end_range)
+        date = parse(offered_date)
+        return (start <= date) and (date <= end)
+
 
     def _verify(self):
         ret = 0.0

@@ -34,14 +34,14 @@ class Teller(object):
 
     # process a bank statement with the user
     # return a tuple: the list of transactions, and the statement form (XactionCsv)
-    def process_statement(self, csv_file="", st_type="Credit Card"):
+    def process_statement(self, csv_file="", st_type="Credit Card", start="1/1/1970", end="1/1/2500"):
         log.info("Processing bank-statement file, %s." % csv_file)
         transactions = []
         sttmt = None
 
         if csv_file:
             # parse the CSV File
-            sttmt = XactionCsv(csv_file)
+            sttmt = XactionCsv(csv_file, start, end)
 
             # convert the rows of normalized dictionaries to transactions
             sid = Teller("Sid") # ask a new Teller to do this
@@ -100,6 +100,8 @@ class Teller(object):
 
         # read what the user wants
         csv = user_words.pop(0)
+        start = ""
+        end = ""
         if user_words:
             _ = user_words.pop(0)
             start = user_words.pop(0)
@@ -108,7 +110,7 @@ class Teller(object):
 
         # Process the credit-card transactions. TODO - use start and end as a date range
         print "Passing this off to another teller to process the credit card."
-        t.subs, _ = self.process_statement(csv)
+        t.subs, _ = self.process_statement(csv, start=start, end=end)
         print "Done processing %d credit-card transactions." % len(t.subs)
 
     def _deposit_to_one_bucket(self, cmd="", t=None, still_needed=0.0, user_words=[]):
@@ -177,7 +179,7 @@ class Teller(object):
         ret += "\tEither of the above, plus comment:   <bucket-number> [a | amount] -c <comment with spaces>\n"
         ret += "\tDivide <amount> based on budget:     d <amount>\n"
         ret += "\tDivide the rest based on budget:     d\n"
-        ret += "\tCredit card - break down:            c <path-to-cc.csv-file> -s <start-date> -e <end-date>\n"
+        ret += "\tCredit card - break down:            c <path-to-cc.csv-file> range <start-date> - <end-date>\n"
         ret += "\tNext (add the rest to the default):  n\n"
         ret += "\tPrint this help:                     ?\n"
         return ret
