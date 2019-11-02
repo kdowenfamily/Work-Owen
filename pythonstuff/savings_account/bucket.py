@@ -15,6 +15,7 @@ DEFAULT_BUCKET = {
                 "title": "",
                 "alt_titles": [],
                 "tags": [],
+                "category": "",
                 "comments": [],
                 "default": False
                 }
@@ -41,6 +42,7 @@ class Bucket(object):
         self.title = bucket.get("title", DEFAULT_BUCKET['title'])
         self.alt_titles = bucket.get("alt_titles", DEFAULT_BUCKET['alt_titles'])
         self.tags = bucket.get("tags", DEFAULT_BUCKET['tags'])
+        self.category = bucket.get("category", DEFAULT_BUCKET['category'])
         self.comments = bucket.get("comments", DEFAULT_BUCKET['comments'])
         self.default = bucket.get("default", DEFAULT_BUCKET['default'])
 
@@ -107,6 +109,14 @@ class Bucket(object):
                 self._tags.append(str(tag))    # incase it is unicode
 
     @property
+    def category(self):
+        return self._category
+
+    @category.setter
+    def category(self, category):
+        self._category = str(category)          # incase it is unicode
+
+    @property
     def comments(self):
         return self._comments
 
@@ -138,6 +148,7 @@ class Bucket(object):
         ret += "Weight:         " + str(self.weight) + "\n"
         ret += "Order:          " + str(self.order) + "\n"
         ret += "Tags:           " + str(self.tags) + "\n"
+        ret += "Category:       " + str(self.category) + "\n"
         if self.default:
             ret += "Default bucket\n"
 

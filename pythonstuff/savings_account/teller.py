@@ -69,10 +69,7 @@ class Teller(object):
         t = self.transaction
         not_done = 1
         while (not_done):
-            total_so_far = t.buckets.total
-            total_needed = t.init_total
-            still_needed = total_needed - total_so_far
-
+            still_needed = t.init_total - t.total
             if abs(still_needed) <= 0.01:
                 not_done = 0
                 print "\nFinal:"
@@ -100,18 +97,22 @@ class Teller(object):
 
         # read what the user wants
         csv = user_words.pop(0)
+        if not os.path.exists(csv):
+            print "No such file, %s." % csv
+            return []
         start = ""
         end = ""
         if user_words:
-            _ = user_words.pop(0)
+            user_words.pop(0)
             start = user_words.pop(0)
-            _ = user_words.pop(0)
+            user_words.pop(0)
             end = user_words.pop(0)
 
-        # Process the credit-card transactions. TODO - use start and end as a date range
-        print "Passing this off to another teller to process the credit card."
-        t.subs, _ = self.process_statement(csv, start=start, end=end)
-        print "Done processing %d credit-card transactions." % len(t.subs)
+        # Process the credit-card transactions.
+        print "Processing the new credit-card statement, %s." % csv
+        cc_subs, _ = self.process_statement(csv, start=start, end=end)
+        t.more_subs(cc_subs)
+        print "Done processing %d credit-card transactions." % len(cc_subs)
 
     def _deposit_to_one_bucket(self, cmd="", t=None, still_needed=0.0, user_words=[]):
         if not (cmd and t and still_needed and user_words):
@@ -144,6 +145,7 @@ class Teller(object):
             bkt.add_comment(comment)
         else:
             log.error("Unclear - is this a comment? Expected '-c', got '%s'" % arg)
+            print "Unclear comment, dropped: %s." % arg
 
     def _query_user(self, still_needed):
         print self._interactive_xaction_str()
@@ -190,6 +192,8 @@ class Teller(object):
         ret = "On " + str(t.date_time) + ", '" + str(t.init_total) + "' transferred from '" + t.payer + "' to '" + t.payee + "'"
         if t.tags:
             ret += "\n\tWith these tags: " + t.tags
+        if t.category:
+            ret += "\n\tCategory: " + t.category
         if t.note:
             ret += "\n\tNote:  " + t.note
 

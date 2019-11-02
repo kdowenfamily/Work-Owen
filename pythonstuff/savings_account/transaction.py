@@ -55,6 +55,7 @@ class Transaction(object):
         self.payer = source_account
         self.payee = xact_data.get('Payee', "")
         self.tags = xact_data.get('Tags', "")
+        self.category = xact_data.get('Category', "")
         self.note = xact_data.get('Memo/Notes', "")
         self.title = self.payee if self.payee else self.note
         self.buckets = Buckets.from_file(Buckets.BUCKETS_FILE)
@@ -84,6 +85,12 @@ class Transaction(object):
         for sub in new_subs:
             self.buckets += sub.buckets
 
+    # add more subs to your current set, and add their buckets to yours
+    def more_subs(self, new_subs):
+        self._subs.extend(new_subs)
+        for sub in new_subs:
+            self.buckets += sub.buckets
+
     # if the total in the file is different from the bucket total, add the diff to the default bucket
     def reconcile_total(self):
         if not (self.init_total and (self.init_total != self.total)):
@@ -100,8 +107,8 @@ class Transaction(object):
     # make a list of the strings we need to print out
     def list_out(self):
         rets = []
-        subs = []
         if self.subs:
+            subs = []
             for sub in self.subs:
                 self.buckets -= sub.buckets
                 subs.append(sub.list_out_as_sub(self.date_time))
