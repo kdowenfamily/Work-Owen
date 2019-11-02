@@ -103,8 +103,8 @@ class XactionCsv(object):
                 xact_data['buckets'] = bkts
             else:
                 # this is a CSV from Quicken
-                if not (('Tags' in row.keys()) and ("Savings" not in row['Tags'])):
-                    # avoid rows where: there are tags, and "Savings" isn't one of them
+                if not (('Tags' in row.keys()) and (not re.search(r"savings", row['Tags'], re.IGNORECASE))):
+                    # avoid rows where: there are tags, and "savings" isn't one of them
                     xact_data = row
 
             # create the transaction

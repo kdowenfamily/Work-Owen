@@ -69,7 +69,8 @@ class Savings(object):
         rets = []
         for xact in sorted(self.transactions, key=lambda k: k.date_time):
             if (rets and xact.total == rets[-1].total and xact.date_time == rets[-1].date_time):
-                # same date and total?! Mistake - move along...
+                # same date and total?! Mistake - undo it and move along...
+                self.buckets -= xact.buckets
                 continue
             prev = xact
             rets.append(xact)

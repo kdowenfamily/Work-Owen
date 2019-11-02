@@ -22,6 +22,7 @@ class Start_Transaction(Transaction):
                     "Amount": amount,
                     "Payee": "",
                     "Tags": "",
+                    "Category": "",
                     "Memo/Notes": "Restart budget",
                     "buckets": {}
                 }
