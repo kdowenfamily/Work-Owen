@@ -60,6 +60,7 @@ class Transaction(object):
         self.title = self.payee if self.payee else self.note
         self.buckets = Buckets.from_file(Buckets.BUCKETS_FILE)
         self.subs = [] # If the transaction has sub-transactions, put them here
+        self.xact_data = xact_data # keep the raw data around
 
         log.info("Done setting up transaction: %s, %3.2f (from %s to %s)." % (self.date_time, self.init_total, self.payer, self.payee) )
 
@@ -106,34 +107,17 @@ class Transaction(object):
 
     # make a list of the strings we need to print out
     def list_out(self):
-        rets = []
+        log.debug("Listing transaction for %s." % self.title)
+        mysubs = []
         if self.subs:
-            subs = []
-            for sub in self.subs:
-                self.buckets -= sub.buckets
-                subs.append(sub.list_out_as_sub(self.date_time))
-            ret = [str(self.date_time), self.description, "", str(self.total)] + self.buckets.list_out()
-            rets = [ret]
-            rets.extend(subs)
-        else:
-            ret = [str(self.date_time), self.description, "", str(self.total)] + self.buckets.list_out()
-            rets = [ret]
-        return rets
+            for mysub in self.subs:
+                self.buckets -= mysub.buckets
+                mysubs.extend(mysub.list_out())
 
-    # make a list of the strings we need to print out, as a sub-transaction
-    def list_out_as_sub(self, date_of_master=None):
-        # make temporary alterations
-        otitle = self.title
-        self.title = "- %s (%s)" % (self.title, str(self.date_time))
-        odate = self.date_time
-        self.date_time = date_of_master + timedelta(hours=1)
         ret = [str(self.date_time), self.description, "", str(self.total)] + self.buckets.list_out()
-
-        # undo the alterations, in case we need to do this again
-        self.title = otitle
-        self.date_time = odate
-
-        return ret
+        rets = [ret]
+        rets.extend(mysubs)
+        return rets
 
     def titles(self):
         preamble = ",".join(("Date", "Transaction", "Running Total", "Total"))
