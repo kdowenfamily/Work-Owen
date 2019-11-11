@@ -213,10 +213,17 @@
     "tags": []
   },
   {
+    "title": "Rainy Day",
+    "alt_titles": ["Cash Flow"],
+    "weight": 1,
+    "order": 25,
+    "tags": []
+  },
+  {
     "title": "Slush",
     "alt_titles": [],
     "weight": 1,
-    "order": 25,
+    "order": 26,
     "tags": [],
     "default": true
   }

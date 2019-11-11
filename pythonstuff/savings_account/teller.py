@@ -4,6 +4,7 @@ import csv, json, re, logging, os
 from dateutil.parser import parse
 from copy import deepcopy
 from transaction import Transaction
+from sub_transaction import SubTransaction
 from transaction_template import Transaction_Template
 from start_transaction import Start_Transaction
 from buckets import Buckets
@@ -110,7 +111,12 @@ class Teller(object):
 
         # Process the credit-card transactions.
         print "Processing the new credit-card statement, %s." % csv
-        cc_subs, _ = self.process_statement(csv, start=start, end=end)
+        cc_trans, xact_csv = self.process_statement(csv, start=start, end=end)
+        cc_subs = []
+        for sub in cc_trans:
+            my_sub = SubTransaction(sub.payer, sub.xact_data, t)
+            my_sub.buckets = sub.buckets
+            cc_subs.append(my_sub)
         t.more_subs(cc_subs)
         print "Done processing %d credit-card transactions." % len(cc_subs)
 
