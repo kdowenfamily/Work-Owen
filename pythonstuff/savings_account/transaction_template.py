@@ -44,7 +44,7 @@ class Transaction_Template(object):
 
         if self.buckets:
             bkt_num = 1
-            values = ", ".join((self.title, str(self.buckets.get_total()),  self.payee, self.payer))
+            values = ", ".join((self.title, str(self.buckets.total),  self.payee, self.payer))
             for title in self.buckets.ordered_titles:
                 bkt = self.buckets.find(number = bkt_num)
                 values += ", " + str(bkt.total)

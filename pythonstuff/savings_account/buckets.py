@@ -37,7 +37,10 @@ class Buckets(object):
 
     @property
     def total(self):
-        return self.get_total()
+        tot = 0
+        for bkt in self.contents:
+            tot += bkt.total
+        return tot
 
     @property
     def notes(self):
@@ -101,12 +104,6 @@ class Buckets(object):
 
         for dropped in to_drop:
             self.drop_bucket(dropped)
-
-    def get_total(self):
-        tot = 0
-        for bkt in self.contents:
-            tot += bkt.total
-        return tot
 
     def get_default(self):
         for bkt in self.contents:

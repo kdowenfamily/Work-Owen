@@ -22,7 +22,7 @@ DEFAULT_BUCKET = {
 
 class Bucket(object):
     @classmethod
-    def string2float(cls, st):
+    def string2dollars(cls, st):
         money = str(st)                         # incase it is already a number
         money = money.strip()                   # remove any leading/trailing space
         money = money.strip("$")                # remove any leading '$'
@@ -52,7 +52,7 @@ class Bucket(object):
 
     @total.setter
     def total(self, total):
-        self._total = Bucket.string2float(total)
+        self._total = Bucket.string2dollars(total)
 
     @property
     def order(self):
@@ -86,7 +86,6 @@ class Bucket(object):
     def alt_titles(self, alt_titles):
         if not isinstance(alt_titles, list):
             alt_titles = [alt_titles]
-
         self._alt_titles = []
         for atitle in alt_titles:
             self._alt_titles.append(str(atitle)) # incase it is unicode
@@ -179,16 +178,12 @@ class Bucket(object):
                 (self.title == another_bucket.title) and
                 (self.weight == another_bucket.weight) and
                 (self.total == another_bucket.total)
-            )
+        )
 
     def negate(self):
         n = self.total
-        if n:
+        if n:   # don't make "-0"
             self.total = -n
-
-    def transact(self, dollars):
-        self.total = self.total + dollars
-        return self
 
 if __name__ == "__main__":
     bk = Bucket({"title":"Dan's Bucket", "total":"1,000,000"})
