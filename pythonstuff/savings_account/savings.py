@@ -22,7 +22,7 @@ class Savings(object):
         self.name = name
         self.buckets = Buckets.from_file(Buckets.BUCKETS_FILE)
         self.transactions = []
-        self.snapshots = []
+        self.sig2trans = {}
         self.teller = Teller()
         self.sv_expert = Teller("Susie Q")
         self.manager = Manager()
@@ -56,6 +56,7 @@ class Savings(object):
     def _add_transactions(self, xacts=[]):
         for xact in xacts:
             self.buckets += xact.buckets
+            self.sig2trans[(xact.date_time, xact.total)] = xact
         self.transactions.extend(xacts)
 
     # go back and make all transactions have the final set of buckets
@@ -63,29 +64,6 @@ class Savings(object):
         zero_set = self.buckets.dupe()
         for xact in self.transactions:
             xact.buckets += zero_set
-
-    # go back and make sure all transactions are unique
-    def prune_transactions(self):
-        rets = []
-        for xact in sorted(self.transactions, key=lambda k: k.date_time):
-            if (rets and xact.total == rets[-1].total and xact.date_time == rets[-1].date_time):
-                # same date and total?! Mistake - undo it and move along...
-                self.buckets -= xact.buckets
-                continue
-            prev = xact
-            rets.append(xact)
-        self.transactions = rets
-
-    def _take_snapshot(self, xaction=None):
-        for xaction in self.transactions:
-            snapshot = {}
-            snapshot["date"] = xaction.date_time
-            snapshot["payer"] = xaction.payer
-            snapshot["payee"] = xaction.payee
-            snapshot["notes"] = xaction.notes
-            snapshot["total"] = xaction.total
-            snapshot["grand_total"] = self.total
-            snapshot["buckets"] = self.buckets
 
     # output the full history of transactions, in CSV format
     def csv_out(self, out_file="/tmp/savings.csv"):
@@ -95,7 +73,7 @@ class Savings(object):
             csv_writer = csv.writer(f)
             csv_writer.writerow(self.transactions[-1].titles().split(",")) # titles
             csv_writer.writerow(["", "Running Total", "", str(self.total)] + self.buckets.list_out())
-            for xaction in sorted(self.transactions, key=lambda k: k.date_time):
+            for xaction in sorted(self.sig2trans.values(), key=lambda k: k.date_time):
                 my_list = xaction.list_out()
                 csv_writer.writerows(my_list)
 
@@ -117,7 +95,6 @@ if __name__ == "__main__":
     sv.read_history(args.savings)
     sv.read_latest_transactions(args.quicken)
     sv.equalize_transactions()
-    sv.prune_transactions()
     if args.edit:
         sv.rebalance()
 

@@ -29,7 +29,7 @@ class Transaction(object):
             if not (os.path.isfile(xact) and re.search(r'\.json\s*$', xact)):
                 continue
             x_template = Transaction_Template(xact)
-            cls.total2trTemplate[x_template.buckets.get_total()] = x_template
+            cls.total2trTemplate[x_template.buckets.total] = x_template
             if not (re.search(r'\d\d\d\d\.', xact)):
                 cls.masterPaychecks.append(x_template)
         log.info("Done parsing the paycheck breakdowns.")

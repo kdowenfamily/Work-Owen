@@ -57,18 +57,17 @@ class XactionCsv(object):
                     in_data = True
                     headers = row
                 elif ("Running Total" in row):
-                    self.grand_total = Bucket.string2float(row[GRAND_TOTAL_COL])
+                    self.grand_total = Bucket.string2dollars(row[GRAND_TOTAL_COL])
                 elif ("Balance:" in row):
                     if self.end_balance:
                         # This is past the last row, with the earliest transaction.
                         # Take the last row and make an implicit "start" transaction.
-                        # TODO - this is a kludge
-                        start_bal = Bucket.string2float(useful[-1]["Balance"])
-                        start_amt = Bucket.string2float(useful[-1]["Amount"])
+                        start_bal = Bucket.string2dollars(useful[-1]["Balance"])
+                        start_amt = Bucket.string2dollars(useful[-1]["Amount"])
                         self.start_balance = start_bal - start_amt
                         self.start_date = useful[-1]["Date"]
                     else:
-                        self.end_balance = Bucket.string2float(row[BALANCE_COL])
+                        self.end_balance = Bucket.string2dollars(row[BALANCE_COL])
 
                 if 'Total Inflows:' in row:
                     in_data = False 
@@ -88,7 +87,7 @@ class XactionCsv(object):
             # clean the raw data
             for rkey in row.keys():
                 if re.search("^[\s\,\(,\),\.\-\$\d]+$", row[rkey]):
-                    row[rkey] = Bucket.string2float(row[rkey])
+                    row[rkey] = Bucket.string2dollars(row[rkey])
 
             # prepare the data for creating a transaction
             if "Running Total" in row.keys():
