@@ -77,6 +77,18 @@ class Savings(object):
                 my_list = xaction.list_out()
                 csv_writer.writerows(my_list)
 
+    # make all dates progressive, so that the order in the CSV is constant
+    def kragle_order(self):
+        last_date = None
+        delta = timedelta(seconds=0)
+        for xaction in sorted(self.sig2trans.values(), key=lambda k: k.date_time):
+            if xaction.date_time == last_date:
+                delta += timedelta(seconds=1)
+                xaction.date_time += delta
+            else:
+                delta = timedelta(seconds=0)
+                last_date = xaction.date_time
+
     def __str__(self):
         ret = "Name:  %s\n" % self.name
         ret += "\n" + self.buckets.show() + "\n"
@@ -97,6 +109,7 @@ if __name__ == "__main__":
     sv.equalize_transactions()
     if args.edit:
         sv.rebalance()
+    sv.kragle_order()
 
     print
     sv.csv_out(args.outfile)

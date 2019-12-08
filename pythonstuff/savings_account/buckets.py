@@ -3,6 +3,7 @@
 import csv, json, re, logging
 from copy import deepcopy
 from bucket import Bucket
+from usd import USD
 
 logging.basicConfig(filename="savings.log",
         format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",
@@ -33,11 +34,11 @@ class Buckets(object):
         self.ordered_titles = []
         self.contents = []
         self.init_buckets(buckets)
-        log.info("Done setting up %s buckets, total of %.2f." % (len(self.contents), self.total))
+        log.info("Done setting up %s buckets, total of %s." % (len(self.contents), self.total))
 
     @property
     def total(self):
-        tot = 0
+        tot = USD(0)
         for bkt in self.contents:
             tot += bkt.total
         return tot
@@ -97,7 +98,7 @@ class Buckets(object):
             if bucket.title not in self.alias2title.keys():
                 continue
             real_title = self.alias2title[bucket.title]
-            log.debug("Pruning %s and adding %.2f to %s." % (bucket.title, bucket.total, real_title) )
+            log.debug("Pruning %s and adding %s to %s." % (bucket.title, bucket.total, real_title) )
             real_bkt = self.titles2buckets[real_title]
             real_bkt += bucket
             to_drop.append(bucket)
@@ -152,12 +153,13 @@ class Buckets(object):
             ct += 1
             ct_str = str(ct)
             bkt = self.titles2buckets[title]
-            ret += "%3d. %-24s %-6.2f" % (ct, bkt.title, bkt.total)
+            money_str = str(bkt.total)
+            ret += "%3d. %-24s %-6.2f" % (ct, bkt.title, float(money_str))
             if bkt.default:
                 ret += " (default)"
             ret += "\n"
 
-        ret += "\nTotal:  %.2f\n" % self.total
+        ret += "\nTotal:  %s\n" % self.total
 
         return ret
 
@@ -172,7 +174,7 @@ class Buckets(object):
     def list_out(self):
         ret = []
         for title in self.ordered_titles:
-            ret.append(str(self.titles2buckets[title].total))
+            ret.append(self.titles2buckets[title].total)
         return ret
 
     def __str__(self):

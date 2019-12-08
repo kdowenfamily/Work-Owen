@@ -1,11 +1,9 @@
 #!/usr/bin/python
 
-import csv, json, re, logging, os
+import logging
 from copy import deepcopy
-from transaction_template import Transaction_Template
 from transaction import Transaction
 from buckets import Buckets
-from bucket import Bucket
 
 logging.basicConfig(filename="savings.log",
         format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",

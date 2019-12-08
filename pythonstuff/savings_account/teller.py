@@ -1,14 +1,12 @@
 #!/usr/bin/python
 
-import csv, json, re, logging, os
-from dateutil.parser import parse
-from copy import deepcopy
+import re, logging, os
 from transaction import Transaction
 from sub_transaction import SubTransaction
-from transaction_template import Transaction_Template
 from start_transaction import Start_Transaction
 from buckets import Buckets
 from xaction_csv import XactionCsv
+from usd import USD
 
 logging.basicConfig(filename="savings.log",
         format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",
@@ -54,9 +52,9 @@ class Teller(object):
     # divide the total into buckets as needed
     def _divide_into_buckets(self, xact_data={}):
         t = self.transaction
-        if t.init_total in Transaction.total2trTemplate.keys():
+        if str(t.init_total) in Transaction.total2trTemplate.keys():
             # this looks like a paycheck, or similar
-            t_tmplt = Transaction.total2trTemplate[t.init_total]
+            t_tmplt = Transaction.total2trTemplate[str(t.init_total)]
             t.buckets += t_tmplt.buckets
             t.title = t_tmplt.title
         elif ('buckets' in xact_data.keys()):
@@ -85,7 +83,7 @@ class Teller(object):
         if len(user_words):
             dollars = user_words.pop(0)
             if re.search(r'-?^\d+(\.\d+)?$', dollars):
-                amt = float(dollars)
+                amt = USD(dollars)
             else:
                 log.error("Unclear amount for -d; expected dollar amount, got '%s'" % dollars)
         if amt:
@@ -131,7 +129,7 @@ class Teller(object):
         if re.search(r'^a$', amt, re.IGNORECASE):
             amt = still_needed
         elif re.search(r'^-?\d+(\.\d+)?$', amt):
-            amt = float(amt)
+            amt = USD(amt)
         else:
             log.error("Bad amount for bucket %s; expected 'a' or dollar amount, got '%s'" % (bkt.title, amt))
             return user_words
@@ -147,7 +145,7 @@ class Teller(object):
         arg = user_words.pop(0)
         if re.search(r'^-c$', arg, re.IGNORECASE):
             comment = " ".join(user_words)
-            comment += " (%.2f)" % deposit
+            comment += " (%s)" % deposit
             bkt.add_comment(comment)
         else:
             log.error("Unclear - is this a comment? Expected '-c', got '%s'" % arg)
@@ -210,7 +208,7 @@ class Teller(object):
         t = self.transaction
         ret = "\n\nBuckets:\n"
         ret += t.buckets.show()
-        ret += "\nRemaining: %3.2f\n\n" % still_needed
+        ret += "\nRemaining: %s\n\n" % still_needed
 
         return ret
 

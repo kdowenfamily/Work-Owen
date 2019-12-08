@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
-import csv, json, re, logging
+import csv, re, logging
 from dateutil.parser import parse
 from buckets import Buckets
-from bucket import Bucket
+from usd import USD
 
 logging.basicConfig(filename="savings.log",
         format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",
@@ -35,7 +35,7 @@ class XactionCsv(object):
         boring = ['', 'Scheduled', 'Split']
         useful = []
         GRAND_TOTAL_COL = 3 # this is the column where the grand total lives in the "Running Total" row
-        BALANCE_COL = 7 # this is the column where the balance lives in the "Balance" row
+        BALANCE_COL = 7     # this is the column where the balance lives in the "Balance" row
 
         if not in_file:
             return useful
@@ -43,6 +43,7 @@ class XactionCsv(object):
         with open(in_file, 'rb') as csvfile:
             reader = csv.reader(csvfile)
             for row in reader:
+                # get raw values matched up with their headers
                 if in_data and not ("Running Total" in row):
                     head_pos = 0
                     goodies = {}
@@ -53,21 +54,25 @@ class XactionCsv(object):
                     if goodies and goodies["Date"]:
                         useful.append(goodies)
         
+                # make switches based on row contents
                 if 'Date' in row:
+                    # top row for savings.py output or exported CSV from Quicken
                     in_data = True
                     headers = row
                 elif ("Running Total" in row):
-                    self.grand_total = Bucket.string2dollars(row[GRAND_TOTAL_COL])
+                    # second row for savings.py output only - contains grand total
+                    self.grand_total = USD(row[GRAND_TOTAL_COL])
                 elif ("Balance:" in row):
+                    # this must be an exported CSV from Quicken, last row
                     if self.end_balance:
                         # This is past the last row, with the earliest transaction.
                         # Take the last row and make an implicit "start" transaction.
-                        start_bal = Bucket.string2dollars(useful[-1]["Balance"])
-                        start_amt = Bucket.string2dollars(useful[-1]["Amount"])
+                        start_bal = USD(useful[-1]["Balance"])
+                        start_amt = USD(useful[-1]["Amount"])
                         self.start_balance = start_bal - start_amt
                         self.start_date = useful[-1]["Date"]
                     else:
-                        self.end_balance = Bucket.string2dollars(row[BALANCE_COL])
+                        self.end_balance = USD(row[BALANCE_COL])
 
                 if 'Total Inflows:' in row:
                     in_data = False 
@@ -87,12 +92,12 @@ class XactionCsv(object):
             # clean the raw data
             for rkey in row.keys():
                 if re.search("^[\s\,\(,\),\.\-\$\d]+$", row[rkey]):
-                    row[rkey] = Bucket.string2dollars(row[rkey])
+                    row[rkey] = USD(row[rkey])
 
             # prepare the data for creating a transaction
             if "Running Total" in row.keys():
                 # this is a savings-account sheet (custom-made)
-                xact_data['Amount'] = float(row.pop('Total'))
+                xact_data['Amount'] = row.pop('Total')
                 xact_data['Memo/Notes'] = row.pop('Transaction')
                 xact_data['Date'] = row.pop('Date')
                 xact_data['Running Total'] = row.pop('Running Total')

@@ -2,6 +2,7 @@
 
 import re, logging
 from copy import deepcopy
+from usd import USD
 
 logging.basicConfig(filename="savings.log",
         format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",
@@ -21,20 +22,6 @@ DEFAULT_BUCKET = {
                 }
 
 class Bucket(object):
-    @classmethod
-    def string2dollars(cls, st):
-        money = str(st)                         # incase it is already a number
-        money = money.strip()                   # remove any leading/trailing space
-        money = money.strip("$")                # remove any leading '$'
-        if re.search(r'^\(', money):
-            money = re.sub(r'^\(', "-", money)  # any leading "(" becomes "-"
-            money = re.sub(r'\)', "", money)    # the trailing ")" goes away
-        money = re.sub(r',', "", money)         # no commas
-        money = re.sub(r'^$', "0", money)       # a '' translates to 0
-        money = re.sub(r'^-$', "0", money)      # a '-' translates to 0
-        money = re.sub(r'^-\$', "-", money)     # a '-$x.yz' translates to '-x.yz'
-        return round(float(money), 2)           # only penny precision, please
-
     def __init__(self, bucket=DEFAULT_BUCKET):
         self.total = bucket.get("total", DEFAULT_BUCKET['total'])
         self.order = bucket.get("order", DEFAULT_BUCKET['order'])
@@ -52,7 +39,7 @@ class Bucket(object):
 
     @total.setter
     def total(self, total):
-        self._total = Bucket.string2dollars(total)
+        self._total = USD(total)
 
     @property
     def order(self):
