@@ -1,11 +1,10 @@
 #!/usr/bin/python
 
-import csv, json, re, logging, os
+import re, logging, os
 from dateutil.parser import parse
-from datetime import timedelta
-from copy import deepcopy
 from transaction_template import Transaction_Template
 from buckets import Buckets
+from usd import USD
 
 logging.basicConfig(filename="savings.log",
         format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",
@@ -20,25 +19,11 @@ class Transaction(object):
     total2trTemplate = {}
     masterPaychecks = []
 
-    # Load up all paychecks into memory, using their totals as keys
-    @classmethod
-    def get_regular_xfers(cls, paychk_dir=PAYCHECK_DIR):
-        log.info("Parsing the paycheck breakdowns in %s." % paychk_dir)
-        for fl in os.listdir(paychk_dir):
-            xact = os.path.join(paychk_dir, fl)
-            if not (os.path.isfile(xact) and re.search(r'\.json\s*$', xact)):
-                continue
-            x_template = Transaction_Template(xact)
-            cls.total2trTemplate[x_template.buckets.total] = x_template
-            if not (re.search(r'\d\d\d\d\.', xact)):
-                cls.masterPaychecks.append(x_template)
-        log.info("Done parsing the paycheck breakdowns.")
-
     def __init__(self, source_account="", xact_data={}):
         # make map of totals to 'template' transactions 
         # (eg, if total is YYY.ZZ, it must be Dan's paycheck, if it's AAA.BB, it's Kathy's)
         if not Transaction.total2trTemplate:
-            Transaction.get_regular_xfers()
+            self.get_regular_xfers(PAYCHECK_DIR)
 
         log.info("Creating transaction for %s." % source_account)
 
@@ -51,7 +36,7 @@ class Transaction(object):
         except AttributeError:
             log.error("Bad date string, %s." % xact_data.get('Date', ""))
             self.date_time = parse("1/1/2001")
-        self.init_total = xact_data.get('Amount', 0.0)
+        self.init_total = USD(xact_data.get('Amount', 0.0))
         self.payer = source_account
         self.payee = xact_data.get('Payee', "")
         self.tags = xact_data.get('Tags', "")
@@ -62,7 +47,20 @@ class Transaction(object):
         self.subs = [] # If the transaction has sub-transactions, put them here
         self.xact_data = xact_data # keep the raw data around
 
-        log.info("Done setting up transaction: %s, %3.2f (from %s to %s)." % (self.date_time, self.init_total, self.payer, self.payee) )
+        log.info("Done setting up transaction: %s, %s (from %s to %s)." % (self.date_time, self.init_total, self.payer, self.payee) )
+
+    # Load up all paychecks into memory, using their totals as keys
+    def get_regular_xfers(self, paychk_dir=PAYCHECK_DIR):
+        log.info("Parsing the paycheck breakdowns in %s." % paychk_dir)
+        for fl in os.listdir(paychk_dir):
+            xact = os.path.join(paychk_dir, fl)
+            if not (os.path.isfile(xact) and re.search(r'\.json\s*$', xact)):
+                continue
+            x_template = Transaction_Template(xact)
+            Transaction.total2trTemplate[str(x_template.buckets.total)] = x_template
+            if not (re.search(r'\d\d\d\d\.', xact)):
+                Transaction.masterPaychecks.append(x_template)
+        log.info("Done parsing the paycheck breakdowns.")
 
     @property
     def total(self):
@@ -96,14 +94,14 @@ class Transaction(object):
     def reconcile_total(self):
         if not (self.init_total and (self.init_total != self.total)):
             return
-        curr = "%.2f" % self.init_total
-        future = "%.2f" % self.total
-        diff = float(curr) - float(future)
-        if diff:
-            log.error("Original total: %.2f; new total: %.2f" % (self.init_total, self.total))
+        curr = self.init_total
+        future = self.total
+        diff = curr - future
+        if abs(diff) >= 1:
+            log.error("Original total: %s; new total: %s" % (self.init_total, self.total))
             def_bucket = self.buckets.get_default()
-            def_bucket.transact(diff)
-            log.error("Added %.2f to %s" % (diff, def_bucket.title))
+            def_bucket.total += diff
+            log.error("Added %s to %s" % (diff, def_bucket.title))
 
     # make a list of the strings we need to print out
     def list_out(self):
@@ -124,7 +122,7 @@ class Transaction(object):
         return preamble + "," + self.buckets.titles()
 
     def show(self):
-        return ",".join((str(self.date_time), self.title, "", str(self.total)))
+        return ",".join(str(self.date_time), self.title, "", str(self.total))
 
     def __str__(self):
         return ",".join(self.list_out())

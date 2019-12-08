@@ -4,6 +4,7 @@ import re, logging
 from copy import deepcopy
 from transaction import Transaction
 from teller import Teller
+from usd import USD
 
 logging.basicConfig(filename="savings.log",
         format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",
@@ -43,7 +44,7 @@ class Manager(Teller):
             # nibble off and assess the first word
             amt = user_words.pop(0)
             if re.search(r'^-?\d+(\.\d+)?$', amt):
-                amt = float(amt)
+                amt = USD(amt)
             elif re.search(r'^q$', amt, re.IGNORECASE):
                 quit = True
                 continue

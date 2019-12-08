@@ -1,11 +1,7 @@
 #!/usr/bin/python
 
-import csv, json, re, logging, os
-from dateutil.parser import parse
+import logging
 from datetime import timedelta
-from copy import deepcopy
-from transaction_template import Transaction_Template
-from buckets import Buckets
 from transaction import Transaction 
 
 logging.basicConfig(filename="savings.log",
@@ -32,7 +28,11 @@ class SubTransaction(Transaction):
         subtitle = self.title
         subdate = self.date_time
         self.title = "- %s (%s)" % (subtitle, subdate.strftime("%a, %m/%d/%y"))
-        self.date_time = self.parent.date_time + timedelta(hours=1)
+        # Measure the date in 100*years + day of year, call that "seconds", and add them to the date.
+        yr = subdate.year
+        day = subdate.timetuple().tm_yday
+        plus_secs = (100 * yr) + day
+        self.date_time = self.parent.date_time + timedelta(seconds=plus_secs)
         ret = [str(self.date_time), self.description, "", str(self.total)] + self.buckets.list_out()
 
         # undo the alterations, in case we need to do this again
