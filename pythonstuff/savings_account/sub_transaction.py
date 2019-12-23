@@ -18,7 +18,7 @@ class SubTransaction(Transaction):
         log.info("Creating sub-transaction for %s." % source_account)
         super(SubTransaction, self).__init__(source_account, xact_data)
         self.parent = parent
-        log.info("Done setting up sub-transaction: %s, %3.2f (from %s to %s)." 
+        log.info("Done setting up sub-transaction: %s, %s (from %s to %s)." 
                 % (self.date_time, self.init_total, self.payer, self.payee) )
 
     # make a list of the strings we need to print out, as a sub-transaction

@@ -61,6 +61,9 @@ class USD(object):
             return -my_abs
         return my_abs
 
+    def __neg__(self):
+        return -self._total
+
     def __eq__(self, other):
         return (self._total == other._total)
 
