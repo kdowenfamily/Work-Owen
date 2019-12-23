@@ -167,10 +167,16 @@ class Bucket(object):
                 (self.total == another_bucket.total)
         )
 
+    def __neg__(self):
+        my_neg = self._total
+        if my_neg != 0: # neg zero is just zero
+            return -my_neg
+        return my_neg
+
     def negate(self):
-        n = self.total
-        if n:   # don't make "-0"
-            self.total = -n
+        # negate the total in the current object
+        self.total = -self
+        return self
 
 if __name__ == "__main__":
     bk = Bucket({"title":"Dan's Bucket", "total":"1,000,000"})

@@ -187,7 +187,7 @@ class Buckets(object):
             if title in other_buckets.titles2buckets:
                 my_bkt += other_buckets.titles2buckets[title]
 
-        # from other: for all other buckets NOT in my set, insert them as new buckets
+        # from other: for all 'other' buckets NOT in the 'self' set, insert them as new buckets
         added_new = False
         for otitle in other_buckets.titles2buckets.keys():
             if otitle not in self.titles2buckets.keys():
