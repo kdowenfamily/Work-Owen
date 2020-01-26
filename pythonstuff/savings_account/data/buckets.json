@@ -23,6 +23,7 @@
   },
   {
     "title": "Oil",
+    "alt_titles": [],
     "weight": 1,
     "order": 3,
     "tags": [
@@ -31,24 +32,28 @@
   },
   {
     "title": "AAA",
+    "alt_titles": [],
     "weight": 1,
     "order": 4,
     "tags": []
   },
   {
     "title": "Pool Care",
+    "alt_titles": [],
     "weight": 1,
     "order": 5,
     "tags": []
   },
   {
     "title": "Lawn Care",
+    "alt_titles": [],
     "weight": 1,
     "order": 6,
     "tags": []
   },
   {
     "title": "Vacation",
+    "alt_titles": [],
     "weight": 1,
     "order": 7,
     "tags": [
@@ -57,6 +62,7 @@
   },
   {
     "title": "Party",
+    "alt_titles": [],
     "weight": 1,
     "order": 8,
     "tags": []
@@ -78,6 +84,7 @@
   },
   {
     "title": "Magazines",
+    "alt_titles": [],
     "weight": 1,
     "order": 11,
     "tags": [
@@ -86,6 +93,7 @@
   },
   {
     "title": "Car Insurance",
+    "alt_titles": [],
     "weight": 1,
     "order": 12,
     "tags": []
@@ -101,6 +109,7 @@
   },
   {
     "title": "Car Savings",
+    "alt_titles": [],
     "weight": 1,
     "order": 14,
     "tags": []
@@ -194,31 +203,38 @@
     "tags": []
   },
   {
-    "title": "Taxes",
+    "title": "Contacts",
     "alt_titles": [],
     "weight": 1,
     "order": 23,
     "tags": []
   },
   {
-    "title": "Charity",
+    "title": "Taxes",
     "alt_titles": [],
     "weight": 1,
     "order": 24,
     "tags": []
   },
   {
+    "title": "Charity",
+    "alt_titles": [],
+    "weight": 1,
+    "order": 25,
+    "tags": []
+  },
+  {
     "title": "Rainy Day",
     "alt_titles": ["Cash Flow"],
     "weight": 1,
-    "order": 25,
+    "order": 26,
     "tags": []
   },
   {
     "title": "Slush",
     "alt_titles": [],
     "weight": 1,
-    "order": 26,
+    "order": 27,
     "tags": [],
     "default": true
   }

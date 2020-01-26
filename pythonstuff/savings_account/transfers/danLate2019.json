@@ -7,7 +7,7 @@
   "buckets": [
   {
     "title": "Home Maintenance",
-    "total": 350.00
+    "total": 225.00
   },
   {
     "title": "Home Improvement",
@@ -47,7 +47,7 @@
   },
   {
     "title": "Magazines",
-    "total": 5.00
+    "total": 0.00
   },
   {
     "title": "Car Insurance",
@@ -82,12 +82,16 @@
     "total": 100.00
   },
   {
+    "title": "Kathy Hair",
+    "total": 0
+  },
+  {
     "title": "Kathy Life Insurance",
     "total": 15.00
   },
   {
     "title": "Grammy",
-    "total": 15.00
+    "total": 5.00
   },
   {
     "title": "Water",
@@ -99,11 +103,11 @@
   },
   {
     "title": "Taxes",
-    "total": 25.00
+    "total": 20.00
   },
   {
     "title": "Charity",
-    "total": 15.00
+    "total": 10.00
   },
   {
     "title": "Rainy Day",
