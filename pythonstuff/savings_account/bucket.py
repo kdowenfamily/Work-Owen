@@ -55,7 +55,10 @@ class Bucket(object):
 
     @weight.setter
     def weight(self, weight):
-        self._weight = float(weight)             # incase it is a string
+        if isinstance(weight, USD):
+            self._weight = weight.as_float()
+        else:
+            self._weight = float(weight)       # incase it is a string
 
     @property
     def title(self):

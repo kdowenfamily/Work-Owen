@@ -44,8 +44,8 @@ class Start_Transaction(Transaction):
         # for each bucket, get the percentage of the current total, store it in 'weight' property
         list_total = self.buckets.total     # this is a yearly total, from the sum of a year's paychecks
         for bkt in self.buckets.contents:
-            bkt.weight = bkt.total / list_total         # store the percentage
-            bkt.total = round(bkt.weight * amount)      # derive the *real* total from the amount given
+            bkt.weight = bkt.total.as_float() / list_total.as_float()   # store the percentage
+            bkt.total = round(amount.as_float() * bkt.weight)           # derive the *real* total from the amount given
 
         # reconcile the buckets with the initial total
         self.reconcile_total()

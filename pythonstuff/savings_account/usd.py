@@ -55,6 +55,12 @@ class USD(object):
         self._total *= other
         return self
 
+    def __div__(self, other):
+        if isinstance(other, USD):
+            other = other._total
+        my_res = self._total / other
+        return USD(my_res)
+
     def __abs__(self):
         my_abs = self._total
         if my_abs < 0:
@@ -67,9 +73,11 @@ class USD(object):
     def __eq__(self, other):
         return (self._total == other._total)
 
+    def as_float(self):
+        return float(self._total)/100
+
     def __str__(self):
-        num = float(self._total)/100
-        return "%.2f" % num
+        return "%.2f" % self.as_float()
 
 
 if __name__ == "__main__":

@@ -220,11 +220,11 @@ if __name__ == "__main__":
     sheila = Teller("Shiela")
     print sheila
 
-    sample = {"Date": "11/12/1965", "Amount": 250, "Payee": "savings"}
+    sample = {"Date": "11/12/1965", "Amount": 250.00, "Payee": "savings"}
     xact = sheila.process_transaction(source_account="savings", xact_data=sample)
-    sample = {"Date": "9/4/1965", "Amount": 2345, "Payee": "savings"}
+    sample = {"Date": "9/4/1965", "Amount": 2345.00, "Payee": "savings"}
     xact = sheila.process_transaction(source_account="savings", xact_data=sample)
-    sample = {"Date": "5/6/1995", "Amount": 1000, "Payee": "savings"}
+    sample = {"Date": "5/6/1995", "Amount": 1000.00, "Payee": "savings"}
     xact = sheila.process_transaction(source_account="savings", xact_data=sample)
-    sample = {"Date": "6/5/1998", "Amount": 1950, "Payee": "savings"}
+    sample = {"Date": "6/5/1998", "Amount": 1950.00, "Payee": "savings"}
     xact = sheila.process_transaction(source_account="savings", xact_data=sample)
