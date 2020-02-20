@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import csv, json, re, logging
+import csv, json, re, logging, os
 from copy import deepcopy
 from bucket import Bucket
 from usd import USD
@@ -12,7 +12,7 @@ log = logging.getLogger(__name__)
 
 
 class Buckets(object):
-    BUCKETS_FILE = "data/buckets.json"
+    BUCKETS_FILE = os.path.dirname(__file__) + "/data/buckets.json"
 
     @classmethod
     def from_file(cls, file_path=""):
@@ -30,6 +30,7 @@ class Buckets(object):
         log.info("Setting up %s raw buckets." % len(buckets))
         self.titles2buckets = {}
         self.tags2buckets = {}
+        self.cats2buckets = {}
         self.alias2title = {}
         self.ordered_titles = []
         self.contents = []
@@ -73,6 +74,12 @@ class Buckets(object):
                                 bkt.title, bkt.total)
             else:
                 self.tags2buckets[tag] = bkt
+        for cat in bkt.categories:
+            if cat in self.cats2buckets.keys():
+                log.warning("Dupe category: '%s' in config record '%s, %s'.", cat, 
+                                bkt.title, bkt.total)
+            else:
+                self.cats2buckets[cat] = bkt
         for al in bkt.alt_titles:
             self.alias2title[al] = bkt.title
 
@@ -91,8 +98,8 @@ class Buckets(object):
         for bucket in sorted(self.contents, key=lambda k: k.order):
             self.ordered_titles.append(bucket.title)
 
-    # merge all buckets with alias titles into the buckets with the real titles
     def prune(self):
+        # merge all buckets with alias titles into the buckets with the real titles
         to_drop = []
         for bucket in self.contents:
             if bucket.title not in self.alias2title.keys():

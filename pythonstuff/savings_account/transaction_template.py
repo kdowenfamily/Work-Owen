@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import csv, json, re, logging
+import csv, json, re, logging, os
 from bucket import Bucket
 from buckets import Buckets
 
@@ -10,7 +10,7 @@ logging.basicConfig(filename="savings.log",
 log = logging.getLogger(__name__)
 
 class Transaction_Template(object):
-    def __init__(self, template="transfers/dan.json"):
+    def __init__(self, template=os.path.dirname(__file__) + "/transfers/dan.json"):
         # read the JSON files and make one bucket per bucket dict
         self.payer = ""
         self.payee = ""
@@ -85,7 +85,7 @@ class Transaction_Template(object):
         return ret
 
 if __name__ == "__main__":
-    tts = Transaction_Template("transfers/dan.json")
+    tts = Transaction_Template()
     print tts._titles()
     print tts
     print

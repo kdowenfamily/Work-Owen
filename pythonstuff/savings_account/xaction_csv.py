@@ -111,7 +111,7 @@ class XactionCsv(object):
                     # avoid rows where: there are tags, and "savings" isn't one of them
                     xact_data = row
 
-            # create the transaction
+            # create one raw transaction
             if xact_data and self._in_range(xact_data['Date']):
                 xactions.append(xact_data)
 

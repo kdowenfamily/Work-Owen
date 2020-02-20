@@ -11,7 +11,7 @@ logging.basicConfig(filename="savings.log",
         level=logging.DEBUG)
 log = logging.getLogger(__name__)
 
-PAYCHECK_DIR = "./transfers/"
+PAYCHECK_DIR = os.path.dirname(__file__) + "/transfers/"
 
 # Represents one transfer, deposit, or payment.  This corresponds to 
 # one line in a Credit-Card or Savings-Account report.

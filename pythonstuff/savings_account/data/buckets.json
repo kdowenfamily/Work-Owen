@@ -7,6 +7,7 @@
     ],
     "weight": 1,
     "order": 1,
+    "categories": [],
     "tags": []
   },
   {
@@ -17,6 +18,11 @@
     ],
     "weight": 1,
     "order": 2,
+    "categories": [
+      "Furnishings",
+      "Home Improvement",
+      "Home:Home Improvement"
+    ],
     "tags": [
       "Home Improvement"
     ]
@@ -26,6 +32,7 @@
     "alt_titles": [],
     "weight": 1,
     "order": 3,
+    "categories": [],
     "tags": [
       "Utilities"
     ]
@@ -35,6 +42,7 @@
     "alt_titles": [],
     "weight": 1,
     "order": 4,
+    "categories": [],
     "tags": []
   },
   {
@@ -42,6 +50,7 @@
     "alt_titles": [],
     "weight": 1,
     "order": 5,
+    "categories": [],
     "tags": []
   },
   {
@@ -49,6 +58,7 @@
     "alt_titles": [],
     "weight": 1,
     "order": 6,
+    "categories": [],
     "tags": []
   },
   {
@@ -56,6 +66,10 @@
     "alt_titles": [],
     "weight": 1,
     "order": 7,
+    "categories": [
+      "Travel:Vacation",
+      "Vacation"
+    ],
     "tags": [
       "Travel"
     ]
@@ -65,6 +79,7 @@
     "alt_titles": [],
     "weight": 1,
     "order": 8,
+    "categories": [],
     "tags": []
   },
   {
@@ -80,6 +95,9 @@
     ],
     "weight": 1,
     "order": 10,
+    "categories": [
+        "Education:Tuition"
+    ],
     "tags": []
   },
   {
@@ -87,6 +105,7 @@
     "alt_titles": [],
     "weight": 1,
     "order": 11,
+    "categories": [],
     "tags": [
       "Magazines"
     ]
@@ -96,6 +115,7 @@
     "alt_titles": [],
     "weight": 1,
     "order": 12,
+    "categories": [],
     "tags": []
   },
   {
@@ -105,6 +125,9 @@
     ],
     "weight": 1,
     "order": 13,
+    "categories": [
+        "Auto & Transport:Service & Parts"
+    ],
     "tags": []
   },
   {
@@ -112,6 +135,7 @@
     "alt_titles": [],
     "weight": 1,
     "order": 14,
+    "categories": [],
     "tags": []
   },
   {
@@ -123,6 +147,10 @@
     ],
     "weight": 1,
     "order": 15,
+    "categories": [
+        "Shopping:Clothing",
+        "Clothing"
+    ],
     "tags": [
       "American Eagle Outfitters",
       "Urban Outfitters",
@@ -145,6 +173,13 @@
     ],
     "weight": 1,
     "order": 16,
+    "categories": [
+        "gift",
+        "gifts",
+        "Gifts",
+        "gifts & donations:gift",
+        "Gifts & Donations:Gift"
+    ],
     "tags": [
       "Gifts"
     ]
@@ -154,6 +189,7 @@
     "alt_titles": ["Swan's Taxes"],
     "weight": 1,
     "order": 17,
+    "categories": [],
     "tags": []
   },
   {
@@ -163,6 +199,7 @@
     ],
     "weight": 1,
     "order": 18,
+    "categories": [],
     "tags": [
     ]
   },
@@ -173,6 +210,7 @@
     ],
     "weight": 1,
     "order": 19,
+    "categories": [],
     "tags": []
   },
   {
@@ -182,6 +220,7 @@
     ],
     "weight": 1,
     "order": 20,
+    "categories": [],
     "tags": [
     ]
   },
@@ -192,6 +231,7 @@
     ],
     "weight": 1,
     "order": 21,
+    "categories": [],
     "tags": [
     ]
   },
@@ -200,6 +240,7 @@
     "alt_titles": [],
     "weight": 1,
     "order": 22,
+    "categories": [],
     "tags": []
   },
   {
@@ -207,6 +248,11 @@
     "alt_titles": [],
     "weight": 1,
     "order": 23,
+    "categories": [
+        "Eyecare",
+        "health & fitness:eyecare",
+        "Health & Fitness:Eyecare"
+    ],
     "tags": []
   },
   {
@@ -214,6 +260,7 @@
     "alt_titles": [],
     "weight": 1,
     "order": 24,
+    "categories": [],
     "tags": []
   },
   {
@@ -221,6 +268,11 @@
     "alt_titles": [],
     "weight": 1,
     "order": 25,
+    "categories": [
+        "Charity",
+        "gifts & donations:charity",
+        "Gifts & Donations:Charity"
+    ],
     "tags": []
   },
   {
@@ -228,6 +280,7 @@
     "alt_titles": ["Cash Flow"],
     "weight": 1,
     "order": 26,
+    "categories": [],
     "tags": []
   },
   {
@@ -235,6 +288,7 @@
     "alt_titles": [],
     "weight": 1,
     "order": 27,
+    "categories": [],
     "tags": [],
     "default": true
   }
