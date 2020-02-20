@@ -5,6 +5,7 @@ from transaction import Transaction
 from sub_transaction import SubTransaction
 from start_transaction import Start_Transaction
 from buckets import Buckets
+from bucket import Bucket
 from xaction_csv import XactionCsv
 from usd import USD
 
@@ -57,6 +58,11 @@ class Teller(object):
             t_tmplt = Transaction.total2trTemplate[str(t.init_total)]
             t.buckets += t_tmplt.buckets
             t.title = t_tmplt.title
+        elif t.category and (t.category in t.buckets.cats2buckets):
+            # Kathy left a conclusive note in Quicken - no asking
+            dest_bucket = t.buckets.cats2buckets[t.category]
+            new_bucket = Bucket({"title":dest_bucket.title,"total":xact_data["Amount"]})
+            dest_bucket += new_bucket
         elif ('buckets' in xact_data.keys()):
             # no asking - this is final
             t.buckets += Buckets(xact_data['buckets'])
