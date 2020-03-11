@@ -97,7 +97,7 @@ class Savings(object):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--name', '-n', help='Name for the Savings account', default='Savings')
-    parser.add_argument('--savings', '-s', help='Path to the current spreadsheed for the Savings account', default='')
+    parser.add_argument('--savings', '-s', help='Path to the current spreadsheed for the Savings account', default='./data/private/spending.csv')
     parser.add_argument('--quicken', '-q', nargs='*', help='Path(s) to Quicken transaction files', default='')
     parser.add_argument('--outfile', '-o', help='Path for the CSV output', default='/tmp/savings.csv')
     parser.add_argument('--edit', '-e', help='Edit the buckets at the end - trade between them', action='store_true')

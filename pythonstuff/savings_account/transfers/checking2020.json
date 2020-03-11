@@ -1,0 +1,77 @@
+{
+  "date": "*",
+  "per_year": 12,
+  "payer": "Checking",
+  "payee": "world",
+  "title": "Checking Monthly Budget",
+  "buckets": [
+  {
+    "title": "Spending Money",
+    "total": 400.00
+  },
+  {
+    "title": "Mortgage",
+    "total": 2400.00
+  },
+  {
+    "title": "Cable",
+    "total": 295.00
+  },
+  {
+    "title": "Cell Phones",
+    "total": 350.00
+  },
+  {
+    "title": "Electric",
+    "total": 250.00
+  },
+  {
+    "title": "Gym",
+    "total": 50.00
+  },
+  {
+    "title": "Hulu",
+    "total": 11.00
+  },
+  {
+    "title": "Netflix",
+    "total": 13.00
+  },
+  {
+    "title": "Car Payment",
+    "total": 400.00
+  },
+  {
+    "title": "Trash",
+    "total": 81.00
+  },
+  {
+    "title": "Amazon Prime",
+    "total": 12.00
+  },
+  {
+    "title": "Gasoline",
+    "total": 250.00
+  },
+  {
+    "title": "Hair",
+    "total": 150.00
+  },
+  {
+    "title": "Food & Supplies",
+    "total": 2000.00
+  },
+  {
+    "title": "Globe",
+    "total": 25.00
+  },
+  {
+    "title": "Nights Out",
+    "total": 200.00
+  },
+  {
+    "title": "Tolls",
+    "total": 65.00
+  }
+  ]
+}

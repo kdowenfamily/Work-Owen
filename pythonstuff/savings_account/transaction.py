@@ -19,7 +19,7 @@ class Transaction(object):
     total2trTemplate = {}
     masterPaychecks = []
 
-    def __init__(self, source_account="", xact_data={}):
+    def __init__(self, source_account="", xact_data={}, buckets=Buckets.from_file(Buckets.BUCKETS_FILE)):
         # make map of totals to 'template' transactions 
         # (eg, if total is YYY.ZZ, it must be Dan's paycheck, if it's AAA.BB, it's Kathy's)
         if not Transaction.total2trTemplate:
@@ -43,9 +43,9 @@ class Transaction(object):
         self.category = xact_data.get('Category', "")
         self.note = xact_data.get('Memo/Notes', "")
         self.title = self.payee if self.payee else self.note
-        self.buckets = Buckets.from_file(Buckets.BUCKETS_FILE)
         self.subs = [] # If the transaction has sub-transactions, put them here
         self.xact_data = xact_data # keep the raw data around
+        self.buckets = buckets.dupe()
 
         log.info("Done setting up transaction: %s, %s (from %s to %s)." % (self.date_time, self.init_total, self.payer, self.payee) )
 
@@ -122,7 +122,7 @@ class Transaction(object):
         return preamble + "," + self.buckets.titles()
 
     def show(self):
-        return ",".join(str(self.date_time), self.title, "", str(self.total))
+        return ",".join((str(self.date_time), self.title, "", str(self.total)))
 
     def __str__(self):
         return ",".join(self.list_out())

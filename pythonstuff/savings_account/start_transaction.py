@@ -1,8 +1,9 @@
 #!/usr/bin/python
 
-import logging
+import logging, os
 from copy import deepcopy
 from transaction import Transaction
+from transaction_template import Transaction_Template
 from buckets import Buckets
 
 logging.basicConfig(filename="savings.log",
@@ -13,7 +14,7 @@ log = logging.getLogger(__name__)
 # An initial transaction, based on a start date and a total amount in the savings account.
 # Average all the current paychecks, and give each bucket the percentage allotted by those paychecks.
 class Start_Transaction(Transaction):
-    def __init__(self, source_account="", start_date="1/1/2015", amount=0.00):
+    def __init__(self, source_account="", start_date="1/1/2015", amount=0.00, pay_ts=Transaction.masterPaychecks):
         # cobble together a dictionary
         my_data = {
                     "Date": start_date,
@@ -26,11 +27,11 @@ class Start_Transaction(Transaction):
                 }
 
         # initialize this like a normal transaction, buckets already done
-        super(Start_Transaction, self).__init__(source_account=source_account, xact_data=my_data)
+        super(Start_Transaction, self).__init__(source_account=source_account, xact_data=my_data, buckets=pay_ts[0].buckets)
 
         # for all master bucket lists, multiply the values by the 'per-year' number in the transaction
         blists = []
-        for mptt in Transaction.masterPaychecks:
+        for mptt in pay_ts:
             bkts = deepcopy(mptt.buckets)   # make a copy of the bucket list
             for bkt in bkts.contents:
                 bkt.total *= mptt.per_year
@@ -54,10 +55,12 @@ class Start_Transaction(Transaction):
 if __name__ == "__main__":
     bkts = Buckets.from_file(Buckets.BUCKETS_FILE)
 
-    tr1 = Start_Transaction(source_account="checking", start_date="11/12/2001", amount=32134.64)
+    from usd import USD
+    paycheck_templs = [Transaction_Template(os.path.dirname(__file__) + "/transfers/dan.json")]
+    tr1 = Start_Transaction(source_account="checking", start_date="11/12/2001", amount=USD(100.00), pay_ts=paycheck_templs)
     bkts += tr1.buckets
     print "\n\nStart Transaction:\n"
-    print tr1
+    print tr1.show()
     print "\nTransaction Breakdown:\n"
     print tr1.buckets.show()
     print "\nBucket Breakdown:\n"
