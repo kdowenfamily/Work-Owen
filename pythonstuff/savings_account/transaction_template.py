@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import csv, json, re, logging, os
+import csv, json, re, logging, os, argparse
 from bucket import Bucket
 from buckets import Buckets
 
@@ -85,7 +85,11 @@ class Transaction_Template(object):
         return ret
 
 if __name__ == "__main__":
-    tts = Transaction_Template()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--json', '-j', help='Path to JSON file', default='transfers/dan.json')
+    args = parser.parse_args()
+
+    tts = Transaction_Template(template=os.path.dirname(__file__) + "/" + args.json)
     print tts._titles()
     print tts
     print
