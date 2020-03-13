@@ -7,43 +7,43 @@
   "buckets": [
   {
     "title": "Spending Money",
-    "total": 400.00
+    "total": 60.00
   },
   {
     "title": "Mortgage",
-    "total": 2400.00
-  },
-  {
-    "title": "Cable",
-    "total": 295.00
-  },
-  {
-    "title": "Cell Phones",
     "total": 350.00
   },
   {
-    "title": "Electric",
-    "total": 250.00
-  },
-  {
-    "title": "Gym",
+    "title": "Cable",
     "total": 50.00
   },
   {
+    "title": "Cell Phones",
+    "total": 100.00
+  },
+  {
+    "title": "Electric",
+    "total": 50.00
+  },
+  {
+    "title": "Gym",
+    "total": 7.00
+  },
+  {
     "title": "Hulu",
-    "total": 11.00
+    "total": 10.00
   },
   {
     "title": "Netflix",
-    "total": 13.00
+    "total": 12.00
   },
   {
     "title": "Car Payment",
-    "total": 400.00
+    "total": 60.00
   },
   {
     "title": "Trash",
-    "total": 81.00
+    "total": 50.00
   },
   {
     "title": "Amazon Prime",
@@ -51,15 +51,15 @@
   },
   {
     "title": "Gasoline",
-    "total": 250.00
-  },
-  {
-    "title": "Hair",
     "total": 150.00
   },
   {
+    "title": "Hair",
+    "total": 25.00
+  },
+  {
     "title": "Food & Supplies",
-    "total": 2000.00,
+    "total": 500.00,
     "default": true
   },
   {
@@ -68,11 +68,11 @@
   },
   {
     "title": "Nights Out",
-    "total": 200.00
+    "total": 20.00
   },
   {
     "title": "Tolls",
-    "total": 65.00
+    "total": 50.00
   }
   ]
 }

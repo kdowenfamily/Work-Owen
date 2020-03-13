@@ -7,15 +7,15 @@
   "buckets": [
   {
     "title": "Home Maintenance",
-    "total": 350.00
+    "total": 165.00
   },
   {
     "title": "Home Improvement",
-    "total": 100.00
+    "total": 50.00
   },
   {
     "title": "Oil",
-    "total": 150.00
+    "total": 50.00
   },
   {
     "title": "AAA",
@@ -23,19 +23,19 @@
   },
   {
     "title": "Pool Care",
-    "total": 90.00
+    "total": 30.00
   },
   {
     "title": "Lawn Care",
-    "total": 55.00
+    "total": 25.00
   },
   {
     "title": "Vacation",
-    "total": 100.00
+    "total": 50.00
   },
   {
     "title": "Party",
-    "total": 50.00
+    "total": 25.00
   },
   {
     "title": "Babysitter",
@@ -43,7 +43,7 @@
   },
   {
     "title": "Kid Activities",
-    "total": 50.00
+    "total": 25.00
   },
   {
     "title": "Magazines",
@@ -51,23 +51,23 @@
   },
   {
     "title": "Car Insurance",
-    "total": 155.00
+    "total": 75.00
   },
   {
     "title": "Car Maintenance",
-    "total": 100.00
+    "total": 40.00
   },
   {
     "title": "Car Savings",
-    "total": 150.00
+    "total": 50.00
   },
   {
     "title": "Clothes",
-    "total": 200.00
+    "total": 40.00
   },
   {
     "title": "Dan Gifts",
-    "total": 100.00
+    "total": 20.00
   },
   {
     "title": "Dan Swan's Taxes",
@@ -75,11 +75,11 @@
   },
   {
     "title": "Dan Life Insurance",
-    "total": 30.00
+    "total": 10.00
   },
   {
     "title": "Kathy Gifts",
-    "total": 100.00
+    "total": 20.00
   },
   {
     "title": "Kathy Life Insurance",
@@ -91,11 +91,11 @@
   },
   {
     "title": "Water",
-    "total": 92.50
+    "total": 12.50
   },
   {
     "title": "Contacts",
-    "total": 25.00
+    "total": 15.00
   },
   {
     "title": "Taxes",
@@ -107,7 +107,7 @@
   },
   {
     "title": "Rainy Day",
-    "total": 100.00
+    "total": 40.00
   },
   {
     "title": "Slush",
