@@ -71,7 +71,9 @@ class USD(object):
         return -self._total
 
     def __eq__(self, other):
-        return (self._total == other._total)
+        if isinstance(other, USD):
+            return (self._total == other._total)
+        return (self._total == other)
 
     def as_float(self):
         return float(self._total)/100
