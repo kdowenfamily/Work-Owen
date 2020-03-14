@@ -11,19 +11,18 @@ logging.basicConfig(filename="savings.log",
         level=logging.DEBUG)
 log = logging.getLogger(__name__)
 
-PAYCHECK_DIR = os.path.dirname(__file__) + "/transfers/"
-
 # Represents one transfer, deposit, or payment.  This corresponds to 
 # one line in a Credit-Card or Savings-Account report.
 class Transaction(object):
     total2trTemplate = {}
     masterPaychecks = []
+    PAYCHECK_DIR = os.path.dirname(__file__) + "/transfers/private"
 
     def __init__(self, source_account="", xact_data={}, buckets=Buckets.from_file(Buckets.BUCKETS_FILE)):
         # make map of totals to 'template' transactions 
         # (eg, if total is YYY.ZZ, it must be Dan's paycheck, if it's AAA.BB, it's Kathy's)
         if not Transaction.total2trTemplate:
-            self.get_regular_xfers(PAYCHECK_DIR)
+            self.get_regular_xfers(Transaction.PAYCHECK_DIR)
 
         log.info("Creating transaction for %s." % source_account)
 
@@ -57,9 +56,11 @@ class Transaction(object):
             if not (os.path.isfile(xact) and re.search(r'\.json\s*$', xact)):
                 continue
             x_template = Transaction_Template(xact)
-            Transaction.total2trTemplate[str(x_template.buckets.total)] = x_template
-            if not (re.search(r'\d\d\d\d\.', xact)):
-                Transaction.masterPaychecks.append(x_template)
+            if not (x_template.buckets.total == 0):
+                # if the total is zero, ignore it
+                Transaction.total2trTemplate[str(x_template.buckets.total)] = x_template
+                if not (re.search(r'\d\d\d\d\.', xact)):
+                    Transaction.masterPaychecks.append(x_template)
         log.info("Done parsing the paycheck breakdowns.")
 
     @property

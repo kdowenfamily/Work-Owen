@@ -10,7 +10,9 @@ logging.basicConfig(filename="savings.log",
 log = logging.getLogger(__name__)
 
 class Transaction_Template(object):
-    def __init__(self, template=os.path.dirname(__file__) + "/transfers/dan.json"):
+    TEMPLATE_DIR = os.path.dirname(__file__) + "/transfers/private"
+
+    def __init__(self, template=TEMPLATE_DIR + "/dan.json"):
         # read the JSON files and make one bucket per bucket dict
         self.payer = ""
         self.payee = ""
@@ -86,7 +88,7 @@ class Transaction_Template(object):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--json', '-j', help='Path to JSON file', default='transfers/dan.json')
+    parser.add_argument('--json', '-j', help='Path to JSON file', default=Transaction_Template.TEMPLATE_DIR + '/dan.json')
     args = parser.parse_args()
 
     tts = Transaction_Template(template=os.path.dirname(__file__) + "/" + args.json)

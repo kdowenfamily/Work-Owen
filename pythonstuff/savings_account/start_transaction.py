@@ -56,8 +56,8 @@ if __name__ == "__main__":
     bkts = Buckets.from_file(Buckets.BUCKETS_FILE)
 
     from usd import USD
-    paycheck_templs = [Transaction_Template(os.path.dirname(__file__) + "/transfers/dan.json")]
-    tr1 = Start_Transaction(source_account="checking", start_date="11/12/2001", amount=USD(100.00), pay_ts=paycheck_templs)
+    paycheck_templs = [Transaction_Template(Transaction_Template.TEMPLATE_DIR + "/dan.json")]
+    tr1 = Start_Transaction(source_account="checking", start_date="11/12/2001", amount=USD(1000.00), pay_ts=paycheck_templs)
     bkts += tr1.buckets
     print "\n\nStart Transaction:\n"
     print tr1.show()

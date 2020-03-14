@@ -11,8 +11,6 @@ logging.basicConfig(filename="savings.log",
         level=logging.DEBUG)
 log = logging.getLogger(__name__)
 
-PAYCHECK_DIR = "./transfers/"
-
 # Represents a bank manager, to ask the user questions and alter transactions
 # as needed.
 class Manager(Teller):
