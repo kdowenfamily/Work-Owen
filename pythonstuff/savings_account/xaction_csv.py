@@ -129,11 +129,11 @@ class XactionCsv(object):
         bckts = Buckets.from_file(Buckets.BUCKETS_FILE) # re-initialize
 
         for xact in self.raw_transactions:
-            ret += xact['Amount']
+            ret += xact['Amount'].as_float()
             bckts += Buckets(xact['buckets'])
 
-        print "Expected %.2f, got %.2f from totals" % (self.grand_total, ret)
-        print "Expected %.2f, got %.2f from buckets" % (self.grand_total, bckts.total)
+        print "Expected %.2f, got %.2f from totals" % (self.grand_total.as_float(), ret)
+        print "Expected %.2f, got %.2f from buckets" % (self.grand_total.as_float(), bckts.total.as_float())
         print str(len(self.raw_transactions)) + " total transactions\n"
 
     def __str__(self):
