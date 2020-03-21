@@ -181,7 +181,7 @@ class Buckets(object):
     def list_out(self):
         ret = []
         for title in self.ordered_titles:
-            ret.append(self.titles2buckets[title].total)
+            ret.append(str(self.titles2buckets[title].total))
         return ret
 
     def __str__(self):
