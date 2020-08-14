@@ -32,7 +32,7 @@ class XactionCsv(object):
     def _parse_csv(self, in_file=""):
         in_data = False
         headers = []
-        boring = ['', 'Scheduled', 'Split']
+        boring = ['', 'Scheduled', 'Split', '\xef\xbb\xbf']
         useful = []
         GRAND_TOTAL_COL = 3 # this is the column where the grand total lives in the "Running Total" row
         BALANCE_COL = 7     # this is the column where the balance lives in the "Balance" row
@@ -150,13 +150,15 @@ if __name__ == "__main__":
             "data/private/spending2012.csv",
             "data/private/spending2016.csv",
             "data/private/sp2.csv",
-            "data/private/savings-xactions-export-2018-12-30.csv"
+            "data/private/savings-2020-05-08.csv",
+            "data/private/savings-2020-04-02.csv"
             ]
 
-    csv = XactionCsv(in_file=X_FILES[4])
+    csv = XactionCsv(in_file=X_FILES[3])
     print
-    print "Input file is " + X_FILES[4] + "\n"
+    print "Input file is " + X_FILES[3] + "\n"
     with open("/tmp/xaction.csv", 'w') as f:
         f.write(str(csv))
     print "Output file is /tmp/xaction.csv\n"
-    csv._verify()
+    if 'buckets' in csv.raw_transactions[0]:
+        csv._verify()
