@@ -32,7 +32,7 @@ class XactionCsv(object):
     def _parse_csv(self, in_file=""):
         in_data = False
         headers = []
-        boring = ['', 'Scheduled', 'Split']
+        boring = ['', 'Scheduled', 'Split', '\xef\xbb\xbf']
         useful = []
         GRAND_TOTAL_COL = 3 # this is the column where the grand total lives in the "Running Total" row
         BALANCE_COL = 7     # this is the column where the balance lives in the "Balance" row
@@ -129,11 +129,11 @@ class XactionCsv(object):
         bckts = Buckets.from_file(Buckets.BUCKETS_FILE) # re-initialize
 
         for xact in self.raw_transactions:
-            ret += xact['Amount']
+            ret += xact['Amount'].as_float()
             bckts += Buckets(xact['buckets'])
 
-        print "Expected %.2f, got %.2f from totals" % (self.grand_total, ret)
-        print "Expected %.2f, got %.2f from buckets" % (self.grand_total, bckts.total)
+        print "Expected %.2f, got %.2f from totals" % (self.grand_total.as_float(), ret)
+        print "Expected %.2f, got %.2f from buckets" % (self.grand_total.as_float(), bckts.total.as_float())
         print str(len(self.raw_transactions)) + " total transactions\n"
 
     def __str__(self):
@@ -150,13 +150,15 @@ if __name__ == "__main__":
             "data/private/spending2012.csv",
             "data/private/spending2016.csv",
             "data/private/sp2.csv",
-            "data/private/savings-xactions-export-2018-12-30.csv"
+            "data/private/savings-2020-05-08.csv",
+            "data/private/savings-2020-04-02.csv"
             ]
 
-    csv = XactionCsv(in_file=X_FILES[4])
+    csv = XactionCsv(in_file=X_FILES[3])
     print
-    print "Input file is " + X_FILES[4] + "\n"
+    print "Input file is " + X_FILES[3] + "\n"
     with open("/tmp/xaction.csv", 'w') as f:
         f.write(str(csv))
     print "Output file is /tmp/xaction.csv\n"
-    csv._verify()
+    if 'buckets' in csv.raw_transactions[0]:
+        csv._verify()
