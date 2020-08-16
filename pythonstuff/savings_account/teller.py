@@ -3,7 +3,7 @@
 import re, logging, os
 from transaction import Transaction
 from sub_transaction import SubTransaction
-from start_transaction import Start_Transaction
+from starter_transaction import Starter_Transaction
 from buckets import Buckets
 from bucket import Bucket
 from xaction_csv import XactionCsv
@@ -91,7 +91,7 @@ class Teller(object):
             else:
                 log.error("Unclear amount for -d; expected dollar amount, got '%s'" % dollars)
         if amt:
-            ave_xact = Start_Transaction("Savings", "", amt)
+            ave_xact = Starter_Transaction("Savings", "", amt)
             t.buckets += ave_xact.buckets
 
     def _credit_card_breakdown(self, cmd="", t=None, still_needed=0.0, user_words=[]):

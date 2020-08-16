@@ -7,7 +7,7 @@ from buckets import Buckets
 from teller import Teller
 from manager import Manager
 from transaction import Transaction
-from start_transaction import Start_Transaction
+from starter_transaction import Starter_Transaction
 
 
 logging.basicConfig(filename="savings.log",
@@ -45,7 +45,7 @@ class Savings(object):
             new_trs, sttmnt = self.sv_expert.process_statement(csv_file)
             if ((not self.transactions) and sttmnt.start_balance):
                 # no earlier savings-account spreadsheet; create a start row
-                self._add_transactions([Start_Transaction("Savings", sttmnt.start_date, sttmnt.start_balance)])
+                self._add_transactions([Starter_Transaction("Savings", sttmnt.start_date, sttmnt.start_balance)])
             self._add_transactions(new_trs)
 
     # let the user manually re-balance the buckets
