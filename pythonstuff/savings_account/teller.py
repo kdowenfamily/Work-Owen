@@ -9,7 +9,7 @@ from bucket import Bucket
 from xaction_csv import XactionCsv
 from usd import USD
 
-logging.basicConfig(filename="savings.log",
+logging.basicConfig(filename="/var/log/savings/savings.log",
         format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",
         level=logging.DEBUG)
 log = logging.getLogger(__name__)
@@ -32,7 +32,7 @@ class Teller(object):
 
     # process a bank statement with the user
     # return a tuple: the list of transactions, and the statement form (XactionCsv)
-    def process_statement(self, csv_file="", st_type="Credit Card", start="1/1/1970", end="1/1/2500"):
+    def process_statement(self, csv_file="", st_type="Credit Card", start="1970-01-01", end="2500-12-31"):
         log.info("Processing bank-statement file, %s." % csv_file)
         transactions = []
         sttmt = None
@@ -103,12 +103,14 @@ class Teller(object):
         if not os.path.exists(csv):
             print "No such file, %s." % csv
             return []
-        start = ""
-        end = ""
+        start = "1970-01-01"    # default: start at dawn of time
+        end = "2500-12-31"      # default: end at end of days
         if user_words:
             user_words.pop(0)
+        if user_words:          # if there are words left, take next 2
             start = user_words.pop(0)
             user_words.pop(0)
+        if user_words:          # if there are still words left, take next
             end = user_words.pop(0)
 
         # Process the credit-card transactions.
