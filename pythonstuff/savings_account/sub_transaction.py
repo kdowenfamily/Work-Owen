@@ -1,10 +1,10 @@
 #!/usr/bin/python
 
-import logging
+import logging, re
 from datetime import timedelta
 from transaction import Transaction 
 
-logging.basicConfig(filename="savings.log",
+logging.basicConfig(filename="/var/log/savings/savings.log",
         format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",
         level=logging.DEBUG)
 log = logging.getLogger(__name__)
@@ -16,42 +16,55 @@ class SubTransaction(Transaction):
         log.info("Creating sub-transaction for %s." % source_account)
         super(SubTransaction, self).__init__(source_account, xact_data)
         self.parent = parent
+        self.subdate = self.date_time
+        self.subtitle = self._indent_subtitle("%s (%s)" % (self.title, self.subdate.strftime("%a, %m/%d/%y")))
+        self.title = self.title + " (sub)"
+        self.date_time = self.parent.date_time
+        self._increase_date()
         log.info("Done setting up sub-transaction: %s, %s (from %s to %s)." 
                 % (self.date_time, self.init_total, self.payer, self.payee) )
+
+    def _increase_date(self):
+        log.debug("fixing up the sub-transaction date")
+        yr = self.subdate.year
+        day = self.subdate.timetuple().tm_yday
+        plus_secs = 3600 + yr + day
+        self.date_time = self.date_time + timedelta(seconds=plus_secs)
+
+    def _indent_subtitle(self, title):
+        if re.search(r'^\s*- ', title):
+            return title
+        else:
+            return "- " + title
+
+    @property
+    def description(self):
+        ret = self.subtitle
+        if self.buckets.notes:
+            ret += self._indent_subtitle(self.buckets.notes)
+        return ret
 
     # make a list of the strings we need to print out, as a sub-transaction
     def list_out(self):
         log.debug("Listing sub-transaction for %s." % self.title)
-        # make temporary alterations
-        subtitle = self.title
-        subdate = self.date_time
-        self.title = "- %s (%s)" % (subtitle, subdate.strftime("%a, %m/%d/%y"))
-        # Measure the date in 100*years + day of year, call that "seconds", and add them to the date.
-        yr = subdate.year
-        day = subdate.timetuple().tm_yday
-        plus_secs = (100 * yr) + day
-        self.date_time = self.parent.date_time + timedelta(seconds=plus_secs)
-        ret = [str(self.date_time), self.description, "", str(self.total)] + self.buckets.list_out()
-
-        # undo the alterations, in case we need to do this again
-        self.title = subtitle
-        self.date_time = subdate
-
-        return [ret]
+        return [str(self.date_time), self.description, "", str(self.total)] + self.buckets.list_out()
 
 
 if __name__ == "__main__":
     sample = {"Date": "11/12/1965", "Amount": 250, "Payee": "savings"}
     tr1 = Transaction(source_account="checking", xact_data=sample)
     print tr1.titles()
-    print tr1.show()
+    print tr1.list_out()
+    print
 
-    sample = {"Date": "9/4/1965", "Amount": 610, "Payee": "savings"}
-    tr2 = Transaction(source_account="checking", xact_data=sample)
-    print tr2.titles()
-    print tr2.show()
+    sample2 = {"Date": "9/4/1965", "Amount": 610, "Payee": "savings"}
+    str1 = SubTransaction(source_account="checking", xact_data=sample2, parent=tr1)
 
-    sample = {"Date": "7/23/19", "Amount": 2000, "Payee": "savings"}
-    tr3 = Transaction(source_account="checking", xact_data=sample)
-    print tr3.titles()
-    print tr3.show()
+    sample3 = {"Date": "7/23/19", "Amount": 2100.00, "Payee": "savings"}
+    str2 = SubTransaction(source_account="checking", xact_data=sample3, parent=tr1)
+
+    tr1.extend_subs([str1, str2])
+    print tr1.titles()
+    tr_list = tr1.list_out()
+    for tr in tr_list:
+        print tr

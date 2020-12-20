@@ -12,7 +12,7 @@ log = logging.getLogger(__name__)
 
 # A list of transactions from a CSV file.
 class XactionCsv(object):
-    def __init__(self, in_file="", start="1/1/1970", end="1/1/2500"):
+    def __init__(self, in_file="", start="1970-01-01", end="2500-12-31"):
         log.info("Parsing CSV of transactions, %s." % in_file)
         self.grand_total = 0.0
         self.start_balance = 0.0
@@ -32,7 +32,7 @@ class XactionCsv(object):
     def _parse_csv(self, in_file=""):
         in_data = False
         headers = []
-        boring = ['', 'Scheduled', 'Split', '\xef\xbb\xbf']
+        boring = ['', 'Scheduled', 'Split', '\xef\xbb\xbf'] # ignore columns with any of these headers
         useful = []
         GRAND_TOTAL_COL = 3 # this is the column where the grand total lives in the "Running Total" row
         BALANCE_COL = 7     # this is the column where the balance lives in the "Balance" row

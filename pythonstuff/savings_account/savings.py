@@ -10,7 +10,7 @@ from transaction import Transaction
 from starter_transaction import Starter_Transaction
 
 
-logging.basicConfig(filename="savings.log",
+logging.basicConfig(filename="/var/log/savings/savings.log",
         format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",
         level=logging.DEBUG)
 log = logging.getLogger(__name__)
@@ -32,36 +32,42 @@ class Savings(object):
     def total(self):
         return self.buckets.total
 
-    # seed the buckets and the total with the older savings-account record
+    # seed the buckets and the total from the current savings-account record
     def read_history(self, savings_record=''):
         if not savings_record:
             return
         savings_now, statement = self.sv_expert.process_statement(savings_record)
-        self._add_transactions(savings_now)
+        self._extend_transactions(savings_now)
 
-    # feed in all the latest transaction files from Quicken
+    # feed in all the new transaction files from Quicken
     def read_latest_transactions(self, transaction_files=[]):
         for csv_file in transaction_files:
             new_trs, sttmnt = self.sv_expert.process_statement(csv_file)
             if ((not self.transactions) and sttmnt.start_balance):
                 # no earlier savings-account spreadsheet; create a start row
-                self._add_transactions([Starter_Transaction("Savings", sttmnt.start_date, sttmnt.start_balance)])
-            self._add_transactions(new_trs)
+                self._extend_transactions([Starter_Transaction("Savings", sttmnt.start_date, sttmnt.start_balance)])
+            self._extend_transactions(new_trs)
 
     # let the user manually re-balance the buckets
     def rebalance(self):
         date = str(self.transactions[-1].date_time + timedelta(hours=1))
-        self._add_transactions([self.manager.play_in_vault(self.buckets, date)])
+        self._extend_transactions([self.manager.play_in_vault(self.buckets, date)])
 
-    def _add_transactions(self, xacts=[]):
+    # extend our list of transactions with some new ones
+    def _extend_transactions(self, xacts=[]):
         for xact in xacts:
             self.buckets += xact.buckets
             self.sig2trans[(xact.date_time, xact.total)] = xact
         self.transactions.extend(xacts)
 
-    # go back and make all transactions have the final set of buckets
+    # Different transactions may have different sets of buckets;
+    # at the beginning of the year, you may have been saving for 
+    # Little League, by mid-year, you might be saving for Christmas.
+    # As transactions are read in, the master set of buckets is 
+    # the union of all bucket lists (with both Little League and Xmas).
+    # Go back and make all transactions have the final set of buckets.
     def equalize_transactions(self):
-        zero_set = self.buckets.dupe()
+        zero_set = self.buckets.dupe() # make an empty set of all buckets
         for xact in self.transactions:
             xact.buckets += zero_set
 
