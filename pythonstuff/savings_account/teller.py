@@ -26,9 +26,9 @@ class Teller(object):
     # process one transaction with the user
     def process_transaction(self, source_account="", xact_data={}):
         self.transaction = Transaction(source_account, xact_data)
-        self._divide_into_buckets(xact_data)
-        self.transaction.reconcile_total()
-        return self.transaction
+        if not self.transaction.buckets_filled:
+            # this amount didn't default to any bucket set - ask the user
+            self._loop_buckets()
 
     # process a bank statement with the user
     # return a tuple: the list of transactions, and the statement form (XactionCsv)
@@ -43,30 +43,27 @@ class Teller(object):
 
             # convert the rows of normalized dictionaries to transactions
             sid = Teller("Sid") # ask a new Teller to do this
+            sub_owner = None    # latest sub-transaction owner to be found
             for xact_data in sttmt.raw_transactions:
-                transactions.append(sid.process_transaction(st_type, xact_data))
+                self.process_transaction(st_type, xact_data)
+                full_trans = self.transaction
+
+                # re-link transactions with their sub-transactions
+                if (full_trans.is_owner):
+                    # this holds subs - just hold onto it
+                    sub_owner = full_trans
+                elif (self.transaction.is_sub and (sub_owner != None)):
+                    # this is a sub, and we previously held onto an owner
+                    next_sub = SubTransaction(full_trans.payer, full_trans.xact_data, sub_owner)  # make it a sub now
+                    sub_owner.extend_subs([next_sub])   # add this sub to the owner
+                else:
+                    # this is not a sub or an owner
+                    if sub_owner and sub_owner.subs:
+                        transactions.append(sub_owner)
+                        sub_owner = None
+                    transactions.append(full_trans)
 
         return transactions, sttmt
-
-    # divide the total into buckets as needed
-    def _divide_into_buckets(self, xact_data={}):
-        t = self.transaction
-        if str(t.init_total) in Transaction.total2trTemplate.keys():
-            # this looks like a paycheck, or similar
-            t_tmplt = Transaction.total2trTemplate[str(t.init_total)]
-            t.buckets += t_tmplt.buckets
-            t.title = t_tmplt.title
-        elif t.category and (t.category in t.buckets.cats2buckets):
-            # Kathy left a conclusive note in Quicken - no asking
-            dest_bucket = t.buckets.cats2buckets[t.category]
-            new_bucket = Bucket({"title":dest_bucket.title,"total":xact_data["Amount"]})
-            dest_bucket += new_bucket
-        elif ('buckets' in xact_data.keys()):
-            # no asking - this is final
-            t.buckets += Buckets(xact_data['buckets'])
-        else:
-            # this could be anything - ask the user
-            self._loop_buckets()
 
     def _loop_buckets(self):
         t = self.transaction
@@ -121,7 +118,7 @@ class Teller(object):
             my_sub = SubTransaction(sub.payer, sub.xact_data, t)
             my_sub.buckets = sub.buckets
             cc_subs.append(my_sub)
-        t.more_subs(cc_subs)
+        t.extend_subs(cc_subs)
         print "Done processing %d credit-card transactions." % len(cc_subs)
 
     def _deposit_to_one_bucket(self, cmd="", t=None, still_needed=0.0, user_words=[]):
@@ -227,10 +224,10 @@ if __name__ == "__main__":
     print sheila
 
     sample = {"Date": "11/12/1965", "Amount": 250.00, "Payee": "savings"}
-    xact = sheila.process_transaction(source_account="savings", xact_data=sample)
+    sheila.process_transaction(source_account="savings", xact_data=sample)
     sample = {"Date": "9/4/1965", "Amount": 2345.00, "Payee": "savings"}
-    xact = sheila.process_transaction(source_account="savings", xact_data=sample)
+    sheila.process_transaction(source_account="savings", xact_data=sample)
     sample = {"Date": "5/6/1995", "Amount": 1000.00, "Payee": "savings"}
-    xact = sheila.process_transaction(source_account="savings", xact_data=sample)
+    sheila.process_transaction(source_account="savings", xact_data=sample)
     sample = {"Date": "6/5/1998", "Amount": 1950.00, "Payee": "savings"}
-    xact = sheila.process_transaction(source_account="savings", xact_data=sample)
+    sheila.process_transaction(source_account="savings", xact_data=sample)

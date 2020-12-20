@@ -32,7 +32,7 @@ class XactionCsv(object):
     def _parse_csv(self, in_file=""):
         in_data = False
         headers = []
-        boring = ['', 'Scheduled', 'Split', '\xef\xbb\xbf']
+        boring = ['', 'Scheduled', 'Split', '\xef\xbb\xbf'] # ignore columns with any of these headers
         useful = []
         GRAND_TOTAL_COL = 3 # this is the column where the grand total lives in the "Running Total" row
         BALANCE_COL = 7     # this is the column where the balance lives in the "Balance" row

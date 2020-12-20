@@ -17,6 +17,7 @@ class Transaction(object):
     total2trTemplate = {}
     masterPaychecks = []
     PAYCHECK_DIR = os.path.dirname(__file__) + "/transfers/private"
+    OWNER_MARKER = "with subtransactions below"  # marker for the transaction in the CSV file, incase it has subs
 
     def __init__(self, source_account="", xact_data={}, buckets=Buckets.from_file(Buckets.BUCKETS_FILE)):
         # make map of totals to 'template' transactions 
@@ -46,6 +47,9 @@ class Transaction(object):
         self.xact_data = xact_data # keep the raw data around
         self.buckets = buckets.dupe()
 
+        # try to divide the total amount given into buckets
+        self.divide_total_into_buckets()
+
         log.info("Done setting up transaction: %s, %s (from %s to %s)." % (self.date_time, self.init_total, self.payer, self.payee) )
 
     # Load up all paychecks into memory, using their totals as keys
@@ -70,8 +74,10 @@ class Transaction(object):
     @property
     def description(self):
         ret = self.title
-        if self.buckets.notes:
-            ret += " - " + self.buckets.notes
+#        if self.buckets.notes:
+#            ret += " - " + self.buckets.notes
+        if self.subs and (Transaction.OWNER_MARKER not in ret):
+            ret += " ("+ Transaction.OWNER_MARKER + ")"
         return ret
 
     @property
@@ -85,8 +91,46 @@ class Transaction(object):
         for sub in new_subs:
             self.buckets += sub.buckets
 
+    @property
+    def is_sub(self):
+        return (re.search(r'^\s*- ', self.note))
+
+    @property
+    def is_owner(self):
+        return (Transaction.OWNER_MARKER in self.note)
+
+    @property
+    def buckets_filled(self):
+        return self._buckets_filled
+
+    @buckets_filled.setter
+    def buckets_filled(self, buckets_filled):
+        self._buckets_filled = buckets_filled
+
+    # Divide the total amount given into individual buckets.
+    # Return True unless this is impossible (need user to tell us).
+    def divide_total_into_buckets(self):
+        if str(self.init_total) in Transaction.total2trTemplate.keys():
+            # this looks like a paycheck, or similar
+            t_tmplt = Transaction.total2trTemplate[str(self.init_total)]
+            self.buckets += t_tmplt.buckets
+            self.title = t_tmplt.title
+        elif self.category and (self.category in self.buckets.cats2buckets):
+            # Kathy left a conclusive note in Quicken - no asking
+            dest_bucket = self.buckets.cats2buckets[t.category]
+            new_bucket = Bucket({"title":dest_bucket.title,"total":xact_data["Amount"]})
+            dest_bucket += new_bucket
+        elif ('buckets' in self.xact_data.keys()):
+            # no asking - the transaction data has buckets already, so this is final
+            self.buckets += Buckets(self.xact_data['buckets'])
+        else:
+            self.buckets_filled = False
+
+        self.reconcile_total()
+        self.buckets_filled = True
+
     # add more subs to your current set, and add their buckets to yours
-    def more_subs(self, new_subs):
+    def extend_subs(self, new_subs):
         self._subs.extend(new_subs)
         for sub in new_subs:
             self.buckets += sub.buckets
@@ -104,18 +148,23 @@ class Transaction(object):
             def_bucket.total += diff
             log.error("Added %s to %s" % (diff, def_bucket.title))
 
-    # make a list of the strings we need to print out
+    # make a list of the strings we need to print into the csv file
     def list_out(self):
         log.debug("Listing transaction for %s." % self.title)
+
+        # make a list of sub transactions, if there are any
         mysubs = []
         if self.subs:
             for mysub in self.subs:
                 self.buckets -= mysub.buckets
-                mysubs.extend(mysub.list_out())
+                mysubs.extend([mysub.list_out()])
 
+        # make the csv line (date, desc, blank, total, value+) for this transaction
         ret = [str(self.date_time), self.description, "", str(self.total)] + self.buckets.list_out()
         rets = [ret]
-        rets.extend(mysubs)
+
+        rets.extend(mysubs) # add the subs after the main transaction, if there are any
+
         return rets
 
     def titles(self):

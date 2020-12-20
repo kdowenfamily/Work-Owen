@@ -31,10 +31,21 @@
     ]
   },
   {
+    "title": "Bathroom Renovations",
+    "alt_titles": [
+    ],
+    "weight": 1,
+    "order": 3,
+    "categories": [
+    ],
+    "tags": [
+    ]
+  },
+  {
     "title": "Oil",
     "alt_titles": [],
     "weight": 1,
-    "order": 3,
+    "order": 4,
     "categories": [],
     "tags": [
       "Utilities"
@@ -44,7 +55,7 @@
     "title": "AAA",
     "alt_titles": [],
     "weight": 1,
-    "order": 4,
+    "order": 5,
     "categories": [],
     "tags": []
   },
@@ -52,7 +63,7 @@
     "title": "Pool Care",
     "alt_titles": [],
     "weight": 1,
-    "order": 5,
+    "order": 6,
     "categories": [],
     "tags": []
   },
@@ -60,7 +71,7 @@
     "title": "Lawn Care",
     "alt_titles": [],
     "weight": 1,
-    "order": 6,
+    "order": 7,
     "categories": [],
     "tags": []
   },
@@ -68,7 +79,7 @@
     "title": "Vacation",
     "alt_titles": [],
     "weight": 1,
-    "order": 7,
+    "order": 8,
     "categories": [
       "Travel:Vacation",
       "Vacation"
@@ -81,7 +92,7 @@
     "title": "Party",
     "alt_titles": [],
     "weight": 1,
-    "order": 8,
+    "order": 9,
     "categories": [],
     "tags": []
   },
@@ -96,7 +107,7 @@
         "Lindsey"
     ],
     "weight": 1,
-    "order": 9,
+    "order": 10,
     "categories": [
     ],
     "tags": []
@@ -107,7 +118,7 @@
         "Molly"
     ],
     "weight": 1,
-    "order": 10,
+    "order": 11,
     "categories": [
         "Education:Tuition"
     ],
@@ -117,7 +128,7 @@
     "title": "Magazines",
     "alt_titles": [],
     "weight": 1,
-    "order": 11,
+    "order": 12,
     "categories": [],
     "tags": [
       "Magazines"
@@ -127,7 +138,7 @@
     "title": "Car Insurance",
     "alt_titles": [],
     "weight": 1,
-    "order": 12,
+    "order": 13,
     "categories": [],
     "tags": []
   },
@@ -137,7 +148,7 @@
       "Car Maint."
     ],
     "weight": 1,
-    "order": 13,
+    "order": 14,
     "categories": [
         "Auto & Transport:Service & Parts"
     ],
@@ -147,7 +158,7 @@
     "title": "Car Savings",
     "alt_titles": [],
     "weight": 1,
-    "order": 14,
+    "order": 15,
     "categories": [],
     "tags": []
   },
@@ -159,7 +170,7 @@
         "Kathy Wardrobe"
     ],
     "weight": 1,
-    "order": 15,
+    "order": 16,
     "categories": [
         "Shopping:Clothing",
         "Clothing"
@@ -185,7 +196,7 @@
         "K Gifts"
     ],
     "weight": 1,
-    "order": 16,
+    "order": 17,
     "categories": [
         "gift",
         "gifts",
@@ -201,7 +212,7 @@
     "title": "Dan Swan's Taxes",
     "alt_titles": ["Swan's Taxes"],
     "weight": 1,
-    "order": 17,
+    "order": 18,
     "categories": [],
     "tags": []
   },
@@ -211,7 +222,7 @@
         "D Life Insurance"
     ],
     "weight": 1,
-    "order": 18,
+    "order": 19,
     "categories": [],
     "tags": [
     ]
@@ -222,20 +233,9 @@
         "Dan's Mom"
     ],
     "weight": 1,
-    "order": 19,
-    "categories": [],
-    "tags": []
-  },
-  {
-    "title": "Kathy Hair",
-    "alt_titles": [
-        "K Hair"
-    ],
-    "weight": 1,
     "order": 20,
     "categories": [],
-    "tags": [
-    ]
+    "tags": []
   },
   {
     "title": "Kathy Life Insurance",

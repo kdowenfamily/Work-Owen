@@ -60,7 +60,7 @@ class Starter_Transaction(Transaction):
 
 if __name__ == "__main__":
     from usd import USD
-    paycheck_path = Transaction_Template.TEMPLATE_DIR + "/danCovid.json"
+    paycheck_path = Transaction_Template.TEMPLATE_DIR + "/dan.json"
     paycheck_templs = [Transaction_Template(paycheck_path)]
     tr1 = Starter_Transaction(source_account="checking", start_date="11/12/2001", amount=USD(1000.00), paychks=paycheck_templs)
     print "\n\nPaycheck used:"
