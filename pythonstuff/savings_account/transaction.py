@@ -74,8 +74,8 @@ class Transaction(object):
     @property
     def description(self):
         ret = self.title
-#        if self.buckets.notes:
-#            ret += " - " + self.buckets.notes
+        if self.buckets.notes:
+            ret += " - " + self.buckets.notes
         if self.subs and (Transaction.OWNER_MARKER not in ret):
             ret += " ("+ Transaction.OWNER_MARKER + ")"
         return ret
@@ -106,28 +106,31 @@ class Transaction(object):
     @buckets_filled.setter
     def buckets_filled(self, buckets_filled):
         self._buckets_filled = buckets_filled
+        if buckets_filled:
+            self.reconcile_total()
 
     # Divide the total amount given into individual buckets.
     # Return True unless this is impossible (need user to tell us).
     def divide_total_into_buckets(self):
+        self.buckets_filled = False
+        
         if str(self.init_total) in Transaction.total2trTemplate.keys():
             # this looks like a paycheck, or similar
             t_tmplt = Transaction.total2trTemplate[str(self.init_total)]
             self.buckets += t_tmplt.buckets
             self.title = t_tmplt.title
+            self.buckets_filled = True
         elif self.category and (self.category in self.buckets.cats2buckets):
             # Kathy left a conclusive note in Quicken - no asking
             dest_bucket = self.buckets.cats2buckets[t.category]
             new_bucket = Bucket({"title":dest_bucket.title,"total":xact_data["Amount"]})
             dest_bucket += new_bucket
+            self.buckets_filled = True
         elif ('buckets' in self.xact_data.keys()):
             # no asking - the transaction data has buckets already, so this is final
             self.buckets += Buckets(self.xact_data['buckets'])
-        else:
-            self.buckets_filled = False
+            self.buckets_filled = True
 
-        self.reconcile_total()
-        self.buckets_filled = True
 
     # add more subs to your current set, and add their buckets to yours
     def extend_subs(self, new_subs):
