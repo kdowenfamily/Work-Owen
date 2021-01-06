@@ -17,13 +17,24 @@ class SubTransaction(Transaction):
         super(SubTransaction, self).__init__(source_account, xact_data)
         self.parent = parent
         self.subdate = self.date_time
-        self.subtitle = self._indent_subtitle("%s (%s)" % (self.title, self.subdate.strftime("%a, %m/%d/%y")))
+        self.subtitle = self.title
         self.title = self.title + " (sub)"
         self.date_time = self.parent.date_time
         self._increase_date()
         log.info("Done setting up sub-transaction: %s, %s (from %s to %s)." 
                 % (self.date_time, self.init_total, self.payer, self.payee) )
 
+
+    @property
+    def subtitle(self):
+        return self._subtitle
+
+    @subtitle.setter
+    def subtitle(self, title):
+        self._subtitle = self._add_date(title)
+        self._subtitle = self._indent(self._subtitle)
+
+    # make the official date-time stamp (copied from the parent's date-time) unique
     def _increase_date(self):
         log.debug("fixing up the sub-transaction date")
         yr = self.subdate.year
@@ -31,7 +42,16 @@ class SubTransaction(Transaction):
         plus_secs = 3600 + yr + day
         self.date_time = self.date_time + timedelta(seconds=plus_secs)
 
-    def _indent_subtitle(self, title):
+    # add the actual date of the subtransaction in parens at the end of the subtitle,
+    # unless already done
+    def _add_date(self, title):
+        if re.search(r'\(..., [\d\/]+\)$', title):
+            return title
+        else:
+            return "%s (%s)" % (title, self.subdate.strftime("%a, %m/%d/%y"))
+
+    # indent the subtitle with a "-" in front of it, unless already done
+    def _indent(self, title):
         if re.search(r'^\s*- ', title):
             return title
         else:
@@ -41,7 +61,7 @@ class SubTransaction(Transaction):
     def description(self):
         ret = self.subtitle
         if self.buckets.notes:
-            ret += self._indent_subtitle(self.buckets.notes)
+            ret += self._indent(self.buckets.notes)
         return ret
 
     # make a list of the strings we need to print out, as a sub-transaction

@@ -12,7 +12,8 @@ logging.basicConfig(filename="/var/log/savings/savings.log",
 log = logging.getLogger(__name__)
 
 # An initial transaction, based on a start date and a total amount in the savings account.
-# Average all the current paychecks, and give each bucket the percentage allotted by those paychecks.
+# Average all the current paychecks, and give each bucket the percentage (of the total amount)
+# allotted by those paychecks.
 class Starter_Transaction(Transaction):
     def __init__(self, source_account="", start_date="1/1/2015", amount=0.00, paychks=Transaction.masterPaychecks):
         # a dictionary to describe this transaction
@@ -34,7 +35,7 @@ class Starter_Transaction(Transaction):
         self.reconcile_total()              # reconcile the buckets with the initial total
 
     # Take a random number of paycheck Transactions.
-    # Return a new list of Bucket_Lists, copied from those paychecks, and all bucket amounts are per-year.
+    # Return a new list of Bucket_Lists, copied from those paychecks, and make all bucket amounts "per-year."
     def _bucket_lists_with_per_year(self, paychecks):
         blists = []
         for paychk in paychecks:
@@ -44,7 +45,7 @@ class Starter_Transaction(Transaction):
             blists.append(bkts)
         return blists
 
-    # Replace this transactions bucket list with a union of the given bucket lists
+    # Replace this transaction's bucket list with a union of the given bucket lists
     def _replace_my_bucket_list(self, blists):
         self.buckets = self.buckets.dupe()  # empty out our list with an empty dupe
         for bl in blists:
