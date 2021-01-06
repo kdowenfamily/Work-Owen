@@ -9,6 +9,8 @@ logging.basicConfig(filename="/var/log/savings/savings.log",
         level=logging.DEBUG)
 log = logging.getLogger(__name__)
 
+# Represents a template for a regular (weekly, bi-monthly, etc.) transfer.
+# This is currently used only for regular post-paycheck transfers.
 class Transaction_Template(object):
     TEMPLATE_DIR = os.path.dirname(__file__) + "/transfers/private"
 
