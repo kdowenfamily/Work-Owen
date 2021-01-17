@@ -3,6 +3,7 @@
 import re, logging, os
 from dateutil.parser import parse
 from transaction_template import Transaction_Template
+from bucket import Bucket
 from buckets import Buckets
 from usd import USD
 
@@ -16,7 +17,7 @@ log = logging.getLogger(__name__)
 class Transaction(object):
     total2trTemplate = {}
     masterPaychecks = []
-    PAYCHECK_DIR = os.path.dirname(__file__) + "/transfers/private"
+    PAYCHECK_DIR = os.path.dirname(__file__) + "/budgets/private"
     OWNER_MARKER = "with subtransactions below"  # marker for the transaction in the CSV file, incase it has subs
 
     def __init__(self, source_account="", xact_data={}, buckets=Buckets.from_file(Buckets.BUCKETS_FILE)):
@@ -122,8 +123,8 @@ class Transaction(object):
             self.buckets_filled = True
         elif self.category and (self.category in self.buckets.cats2buckets):
             # Kathy left a conclusive note in Quicken - no asking
-            dest_bucket = self.buckets.cats2buckets[t.category]
-            new_bucket = Bucket({"title":dest_bucket.title,"total":xact_data["Amount"]})
+            dest_bucket = self.buckets.cats2buckets[self.category]
+            new_bucket = Bucket({"title":dest_bucket.title,"total":self.xact_data["Amount"]})
             dest_bucket += new_bucket
             self.buckets_filled = True
         elif ('buckets' in self.xact_data.keys()):

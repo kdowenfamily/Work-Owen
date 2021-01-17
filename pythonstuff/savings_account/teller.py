@@ -37,31 +37,33 @@ class Teller(object):
         transactions = []
         sttmt = None
 
-        if csv_file:
-            # parse the CSV File
-            sttmt = XactionCsv(csv_file, start, end)
+        if not csv_file:
+            return transactions, sttmt
 
-            # convert the rows of normalized dictionaries to transactions
-            sid = Teller("Sid") # ask a new Teller to do this
-            sub_owner = None    # latest sub-transaction owner to be found
-            for xact_data in sttmt.raw_transactions:
-                self.process_transaction(st_type, xact_data)
-                full_trans = self.transaction
+        # parse the CSV File
+        sttmt = XactionCsv(csv_file, start, end)
 
-                # re-link transactions with their sub-transactions
-                if (full_trans.is_owner):
-                    # this holds subs - just hold onto it
-                    sub_owner = full_trans
-                elif (self.transaction.is_sub and (sub_owner != None)):
-                    # this is a sub, and we previously held onto an owner
-                    next_sub = SubTransaction(full_trans.payer, full_trans.xact_data, sub_owner)  # make it a sub now
-                    sub_owner.extend_subs([next_sub])   # add this sub to the owner
-                else:
-                    # this is not a sub or an owner
-                    if sub_owner and sub_owner.subs:
-                        transactions.append(sub_owner)
-                        sub_owner = None
-                    transactions.append(full_trans)
+        # convert the rows of normalized dictionaries to transactions
+        sub_owner = None    # latest sub-transaction owner to be found
+        sid = Teller("Sid") # ask a new Teller to do this
+        for xact_data in sttmt.raw_transactions:
+            sid.process_transaction(st_type, xact_data)
+            curr_trans = sid.transaction
+
+            # re-link transactions with their sub-transactions
+            if (curr_trans.is_owner):
+                # this holds subs - just hold onto it
+                sub_owner = curr_trans
+            elif (curr_trans.is_sub and (sub_owner != None)):
+                # this is a sub, and we previously held onto an owner
+                next_sub = SubTransaction(curr_trans.payer, curr_trans.xact_data, sub_owner)  # make it a sub now
+                sub_owner.extend_subs([next_sub])   # add this sub to the owner
+            else:
+                # this is not a sub or an owner
+                if sub_owner and sub_owner.subs:
+                    transactions.append(sub_owner)
+                    sub_owner = None
+                transactions.append(curr_trans)
 
         return transactions, sttmt
 
@@ -77,8 +79,8 @@ class Teller(object):
             else:
                 self._query_user(still_needed)
 
-    def _divide_evenly(self, t=None, still_needed=0.0, user_words=[]):
-        if not (t and still_needed):
+    def _divide_evenly(self, still_needed=0.0, user_words=[]):
+        if not still_needed:
             return
         amt = still_needed
         if len(user_words):
@@ -89,17 +91,17 @@ class Teller(object):
                 log.error("Unclear amount for -d; expected dollar amount, got '%s'" % dollars)
         if amt:
             ave_xact = Starter_Transaction("Savings", "", amt)
-            t.buckets += ave_xact.buckets
+            self.transaction.buckets += ave_xact.buckets
 
-    def _credit_card_breakdown(self, cmd="", t=None, still_needed=0.0, user_words=[]):
-        if not (cmd and t and still_needed and user_words):
-            return []
+    def _credit_card_breakdown(self, cmd="", still_needed=0.0, user_words=[]):
+        if not (cmd and still_needed and user_words):
+            return
 
         # read what the user wants
         csv = user_words.pop(0)
         if not os.path.exists(csv):
             print "No such file, %s." % csv
-            return []
+            return
         start = "1970-01-01"    # default: start at dawn of time
         end = "2500-12-31"      # default: end at end of days
         if user_words:
@@ -115,19 +117,20 @@ class Teller(object):
         cc_trans, xact_csv = self.process_statement(csv, start=start, end=end)
         cc_subs = []
         for sub in cc_trans:
-            my_sub = SubTransaction(sub.payer, sub.xact_data, t)
+            my_sub = SubTransaction(sub.payer, sub.xact_data, self.transaction)
             my_sub.buckets = sub.buckets
             cc_subs.append(my_sub)
-        t.extend_subs(cc_subs)
+        self.transaction.extend_subs(cc_subs)
         print "Done processing %d credit-card transactions." % len(cc_subs)
 
-    def _deposit_to_one_bucket(self, cmd="", t=None, still_needed=0.0, user_words=[]):
-        if not (cmd and t and still_needed and user_words):
-            return (user_words, 0)
+    def _deposit_to_one_bucket(self, cmd="", still_needed=0.0, user_words=[]):
+        if not (cmd and still_needed and user_words):
+            return
 
         # find the bucket and money, and add the money to the bucket
-        bkt = t.buckets.find(int(cmd))
-        if not bkt: return
+        bkt = self.transaction.buckets.find(int(cmd))
+        if not bkt:
+            return
         amt = user_words.pop(0)
         if re.search(r'^a$', amt, re.IGNORECASE):
             amt = still_needed
@@ -135,7 +138,7 @@ class Teller(object):
             amt = USD(amt)
         else:
             log.error("Bad amount for bucket %s; expected 'a' or dollar amount, got '%s'" % (bkt.title, amt))
-            return user_words
+            return
         bkt.total += amt
 
         # record any comment
@@ -157,7 +160,7 @@ class Teller(object):
     def _query_user(self, still_needed):
         print self._interactive_xaction_str()
         print self._interactive_buckets_str(still_needed)
-        raw_answer = raw_input("Enter the bucket and amount, 'n' for next: ")
+        raw_answer = raw_input("Enter the bucket and amount, '?' for help: ")
 
         # split up the answer
         raw_answer.strip()
@@ -172,11 +175,11 @@ class Teller(object):
             if abs(still_needed) >= 0.01:
                 t.buckets.get_default().total += still_needed
         elif re.search(r'^d$', cmd, re.IGNORECASE):
-            self._divide_evenly(t, still_needed, user_words)
+            self._divide_evenly(still_needed, user_words)
         elif re.search(r'^c$', cmd):
-            self._credit_card_breakdown(cmd, t, still_needed, user_words)
+            self._credit_card_breakdown(cmd, still_needed, user_words)
         elif re.search(r'^\d+$', cmd):
-            self._deposit_to_one_bucket(cmd, t, still_needed, user_words)
+            self._deposit_to_one_bucket(cmd, still_needed, user_words)
         else:
             print self._help_str()
 

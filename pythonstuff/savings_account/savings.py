@@ -39,7 +39,7 @@ class Savings(object):
         savings_now, statement = self.sv_expert.process_statement(savings_record)
         self._extend_transactions(savings_now)
 
-    # feed in all the new transaction files from Quicken
+    # feed in all the new transaction files from Quicken (like savings-yyyy-mm-dd.csv)
     def read_latest_transactions(self, transaction_files=[]):
         for csv_file in transaction_files:
             new_trs, sttmnt = self.sv_expert.process_statement(csv_file)
