@@ -10,9 +10,9 @@ logging.basicConfig(filename="/var/log/savings/savings.log",
 log = logging.getLogger(__name__)
 
 # Represents a template for a regular (weekly, bi-monthly, etc.) transfer.
-# This is currently used only for regular post-paycheck transfers.
+# This is currently used only for regular post-paycheck transfers (budgets).
 class Transaction_Template(object):
-    TEMPLATE_DIR = os.path.dirname(__file__) + "/transfers/private"
+    TEMPLATE_DIR = os.path.dirname(__file__) + "/budgets/private"
 
     def __init__(self, template=TEMPLATE_DIR + "/dan.json"):
         # read the JSON files and make one bucket per bucket dict

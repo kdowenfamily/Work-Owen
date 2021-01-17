@@ -129,7 +129,9 @@
     "alt_titles": [],
     "weight": 1,
     "order": 12,
-    "categories": [],
+    "categories": [
+      "Entertainment:Newspapers & Magazines"
+    ],
     "tags": [
       "Magazines"
     ]
