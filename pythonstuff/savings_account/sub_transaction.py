@@ -77,7 +77,7 @@ if __name__ == "__main__":
     print tr1.list_out()
     print
 
-    sample2 = {"Date": "9/4/1965", "Amount": 610, "Payee": "savings"}
+    sample2 = {"Date": "9/4/1965", "Amount": 610, "Payee": "Beth Israel"}
     str1 = SubTransaction(source_account="checking", xact_data=sample2, parent=tr1)
 
     sample3 = {"Date": "7/23/19", "Amount": 2100.00, "Payee": "savings"}

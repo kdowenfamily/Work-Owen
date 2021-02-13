@@ -33,7 +33,7 @@ class Teller(object):
     # process a bank statement with the user
     # return a tuple: the list of transactions, and the statement form (XactionCsv)
     def process_statement(self, csv_file="", st_type="Credit Card", start="1970-01-01", end="2500-12-31"):
-        log.info("Processing bank-statement file, %s." % csv_file)
+        log.info("%s processing bank-statement file, %s." % (self.name, csv_file))
         transactions = []
         sttmt = None
 
@@ -65,10 +65,12 @@ class Teller(object):
                     sub_owner = None
                 transactions.append(curr_trans)
 
+        log.info("%s done processing %s." % (self.name, csv_file))
         return transactions, sttmt
 
     def _loop_buckets(self):
         t = self.transaction
+        log.info("Asking user which buckets get $%s." % t.init_total)
         not_done = 1
         while (not_done):
             still_needed = t.init_total - t.total
@@ -98,6 +100,18 @@ class Teller(object):
             return
 
         # read what the user wants
+        csv, start, end = self._parse_cc_instructions(user_words)
+
+        # Process the credit-card transactions. Make them subtransactions of the Teller's transaction.
+        log.info("Processing the new credit-card statement, %s." % csv)
+        cc_trans, _ = self.process_statement(csv, start=start, end=end)
+        num_subs = self._demote_cc_transactions(cc_trans)
+        log.info("Done processing %d credit-card transactions." % num_subs)
+
+    def _parse_cc_instructions(self, user_words=""):
+        if not user_words:
+            return
+        
         csv = user_words.pop(0)
         if not os.path.exists(csv):
             print "No such file, %s." % csv
@@ -112,16 +126,16 @@ class Teller(object):
         if user_words:          # if there are still words left, take next
             end = user_words.pop(0)
 
-        # Process the credit-card transactions.
-        print "Processing the new credit-card statement, %s." % csv
-        cc_trans, xact_csv = self.process_statement(csv, start=start, end=end)
+        return csv, start, end
+
+    def _demote_cc_transactions(self, cc_trans):
         cc_subs = []
         for sub in cc_trans:
             my_sub = SubTransaction(sub.payer, sub.xact_data, self.transaction)
             my_sub.buckets = sub.buckets
             cc_subs.append(my_sub)
         self.transaction.extend_subs(cc_subs)
-        print "Done processing %d credit-card transactions." % len(cc_subs)
+        return len(cc_subs)
 
     def _deposit_to_one_bucket(self, cmd="", still_needed=0.0, user_words=[]):
         if not (cmd and still_needed and user_words):

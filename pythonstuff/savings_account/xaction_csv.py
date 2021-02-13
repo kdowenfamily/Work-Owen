@@ -144,19 +144,18 @@ class XactionCsv(object):
 
 if __name__ == "__main__":
     X_FILES = [
-            "data/private/cc-demo.csv",
+            "data/private/cc-short.csv",
             "data/private/cc-export-2018-12-26.csv",
             "data/private/savings.csv",
             "data/private/spending2012.csv",
             "data/private/spending2016.csv",
-            "data/private/sp2.csv",
             "data/private/savings-2020-05-08.csv",
             "data/private/savings-2020-04-02.csv"
             ]
 
-    csv = XactionCsv(in_file=X_FILES[3])
+    csv = XactionCsv(in_file=X_FILES[0])
     print
-    print "Input file is " + X_FILES[3] + "\n"
+    print "Input file is " + X_FILES[0] + "\n"
     with open("/tmp/xaction.csv", 'w') as f:
         f.write(str(csv))
     print "Output file is /tmp/xaction.csv\n"
