@@ -1,12 +1,12 @@
 #include <iostream>
 #include <thread>
 
-std::mutex mtx;
+std::mutex stdout_mtx;
 static const int num_threads = 10;
 
 //function to be called from a thread
-void call_from_thread(int tid) {
-    std::lock_guard<std::mutex> lock(mtx);
+void call_from_thread(const int tid) {
+    std::lock_guard<std::mutex> lock(stdout_mtx);
     std::cout << "Hello from thread " << tid << std::endl;
 }
 
