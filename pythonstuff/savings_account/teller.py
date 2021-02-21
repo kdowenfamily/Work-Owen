@@ -65,6 +65,11 @@ class Teller(object):
                     sub_owner = None
                 transactions.append(curr_trans)
 
+        # if a sub_owner is at the end, add it
+        if sub_owner and sub_owner.subs:
+            transactions.append(sub_owner)
+            sub_owner = None
+
         log.info("%s done processing %s." % (self.name, csv_file))
         return transactions, sttmt
 

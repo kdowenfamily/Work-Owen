@@ -132,7 +132,6 @@ class Transaction(object):
             self.buckets += Buckets(self.xact_data['buckets'])
             self.buckets_filled = True
 
-
     # add more subs to your current set, and add their buckets to yours
     def extend_subs(self, new_subs):
         self._subs.extend(new_subs)
