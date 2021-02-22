@@ -5,8 +5,9 @@ from copy import deepcopy
 from transaction import Transaction
 from teller import Teller
 from usd import USD
+from constants import LOGFILE
 
-logging.basicConfig(filename="/var/log/savings/savings.log",
+logging.basicConfig(filename=LOGFILE,
         format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",
         level=logging.DEBUG)
 log = logging.getLogger(__name__)
