@@ -4,8 +4,9 @@ import csv, re, logging
 from dateutil.parser import parse
 from buckets import Buckets
 from usd import USD
+from constants import LOGFILE
 
-logging.basicConfig(filename="savings.log",
+logging.basicConfig(filename=LOGFILE,
         format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",
         level=logging.DEBUG)
 log = logging.getLogger(__name__)

@@ -3,8 +3,9 @@
 import csv, json, re, logging, os, argparse
 from bucket import Bucket
 from buckets import Buckets
+from constants import LOGFILE
 
-logging.basicConfig(filename="/var/log/savings/savings.log",
+logging.basicConfig(filename=LOGFILE,
         format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",
         level=logging.DEBUG)
 log = logging.getLogger(__name__)

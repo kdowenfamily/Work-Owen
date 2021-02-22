@@ -1,8 +1,9 @@
 #!/usr/bin/python
 
 import re, logging
+from constants import LOGFILE
 
-logging.basicConfig(filename="savings.log",
+logging.basicConfig(filename=LOGFILE,
         format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",
         level=logging.DEBUG)
 log = logging.getLogger(__name__)
