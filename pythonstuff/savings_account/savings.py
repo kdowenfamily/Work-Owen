@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import csv, json, re, logging, argparse
+import csv, json, re, argparse
 from dateutil.parser import parse
 from datetime import timedelta
 from buckets import Buckets
@@ -8,12 +8,7 @@ from teller import Teller
 from manager import Manager
 from transaction import Transaction
 from starter_transaction import Starter_Transaction
-from constants import LOGFILE
-
-logging.basicConfig(filename=LOGFILE,
-        format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",
-        level=logging.DEBUG)
-log = logging.getLogger(__name__)
+from constants import log
 
 # Represents the savings account.
 class Savings(object):

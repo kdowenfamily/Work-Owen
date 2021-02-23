@@ -1,14 +1,9 @@
 #!/usr/bin/python
 
-import logging, re
+import re
 from datetime import timedelta
 from transaction import Transaction 
-from constants import LOGFILE
-
-logging.basicConfig(filename=LOGFILE,
-        format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",
-        level=logging.DEBUG)
-log = logging.getLogger(__name__)
+from constants import log
 
 # Represents one transfer, deposit, or payment.  This corresponds to 
 # one line in a Credit-Card or Savings-Account report.

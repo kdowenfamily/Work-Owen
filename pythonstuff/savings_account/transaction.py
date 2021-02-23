@@ -1,17 +1,12 @@
 #!/usr/bin/python
 
-import re, logging, os
+import re, os
 from dateutil.parser import parse
 from transaction_template import Transaction_Template
 from bucket import Bucket
 from buckets import Buckets
 from usd import USD
-from constants import LOGFILE
-
-logging.basicConfig(filename=LOGFILE,
-        format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",
-        level=logging.DEBUG)
-log = logging.getLogger(__name__)
+from constants import log
 
 # Represents one transfer, deposit, or payment.  This corresponds to 
 # one line in a Credit-Card or Savings-Account report.

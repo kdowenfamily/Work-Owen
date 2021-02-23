@@ -1,14 +1,9 @@
 #!/usr/bin/python
 
-import csv, json, re, logging, os, argparse
+import csv, json, re, os, argparse
 from bucket import Bucket
 from buckets import Buckets
-from constants import LOGFILE
-
-logging.basicConfig(filename=LOGFILE,
-        format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",
-        level=logging.DEBUG)
-log = logging.getLogger(__name__)
+from constants import log
 
 # Represents a template for a regular (weekly, bi-monthly, etc.) transfer.
 # This is currently used only for regular post-paycheck transfers (budgets).

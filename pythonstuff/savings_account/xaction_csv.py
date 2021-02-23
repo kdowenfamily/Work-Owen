@@ -1,15 +1,10 @@
 #!/usr/bin/python
 
-import csv, re, logging
+import csv, re
 from dateutil.parser import parse
 from buckets import Buckets
 from usd import USD
-from constants import LOGFILE
-
-logging.basicConfig(filename=LOGFILE,
-        format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",
-        level=logging.DEBUG)
-log = logging.getLogger(__name__)
+from constants import log
 
 # A list of transactions from a CSV file.
 class XactionCsv(object):
