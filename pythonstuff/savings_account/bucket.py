@@ -1,14 +1,9 @@
 #!/usr/bin/python
 
-import re, logging
+import re
 from copy import deepcopy
 from usd import USD
-from constants import LOGFILE
-
-logging.basicConfig(filename=LOGFILE,
-        format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",
-        level=logging.DEBUG)
-log = logging.getLogger(__name__)
+from constants import log
 
 DEFAULT_BUCKET = {
                 "total": 0.0,

@@ -1,15 +1,10 @@
 #!/usr/bin/python
 
-import csv, json, re, logging, os
+import csv, json, re, os
 from copy import deepcopy
 from bucket import Bucket
 from usd import USD
-from constants import LOGFILE
-
-logging.basicConfig(filename=LOGFILE,
-        format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",
-        level=logging.DEBUG)
-log = logging.getLogger(__name__)
+from constants import log
 
 
 class Buckets(object):

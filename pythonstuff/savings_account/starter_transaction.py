@@ -1,16 +1,11 @@
 #!/usr/bin/python
 
-import logging, os
+import os
 from copy import deepcopy
 from transaction import Transaction
 from transaction_template import Transaction_Template
 from buckets import Buckets
-from constants import LOGFILE
-
-logging.basicConfig(filename=LOGFILE,
-        format="[%(asctime)s] [%(levelname)-7s] [%(filename)s:%(lineno)d] %(message)s",
-        level=logging.DEBUG)
-log = logging.getLogger(__name__)
+from constants import log
 
 # An initial transaction, based on a start date and a total amount in the savings account.
 # Average all the current paychecks, and give each bucket the percentage (of the total amount)
