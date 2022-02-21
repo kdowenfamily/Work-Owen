@@ -31,8 +31,12 @@
     ]
   },
   {
-    "title": "Bathroom Renovations",
+    "title": "Medical Expenses",
     "alt_titles": [
+        "Health & Fitness:Dentist",
+        "Health & Fitness:Doctor",
+        "Eyecare",
+        "Health & Fitness:Eyecare"
     ],
     "weight": 1,
     "order": 3,
@@ -64,7 +68,9 @@
     "alt_titles": [],
     "weight": 1,
     "order": 6,
-    "categories": [],
+    "categories": [
+        "Home:Pool"
+    ],
     "tags": []
   },
   {
@@ -72,7 +78,9 @@
     "alt_titles": [],
     "weight": 1,
     "order": 7,
-    "categories": [],
+    "categories": [
+        "Home:Lawn & Garden"
+    ],
     "tags": []
   },
   {
@@ -81,7 +89,11 @@
     "weight": 1,
     "order": 8,
     "categories": [
+      "Travel",
       "Travel:Vacation",
+      "Travel:Hotel",
+      "Travel:Rental Car & Taxi",
+      "Travel:Air Travel",
       "Vacation"
     ],
     "tags": [
@@ -99,11 +111,13 @@
   {
     "title": "Kid Activities",
     "alt_titles": [
+        "Sporting Goods",
         "Brown",
+        "Kids Activities",
         "SCAD",
         "Pre School",
         "Babysitter",
-        "Liam",
+        "Molly",
         "Lindsey"
     ],
     "weight": 1,
@@ -113,9 +127,9 @@
     "tags": []
   },
   {
-    "title": "Molly College",
+    "title": "Liam College",
     "alt_titles": [
-        "Molly"
+        "Liam"
     ],
     "weight": 1,
     "order": 11,
@@ -147,7 +161,10 @@
   {
     "title": "Car Maintenance",
     "alt_titles": [
-      "Car Maint."
+      "Car Maint.",
+      "Auto & Transport",
+      "Auto & Transport:Registration",
+      "Auto & Transport:Service & Parts"
     ],
     "weight": 1,
     "order": 14,
@@ -167,6 +184,7 @@
   {
     "title": "Clothes",
     "alt_titles": [
+        "Shopping:Clothing",
         "D Clothes",
         "K Clothes",
         "Kathy Wardrobe"
@@ -195,7 +213,8 @@
         "Dan Gifts",
         "Kathy Gifts",
         "D Gifts",
-        "K Gifts"
+        "K Gifts",
+        "Gift"
     ],
     "weight": 1,
     "order": 17,
@@ -237,7 +256,9 @@
     "weight": 1,
     "order": 20,
     "categories": [],
-    "tags": []
+    "tags": [
+        "grammy"
+    ]
   },
   {
     "title": "Kathy Life Insurance",
@@ -256,18 +277,6 @@
     "weight": 1,
     "order": 22,
     "categories": [],
-    "tags": []
-  },
-  {
-    "title": "Contacts",
-    "alt_titles": [],
-    "weight": 1,
-    "order": 23,
-    "categories": [
-        "Eyecare",
-        "health & fitness:eyecare",
-        "Health & Fitness:Eyecare"
-    ],
     "tags": []
   },
   {

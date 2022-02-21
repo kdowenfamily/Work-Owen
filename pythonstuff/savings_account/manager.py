@@ -58,6 +58,11 @@ class Manager(Teller):
             bkt2a = t.buckets.find(bkt2_num)
             bkt2a.total += amt
 
+            # record any comment
+            if user_words and len(user_words) > 1 and user_words[0] == '-c':
+                user_words.pop(0)    # lose the -c
+                t.title += ": " + " ".join(user_words) + " (" + str(amt) + ")"
+
         return self.transaction
 
     def __str__(self):
