@@ -14,6 +14,7 @@ DEFAULT_BUCKET = {
                 "tags": [],
                 "categories": [],
                 "comments": [],
+                "notes": "",
                 "default": False
                 }
 
@@ -27,6 +28,7 @@ class Bucket(object):
         self.tags = bucket.get("tags", DEFAULT_BUCKET['tags'])
         self.categories = bucket.get("categories", DEFAULT_BUCKET['categories'])
         self.comments = bucket.get("comments", DEFAULT_BUCKET['comments'])
+        self.notes = bucket.get("notes", DEFAULT_BUCKET['notes'])
         self.default = bucket.get("default", DEFAULT_BUCKET['default'])
 
     @property
@@ -109,6 +111,14 @@ class Bucket(object):
                     self._categories.append(str(ct)) # incase it is unicode
             else:
                 self._categories.append(str(cat))    # incase it is unicode
+
+    @property
+    def notes(self):
+        return self._notes
+
+    @notes.setter
+    def notes(self, notes):
+        self._notes = notes
 
     @property
     def comments(self):

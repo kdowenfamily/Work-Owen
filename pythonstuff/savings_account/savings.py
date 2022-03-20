@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import csv, json, re, argparse
+import csv, json, re, argparse, shutil
 from dateutil.parser import parse
 from datetime import timedelta
 from buckets import Buckets
@@ -9,6 +9,9 @@ from manager import Manager
 from transaction import Transaction
 from starter_transaction import Starter_Transaction
 from constants import log
+
+TEMP_OUT_FILE = '/tmp/savings/savings.csv'
+PERM_OUT_FILE = './data/private/spending.csv'
 
 # Represents the savings account.
 class Savings(object):
@@ -67,7 +70,7 @@ class Savings(object):
             xact.buckets += zero_set
 
     # output the full history of transactions, in CSV format
-    def csv_out(self, out_file="/tmp/savings.csv"):
+    def csv_out(self, out_file=TEMP_OUT_FILE):
         if not self.transactions:
             return
         with open (out_file, 'wb') as f:
@@ -95,16 +98,22 @@ class Savings(object):
         ret += "\n" + self.buckets.show() + "\n"
         return ret
 
+    def commit(self):
+        shutil.copy(TEMP_OUT_FILE, PERM_OUT_FILE)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--name', '-n', help='Name for the Savings account', default='Savings')
-    parser.add_argument('--savings', '-s', help='Path to the current spreadsheed for the Savings account', default='./data/private/spending.csv')
+    parser.add_argument('--savings', '-s', help='Path to the current spreadsheed for the Savings account', default=PERM_OUT_FILE)
     parser.add_argument('--quicken', '-q', nargs='*', help='Path(s) to Quicken transaction files', default='')
-    parser.add_argument('--outfile', '-o', help='Path for the CSV output', default='/tmp/savings.csv')
+    parser.add_argument('--outfile', '-o', help='Path for the CSV output', default=TEMP_OUT_FILE)
     parser.add_argument('--edit', '-e', help='Edit the buckets at the end - trade between them', action='store_true')
+    parser.add_argument('--commit', '-c', help='Commit the changes in ' + TEMP_OUT_FILE, action='store_true')
     args = parser.parse_args()
 
     sv = Savings(args.name)
+    if args.commit:
+        sv.commit()
     sv.read_history(args.savings)
     sv.read_latest_transactions(args.quicken)
     sv.equalize_transactions()

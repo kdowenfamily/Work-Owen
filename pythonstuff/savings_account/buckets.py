@@ -160,6 +160,8 @@ class Buckets(object):
             ret += "%3d. %-24s %-6.2f" % (ct, bkt.title, float(money_str))
             if bkt.default:
                 ret += " (default)"
+            if bkt.notes:
+                ret += " - " + bkt.notes
             ret += "\n"
 
         ret += "\nTotal:  %s\n" % self.total
