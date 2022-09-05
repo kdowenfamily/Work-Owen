@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import re
 from datetime import timedelta
@@ -69,9 +69,9 @@ class SubTransaction(Transaction):
 if __name__ == "__main__":
     sample = {"Date": "11/12/1965", "Amount": 250, "Payee": "savings"}
     tr1 = Transaction(source_account="checking", xact_data=sample)
-    print tr1.titles()
-    print tr1.list_out()
-    print
+    print(tr1.titles())
+    print(tr1.list_out())
+    print()
 
     sample2 = {"Date": "9/4/1965", "Amount": 610, "Payee": "Beth Israel"}
     str1 = SubTransaction(source_account="checking", xact_data=sample2, parent=tr1)
@@ -80,7 +80,7 @@ if __name__ == "__main__":
     str2 = SubTransaction(source_account="checking", xact_data=sample3, parent=tr1)
 
     tr1.extend_subs([str1, str2])
-    print tr1.titles()
+    print(tr1.titles())
     tr_list = tr1.list_out()
     for tr in tr_list:
-        print tr
+        print(tr)

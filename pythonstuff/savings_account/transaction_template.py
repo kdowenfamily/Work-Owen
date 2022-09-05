@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import csv, json, re, os, argparse
 from bucket import Bucket
@@ -90,7 +90,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     tts = Transaction_Template(template=os.path.dirname(__file__) + "/" + args.json)
-    print tts._titles()
-    print tts
-    print
-    print tts.buckets.show()
+    print(tts._titles())
+    print(tts)
+    print()
+    print(tts.buckets.show())

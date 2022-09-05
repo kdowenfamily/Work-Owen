@@ -1,7 +1,7 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import csv, re
-from dateutil.parser import parse
+from datetime import datetime
 from buckets import Buckets
 from usd import USD
 from constants import log
@@ -36,7 +36,7 @@ class XactionCsv(object):
         if not in_file:
             return useful
 
-        with open(in_file, 'rb') as csvfile:
+        with open(in_file, 'r') as csvfile:
             reader = csv.reader(csvfile)
             for row in reader:
                 # get raw values matched up with their headers
@@ -47,7 +47,7 @@ class XactionCsv(object):
                         if (not (header in boring)) and (len(row) > head_pos):
                             goodies[header] = row[head_pos]
                         head_pos += 1
-                    if goodies and goodies["Date"]:
+                    if goodies and ("Date" in goodies.keys()) and goodies["Date"]:
                         useful.append(goodies)
         
                 # make switches based on row contents
@@ -114,9 +114,16 @@ class XactionCsv(object):
         return xactions
 
     def _in_range(self, offered_date):
-        start = parse(self.start_range)
-        end = parse(self.end_range)
-        date = parse(offered_date)
+        start = datetime.strptime(self.start_range, "%Y-%m-%d")
+        end = datetime.strptime(self.end_range, "%Y-%m-%d")
+        try:
+            date = datetime.strptime(offered_date, "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            try:
+                date = datetime.strptime(offered_date, "%m/%d/%Y")
+            except ValueError:
+                print(f"Warning:  Cannot parse {offered_date} - calling it '2000-01-01'.")
+                date = datetime.strptime("2000-01-01", "%Y-%m-%d")
         return (start <= date) and (date <= end)
 
 
@@ -128,9 +135,9 @@ class XactionCsv(object):
             ret += xact['Amount'].as_float()
             bckts += Buckets(xact['buckets'])
 
-        print "Expected %.2f, got %.2f from totals" % (self.grand_total.as_float(), ret)
-        print "Expected %.2f, got %.2f from buckets" % (self.grand_total.as_float(), bckts.total.as_float())
-        print str(len(self.raw_transactions)) + " total transactions\n"
+        print("Expected %.2f, got %.2f from totals" % (self.grand_total.as_float(), ret))
+        print("Expected %.2f, got %.2f from buckets" % (self.grand_total.as_float(), bckts.total.as_float()))
+        print(str(len(self.raw_transactions)) + " total transactions\n")
 
     def __str__(self):
         ret = ""
@@ -150,10 +157,10 @@ if __name__ == "__main__":
             ]
 
     csv = XactionCsv(in_file=X_FILES[0])
-    print
-    print "Input file is " + X_FILES[0] + "\n"
+    print()
+    print("Input file is " + X_FILES[0] + "\n")
     with open("/tmp/xaction.csv", 'w') as f:
         f.write(str(csv))
-    print "Output file is /tmp/xaction.csv\n"
+    print("Output file is /tmp/xaction.csv\n")
     if 'buckets' in csv.raw_transactions[0]:
         csv._verify()

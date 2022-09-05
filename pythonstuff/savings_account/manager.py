@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import re
 from copy import deepcopy
@@ -17,22 +17,22 @@ class Manager(Teller):
 
     # bring the user into the vault to trade money between buckets
     def play_in_vault(self, buckets=None, date='1/1/65'):
-        print "My name is %s.  Welcome to the vault.  How can I help you?" % self.name
+        print("My name is %s.  Welcome to the vault.  How can I help you?" % self.name)
         self.transaction = Transaction("Savings", {'Date':date,'Memo/Notes':'Play in vault'})
         t = self.transaction
         bkts = deepcopy(buckets)
         t.buckets += bkts.dupe()
         quit = False
         while not quit:
-            print "\nBuckets:\n"
-            print bkts.show()
+            print("\nBuckets:\n")
+            print(bkts.show())
             raw_answer = raw_input("Enter an amount, a source bucket and a destination bucket ('q' to quit):  ")
 
             # split up the answer
             raw_answer.strip()
             user_words = raw_answer.split()
             if not user_words:
-                print self._help_str()
+                print(self._help_str())
                 continue
 
             # nibble off and assess the first word
@@ -43,7 +43,7 @@ class Manager(Teller):
                 quit = True
                 continue
             else:
-                print "Bad amount for bucket %s; expected 'a' or dollar amount, got '%s'" % (bkt.title, amt)
+                print("Bad amount for bucket %s; expected 'a' or dollar amount, got '%s'" % (bkt.title, amt))
                 continue
 
             # nibble off bucket numbers and exchange
@@ -71,7 +71,7 @@ class Manager(Teller):
 
 if __name__ == "__main__":
     daria = Manager("Daria")
-    print daria
+    print(daria)
 
     sample = {"Date": "11/12/1965", "Amount": 1950, "Payee": "savings"}
     xact1 = daria.process_transaction(source_account="savings", xact_data=sample)

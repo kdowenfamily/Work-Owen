@@ -1,8 +1,7 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
-import csv, json, re, argparse, shutil
-from dateutil.parser import parse
-from datetime import timedelta
+import csv, json, re, argparse, shutil, os
+import datetime
 from buckets import Buckets
 from teller import Teller
 from manager import Manager
@@ -11,6 +10,8 @@ from starter_transaction import Starter_Transaction
 from constants import log
 
 TEMP_OUT_FILE = '/tmp/savings/savings.csv'
+if not os.path.exists('/tmp/savings'):
+    os.makedirs('/tmp/savings')
 PERM_OUT_FILE = './data/private/spending.csv'
 
 # Represents the savings account.
@@ -48,7 +49,7 @@ class Savings(object):
 
     # let the user manually re-balance the buckets
     def rebalance(self):
-        date = str(self.transactions[-1].date_time + timedelta(hours=1))
+        date = str(self.transactions[-1].date_time + datetime.timedelta(hours=1))
         self._extend_transactions([self.manager.play_in_vault(self.buckets, date)])
 
     # extend our list of transactions with some new ones
@@ -73,7 +74,7 @@ class Savings(object):
     def csv_out(self, out_file=TEMP_OUT_FILE):
         if not self.transactions:
             return
-        with open (out_file, 'wb') as f:
+        with open (out_file, 'w') as f:
             csv_writer = csv.writer(f)
             csv_writer.writerow(self.transactions[-1].titles().split(",")) # titles
             csv_writer.writerow(["", "Running Total", "", str(self.total)] + self.buckets.list_out())
@@ -84,13 +85,13 @@ class Savings(object):
     # make all dates progressive, so that the order in the CSV is constant
     def kragle_order(self):
         last_date = None
-        delta = timedelta(seconds=0)
+        delta = datetime.timedelta(seconds=0)
         for xaction in sorted(self.sig2trans.values(), key=lambda k: k.date_time):
             if xaction.date_time == last_date:
-                delta += timedelta(seconds=1)
+                delta += datetime.timedelta(seconds=1)
                 xaction.date_time += delta
             else:
-                delta = timedelta(seconds=0)
+                delta = datetime.timedelta(seconds=0)
                 last_date = xaction.date_time
 
     def __str__(self):
@@ -121,7 +122,7 @@ if __name__ == "__main__":
         sv.rebalance()
     sv.kragle_order()
 
-    print
+    print()
     sv.csv_out(args.outfile)
-    print "CSV is in " + args.outfile + "\n"
-    print sv
+    print("CSV is in " + args.outfile + "\n")
+    print(sv)

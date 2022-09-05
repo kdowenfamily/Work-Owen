@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import re
 from copy import deepcopy
@@ -198,4 +198,4 @@ class Bucket(object):
 
 if __name__ == "__main__":
     bk = Bucket({"title":"Dan's Bucket", "total":"1,000,000"})
-    print bk.show()
+    print(bk.show())

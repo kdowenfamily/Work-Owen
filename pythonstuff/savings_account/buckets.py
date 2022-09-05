@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import csv, json, re, os
 from copy import deepcopy
@@ -224,5 +224,5 @@ class Buckets(object):
 
 if __name__ == "__main__":
     bks = Buckets.from_file(Buckets.BUCKETS_FILE)
-    print bks.titles()
-    print bks
+    print(bks.titles())
+    print(bks)
