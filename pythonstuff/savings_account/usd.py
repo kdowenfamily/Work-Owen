@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import re
 from constants import log 
@@ -71,6 +71,9 @@ class USD(object):
             return (self._total == other._total)
         return (self._total == other)
 
+    def __hash__(self):
+        return hash(self._total)
+
     def as_float(self):
         return float(self._total)/100
 
@@ -80,14 +83,14 @@ class USD(object):
 
 if __name__ == "__main__":
     mon = USD("$10.99")
-    print mon
+    print(mon)
     mon2 = USD(20.0)
-    print mon2
+    print(mon2)
     mon3 = USD(4.29)
-    print mon3
+    print(mon3)
     mon2 = mon2 - mon
-    print mon2
+    print(mon2)
     mon2 += mon3
-    print mon2
-    print mon2 * mon
-    print mon3 * 3
+    print(mon2)
+    print(mon2 * mon)
+    print(mon3 * 3)

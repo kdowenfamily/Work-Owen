@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import os
 from copy import deepcopy
@@ -60,9 +60,9 @@ if __name__ == "__main__":
     paycheck_path = Transaction_Template.TEMPLATE_DIR + "/dan.json"
     paycheck_templs = [Transaction_Template(paycheck_path)]
     tr1 = Starter_Transaction(source_account="checking", start_date="11/12/2001", amount=USD(1000.00), paychks=paycheck_templs)
-    print "\n\nPaycheck used:"
-    print paycheck_path
-    print "\nStart Transaction:"
-    print tr1.show()
-    print "\nTransaction Breakdown (details):\n"
-    print tr1.buckets.show()
+    print("\n\nPaycheck used:")
+    print(paycheck_path)
+    print("\nStart Transaction:")
+    print(tr1.show())
+    print("\nTransaction Breakdown (details):\n")
+    print(tr1.buckets.show())

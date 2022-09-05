@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import re, os
 from transaction import Transaction
@@ -77,8 +77,8 @@ class Teller(object):
             still_needed = t.init_total - t.total
             if abs(still_needed) <= 0.01:
                 not_done = 0
-                print "\nFinal:"
-                print self._interactive_buckets_str(0.0)
+                print("\nFinal:")
+                print(self._interactive_buckets_str(0.0))
             else:
                 self._query_user(still_needed)
 
@@ -115,7 +115,7 @@ class Teller(object):
         
         csv = user_words.pop(0)
         if not os.path.exists(csv):
-            print "No such file, %s." % csv
+            print("No such file, %s." % csv)
             return
         start = "1970-01-01"    # default: start at dawn of time
         end = "2500-12-31"      # default: end at end of days
@@ -170,12 +170,12 @@ class Teller(object):
             bkt.add_comment(comment)
         else:
             log.error("Unclear - is this a comment? Expected '-c', got '%s'" % arg)
-            print "Unclear comment, dropped: %s." % arg
+            print("Unclear comment, dropped: %s." % arg)
 
     def _query_user(self, still_needed):
-        print self._interactive_xaction_str()
-        print self._interactive_buckets_str(still_needed)
-        raw_answer = raw_input("Enter the bucket and amount, '?' for help: ")
+        print(self._interactive_xaction_str())
+        print(self._interactive_buckets_str(still_needed))
+        raw_answer = input("Enter the bucket and amount, '?' for help: ")
 
         # split up the answer
         raw_answer.strip()
@@ -196,7 +196,7 @@ class Teller(object):
         elif re.search(r'^\d+$', cmd):
             self._deposit_to_one_bucket(cmd, still_needed, user_words)
         else:
-            print self._help_str()
+            print(self._help_str())
 
     def _help_str(self):
         # show the options
@@ -239,7 +239,7 @@ class Teller(object):
 
 if __name__ == "__main__":
     sheila = Teller("Shiela")
-    print sheila
+    print(sheila)
 
     sample = {"Date": "11/12/1965", "Amount": 250.00, "Payee": "savings"}
     sheila.process_transaction(source_account="savings", xact_data=sample)

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import csv, json, re, os
 from copy import deepcopy
@@ -160,6 +160,8 @@ class Buckets(object):
             ret += "%3d. %-24s %-6.2f" % (ct, bkt.title, float(money_str))
             if bkt.default:
                 ret += " (default)"
+            if bkt.notes:
+                ret += " - " + bkt.notes
             ret += "\n"
 
         ret += "\nTotal:  %s\n" % self.total
@@ -222,5 +224,5 @@ class Buckets(object):
 
 if __name__ == "__main__":
     bks = Buckets.from_file(Buckets.BUCKETS_FILE)
-    print bks.titles()
-    print bks
+    print(bks.titles())
+    print(bks)

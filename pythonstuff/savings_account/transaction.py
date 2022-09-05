@@ -1,7 +1,7 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import re, os
-from dateutil.parser import parse
+from datetime import datetime
 from transaction_template import Transaction_Template
 from bucket import Bucket
 from buckets import Buckets
@@ -26,13 +26,13 @@ class Transaction(object):
 
         # get data from the transaction line/dictionary
         try:
-            self.date_time = parse(xact_data.get('Date', ""))
+            self.date_time = datetime.strptime(xact_data.get('Date', ""), "%Y-%m-%d %H:%M:%S")
         except ValueError:
             log.error("Bad date string, %s." % xact_data.get('Date', ""))
-            self.date_time = parse("1/1/2001")
+            self.date_time = datetime.strptime("1/1/2001", "%d/%m/%Y")  # set a default
         except AttributeError:
             log.error("Bad date string, %s." % xact_data.get('Date', ""))
-            self.date_time = parse("1/1/2001")
+            self.date_time = datetime.strptime("1/1/2001", "%d/%m/%Y")  # set a default
         self.init_total = USD(xact_data.get('Amount', 0.0))
         self.payer = source_account
         self.payee = xact_data.get('Payee', "")
@@ -180,15 +180,15 @@ class Transaction(object):
 if __name__ == "__main__":
     sample = {"Date": "11/12/1965", "Amount": 250, "Payee": "savings"}
     tr1 = Transaction(source_account="checking", xact_data=sample)
-    print tr1.titles()
-    print tr1.show()
+    print(tr1.titles())
+    print(tr1.show())
 
     sample = {"Date": "9/4/1965", "Amount": 610, "Payee": "savings"}
     tr2 = Transaction(source_account="checking", xact_data=sample)
-    print tr2.titles()
-    print tr2.show()
+    print(tr2.titles())
+    print(tr2.show())
 
     sample = {"Date": "7/23/19", "Amount": 2000, "Payee": "savings"}
     tr3 = Transaction(source_account="checking", xact_data=sample)
-    print tr3.titles()
-    print tr3.show()
+    print(tr3.titles())
+    print(tr3.show())

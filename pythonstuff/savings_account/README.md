@@ -80,7 +80,7 @@ For example:
 
 Place this file in a "data" directory under the savings.py script.
 
-### transfers/\<foo\>.json
+### budgets/private/\<foo\>.json
 
 Prepare one of these for each "regular" transfer into savings.  These are scheduled transactions
 that you create in your banking app, or just regular transfers that you periodically make (assuming
@@ -103,6 +103,12 @@ The file contains one transfer pattern with a date, title, payer, payee, and a l
 Examples of these transfers:
 - Dad's scheduled transfer after each paycheck (twice per month, or 24 times per year): how it is divided
 - Mom's scheduled transfer after each paycheck (once per week, or 52 times per year).
+
+To show the contents of one of these files, along with the total, run:
+
+```
+transaction\_template.py -j budgets/private/\<foo\>.json.
+```
 
 ## File From savings.py -  spending.csv
 
